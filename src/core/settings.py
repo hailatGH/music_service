@@ -50,9 +50,9 @@ else:
 
 DATABASES = {"default": env.db()}
 
-if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
-    DATABASES["default"]["HOST"] = "cloudsql-proxy"
-    DATABASES["default"]["PORT"] = 5432
+# if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
+#     DATABASES["default"]["HOST"] = "cloudsql-proxy"
+#     DATABASES["default"]["PORT"] = 5432
 
 if "core" not in INSTALLED_APPS:
     INSTALLED_APPS += ["core"]
