@@ -8,7 +8,6 @@ from .serializers import ArtistSerializer, AlbumSerializer, GenreSerializer, Tra
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
-
 class ArtistViewSet(viewsets.ModelViewSet):
     
     queryset = ArtistModel.objects.all()
@@ -124,7 +123,6 @@ class AlbumViewSet(viewsets.ModelViewSet):
         except:
             albums = []
         return Response(albums)
-
 class GenreViewSet(viewsets.ModelViewSet):
     
     queryset = GenreModel.objects.all()
@@ -175,7 +173,6 @@ class GenreViewSet(viewsets.ModelViewSet):
         except:
             genres = []
         return Response(genres)
-
 class TrackViewSet(viewsets.ModelViewSet):
     
     queryset = TrackModel.objects.all()
@@ -212,13 +209,11 @@ class TrackViewSet(viewsets.ModelViewSet):
         except:
             tracks = []
         return Response(tracks)
-
 class LyricsViewSet(viewsets.ModelViewSet):
     
     queryset = LyricsModel.objects.all().order_by('-created_at')
     serializer_class = LyricsSerializer
     pagination_class = StandardResultsSetPagination
-
 class PlayListViewSet(viewsets.ModelViewSet):
     
     queryset = PlayListModel.objects.all()
@@ -281,7 +276,6 @@ class PlayListTracksViewSet(viewsets.ModelViewSet):
     queryset = PlayListTracksModel.objects.all()
     serializer_class = PlayListTracksSerializer
     pagination_class = StandardResultsSetPagination
-
 class FavouritesViewSet(viewsets.ModelViewSet):
 
     queryset = FavouritesModel.objects.all()
