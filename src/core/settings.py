@@ -54,6 +54,9 @@ if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
     DATABASES["default"]["HOST"] = "cloudsql-proxy"
     DATABASES["default"]["PORT"] = 5432
 
+if "core" not in INSTALLED_APPS:
+    INSTALLED_APPS += ["core"]
+
 GS_BUCKET_NAME = env("GS_BUCKET_NAME")
 STATICFILES_DIRS = []
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
