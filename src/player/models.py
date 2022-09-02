@@ -23,7 +23,8 @@ class ArtistModel(models.Model):
     artist_title = models.CharField(null=False, blank=True, max_length=100)
     artist_cover = models.ImageField(upload_to=Artists_Profile_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
     artist_description = models.TextField(blank=True, null=True)
-    user_id =  models.CharField(null=False, blank=False, max_length=1023)
+    user_id =  models.CharField(null=True, blank=True, max_length=1023)
+    created_by = models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -35,12 +36,11 @@ class AlbumModel(models.Model):
     class Meta:
         ordering = ['id']
 
-    album_title = models.CharField(null=False, blank=True, unique=True, max_length=100)
+    album_title = models.CharField(null=False, blank=True, max_length=100)
     album_cover = models.ImageField(upload_to=Albums_Cover_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
     album_description = models.TextField(blank=True, null=True)
     artist_id = models.ForeignKey(ArtistModel, related_name='albums', on_delete=models.DO_NOTHING)
-    user_id =  models.CharField(null=False, blank=False, max_length=1023)
-    album_price = models.IntegerField(null=False, blank=True)
+    album_price = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -55,7 +55,6 @@ class GenreModel(models.Model):
     genre_title = models.CharField(null=False, blank=True, unique=True, max_length=100)
     genre_cover = models.ImageField(upload_to=Genres_Cover_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
     genre_description = models.TextField(blank=True, null=True)
-    user_id =  models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -75,7 +74,6 @@ class TrackModel(models.Model):
     artist_id = models.ForeignKey(ArtistModel, related_name='tracks_ar', on_delete=models.DO_NOTHING)
     album_id = models.ForeignKey(AlbumModel, related_name='tracks_al', on_delete=models.DO_NOTHING)
     genre_id = models.ForeignKey(GenreModel, related_name='tracks_g', on_delete=models.DO_NOTHING)
-    user_id =  models.CharField(null=False, blank=False, max_length=1023)
     track_price = models.IntegerField(null=False, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -91,7 +89,6 @@ class LyricsModel(models.Model):
     lyrics_title = models.CharField(null=False, blank=True, unique=True, max_length=100)
     lyrics_detail = models.TextField(blank=True, null=False, unique=True, max_length=4092)
     track_id = models.ForeignKey(TrackModel, related_name='lyrics', on_delete=models.CASCADE, unique=True)
-    user_id =  models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -104,7 +101,7 @@ class PlayListModel(models.Model):
         ordering = ['id']
     
     playlist_name = models.CharField(null=False, blank=True, max_length=100)
-    user_id =  models.CharField(null=False, blank=False, max_length=1023)
+    user_id =  models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -130,7 +127,7 @@ class FavouritesModel(models.Model):
         ordering = ['id']
     
     track_id = models.ForeignKey(TrackModel, related_name='favouritelist', on_delete=models.CASCADE, null=False, blank=False)
-    user_id =  models.CharField(null=False, blank=False, max_length=1023)
+    user_id =  models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

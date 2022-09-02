@@ -71,3 +71,8 @@ class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArtistModel
         fields = '__all__'
+
+    def create(self, validated_data):
+        artist = super().create(validated_data)
+        AlbumModel.objects.create(album_title="Singles", album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist)
+        return artist
