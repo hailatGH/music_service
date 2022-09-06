@@ -1,6 +1,7 @@
+import json
+import requests
 from django.db import models
 from core import validators
-
 
 def Artists_Profile_Images(instance, filename):
     return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
@@ -10,9 +11,12 @@ def Albums_Cover_Images(instance, filename):
     
 def Genres_Cover_Images(instance, filename):
     return '/'.join(['Media_Files', 'Genres_Cover_Images', str(instance.genre_title) + "_" + str(filename)])
-    
+
+def Track_Cover_Images(instance, filename):
+    return '/'.join(['Media_Files', 'Track_Cover_Images', str(instance.track_name) + "_" + str(filename)])
+
 def Track_Files(instance, filename):
-    return '/'.join(['Media_Files', 'Track_Files', str(instance.artist_id) + "_" + str(instance.album_id) + "_" + str(instance.track_name) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Track_Files', str(instance.artist_id), str(instance.album_id), str(instance.track_name) + "_" + str(filename)])
     
 class ArtistModel(models.Model):
     
@@ -41,6 +45,8 @@ class AlbumModel(models.Model):
     album_description = models.TextField(blank=True, null=True)
     artist_id = models.ForeignKey(ArtistModel, related_name='albums', on_delete=models.DO_NOTHING)
     album_price = models.IntegerField(null=True, blank=True)
+    user_id =  models.CharField(null=True, blank=True, max_length=1023)
+    created_by = models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -55,6 +61,7 @@ class GenreModel(models.Model):
     genre_title = models.CharField(null=False, blank=True, unique=True, max_length=100)
     genre_cover = models.ImageField(upload_to=Genres_Cover_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
     genre_description = models.TextField(blank=True, null=True)
+    created_by = models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -69,18 +76,34 @@ class TrackModel(models.Model):
     track_name = models.CharField(null=False, blank=True, unique=True, max_length=100)
     track_description = models.TextField(blank=True, null=True)
     track_file = models.FileField(upload_to=Track_Files, validators=[validators.validate_track_extension], null=False, blank=True)
+    track_cover = models.ImageField(upload_to=Track_Cover_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
     track_status = models.BooleanField(default=False)
     track_release_date=models.DateTimeField()
     artist_id = models.ForeignKey(ArtistModel, related_name='tracks_ar', on_delete=models.DO_NOTHING)
     album_id = models.ForeignKey(AlbumModel, related_name='tracks_al', on_delete=models.DO_NOTHING)
     genre_id = models.ForeignKey(GenreModel, related_name='tracks_g', on_delete=models.DO_NOTHING)
     track_price = models.IntegerField(null=False, blank=True)
+    user_id =  models.CharField(null=True, blank=True, max_length=1023)
+    created_by = models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return '%d: %s' % (self.pk, self.track_name)
 
+    def save(self, *args, **kwargs):
+        super(TrackModel, self).save(*args, **kwargs)
+        # print(self.pk)
+        url = "http://127.0.0.1:8000/count/musicupdate"
+        data = {
+                "track_id": self.pk,
+                "album_id": int(str(self.album_id)[slice(1)]),
+                "artist_id": int(str(self.artist_id)[slice(1)]),
+                "user_id": self.user_id,
+                "created_by": self.created_by,
+            }
+        headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+        r = requests.post(url, json=data, headers=headers)
 class LyricsModel(models.Model):
 
     class Meta:
@@ -89,6 +112,7 @@ class LyricsModel(models.Model):
     lyrics_title = models.CharField(null=False, blank=True, unique=True, max_length=100)
     lyrics_detail = models.TextField(blank=True, null=False, unique=True, max_length=4092)
     track_id = models.ForeignKey(TrackModel, related_name='lyrics', on_delete=models.CASCADE, unique=True)
+    created_by = models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -101,7 +125,7 @@ class PlayListModel(models.Model):
         ordering = ['id']
     
     playlist_name = models.CharField(null=False, blank=True, max_length=100)
-    user_id =  models.CharField(null=False, blank=True, max_length=1023)
+    created_by = models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -127,7 +151,7 @@ class FavouritesModel(models.Model):
         ordering = ['id']
     
     track_id = models.ForeignKey(TrackModel, related_name='favouritelist', on_delete=models.CASCADE, null=False, blank=False)
-    user_id =  models.CharField(null=False, blank=True, max_length=1023)
+    created_by = models.CharField(null=False, blank=False, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 
-from player.views import ArtistViewSet, AlbumViewSet, GenreViewSet, TrackViewSet, LyricsViewSet, FavouritesViewSet, PlayListViewSet, \
+from player.webapp import ArtistViewSet, AlbumViewSet, GenreViewSet, TrackViewSet, LyricsViewSet, FavouritesViewSet, PlayListViewSet, \
     PlayListTracksViewSet
 
 router = DefaultRouter(trailing_slash=False)

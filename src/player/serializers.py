@@ -1,3 +1,5 @@
+import json
+import requests
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
@@ -74,5 +76,6 @@ class ArtistSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         artist = super().create(validated_data)
-        AlbumModel.objects.create(album_title="Singles", album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist)
+        album_title = validated_data['artist_name'] + "'s_" + "SingleMusics"
+        AlbumModel.objects.create(album_title=album_title, album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist)
         return artist
