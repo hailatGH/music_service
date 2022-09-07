@@ -1,5 +1,4 @@
-from time import clock_settime
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 

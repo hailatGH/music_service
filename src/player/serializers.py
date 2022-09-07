@@ -1,5 +1,3 @@
-from dataclasses import fields
-import json, requests
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
