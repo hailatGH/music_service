@@ -1,9 +1,9 @@
-import json
-import requests
+from dataclasses import fields
+import json, requests
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import AlbumModel, ArtistModel, TrackModel, GenreModel, LyricsModel, PlayListModel, PlayListTracksModel, FavouritesModel
+from .models import *
 
 class FavouritesSerializer(serializers.ModelSerializer):
     
@@ -76,6 +76,17 @@ class ArtistSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         artist = super().create(validated_data)
-        album_title = validated_data['artist_name'] + "'s_" + "SingleMusics"
-        AlbumModel.objects.create(album_title=album_title, album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist)
+        AlbumModel.objects.create(album_title="Singles", album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist, created_by=validated_data['created_by'])
         return artist
+
+class PurchasedTrackSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PurchasedTrackModel
+        fields = '__all__'
+
+class PurchasedAlbumSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PurchasedAlbumModel
+        fields = '__all__'

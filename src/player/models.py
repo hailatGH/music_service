@@ -1,7 +1,11 @@
-import json
+import http
+from urllib import request, response
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from django.db import models
 from core import validators
+from rest_framework.response import Response
 
 def Artists_Profile_Images(instance, filename):
     return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
@@ -53,6 +57,10 @@ class AlbumModel(models.Model):
     def __str__(self):
         return '%d: %s' % (self.pk, self.album_title)
 
+    def save(self, *args, **kwargs):
+        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(1)])).values('user_id')[0]['user_id']
+        return super(AlbumModel, self).save(*args, **kwargs)
+
 class GenreModel(models.Model):
 
     class Meta:
@@ -85,6 +93,7 @@ class TrackModel(models.Model):
     track_price = models.IntegerField(null=False, blank=True)
     user_id =  models.CharField(null=True, blank=True, max_length=1023)
     created_by = models.CharField(null=False, blank=False, max_length=1023)
+    viewcount = models.IntegerField(null=False, blank=False, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -92,18 +101,37 @@ class TrackModel(models.Model):
         return '%d: %s' % (self.pk, self.track_name)
 
     def save(self, *args, **kwargs):
-        super(TrackModel, self).save(*args, **kwargs)
-        # print(self.pk)
-        url = "http://127.0.0.1:8000/count/musicupdate"
-        data = {
-                "track_id": self.pk,
-                "album_id": int(str(self.album_id)[slice(1)]),
-                "artist_id": int(str(self.artist_id)[slice(1)]),
-                "user_id": self.user_id,
-                "created_by": self.created_by,
-            }
-        headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-        r = requests.post(url, json=data, headers=headers)
+        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(1)])).values('user_id')[0]['user_id']
+        respo = super(TrackModel, self).save(*args, **kwargs)
+        try:
+            # url = "http://127.0.0.1:8000/count/musicupdate"
+            url = "https://analytics-service-v1-vdzflryflq-ew.a.run.app/count/musicupdate"
+            data = {
+                    "track_id": self.pk,
+                    "album_id": int(str(self.album_id)[slice(1)]),
+                    "artist_id": int(str(self.artist_id)[slice(1)]),
+                    "user_id": self.user_id,
+                    "created_by": self.created_by,
+                }
+            headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+            
+            retry_strategy = Retry(
+                total=10, 
+                backoff_factor=0.8, 
+                status_forcelist=[429, 500, 502, 503, 504]
+            )
+            adapter = HTTPAdapter(max_retries=retry_strategy)
+            http = requests.Session()
+            http.mount("https://", adapter)
+            http.mount("http://", adapter)
+
+            send_to_analytics = requests.post(url, json=data, headers=headers)
+        except BaseException as e:
+            with open("exceptions.txt", "a") as f:
+                print(send_to_analytics, file=f)
+                
+        return respo
+
 class LyricsModel(models.Model):
 
     class Meta:
@@ -157,3 +185,23 @@ class FavouritesModel(models.Model):
 
     def __str__(self):
         return '%d: %d' % (self.pk, self.user_id)
+
+class PurchasedTrackModel(models.Model):
+
+    class Meta:
+        ordering = ['id']
+    
+    track_id = models.IntegerField(null=False, blank=False)
+    user_id = models.CharField(null=False, blank=False, max_length=1023)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class PurchasedAlbumModel(models.Model):
+
+    class Meta:
+        ordering = ['id']
+    
+    album_id = models.IntegerField(null=False, blank=False)
+    user_id = models.CharField(null=False, blank=False, max_length=1023)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
