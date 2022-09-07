@@ -10,6 +10,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
 
 class DataByUserId(viewsets.ModelViewSet):
+    
     queryset = ArtistModel.objects.all()
     serializer_class = ArtistSerializer
     pagination_class = StandardResultsSetPagination

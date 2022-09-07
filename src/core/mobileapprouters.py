@@ -4,7 +4,7 @@ from player.viewset_mobile_app import *
 
 router = DefaultRouter(trailing_slash=False)
 
-# router.register(r'artistbyuserid', ArtistByUserId, basename="artistbyuserid")
+router.register(r'databyuserid', DataByUserId, basename="databyuserid")
 # router.register(r'albumbyuserid', AlbumByUserId, basename="albumbyuserid")
 # router.register(r'album', AlbumViewSet, basename="album")
 # router.register(r'genre', GenreViewSet, basename="genre")
