@@ -137,6 +137,7 @@ class PopularMusicViewSet(viewsets.ModelViewSet):
                 artist_obj = ArtistModel.objects.filter(id=page[track_count]['artist_id']).values('id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at')
                 for val in ['id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at']:
                     artist[val] = artist_obj[0][val]
+                track['artist_name'] = artist_obj[0]['artist_name']
                 track['Artist'] = artist
 
                 album_obj = AlbumModel.objects.filter(id=page[track_count]['album_id']).values('id','album_title','album_cover','album_description','artist_id','album_price','user_id','created_by','created_at','updated_at')
@@ -182,6 +183,7 @@ class TracksViewSet(viewsets.ModelViewSet):
                     track[val] = page[track_count][val]
                 
                 artist_obj = ArtistModel.objects.filter(id=page[track_count]['artist_id']).values('id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at')
+                track['artist_name'] = artist_obj[0]['artist_name']
                 for val in ['id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at']:
                     artist[val] = artist_obj[0][val]
                     track['Artist'] = artist
@@ -208,7 +210,7 @@ class TracksViewSet(viewsets.ModelViewSet):
 
 class ALbumsViewSet(viewsets.ModelViewSet):
 
-    queryset = AlbumModel.objects.all()
+    queryset = AlbumModel.objects.all().exclude(album_title="Singles")
     serializer_class = AlbumSerializer
     pagination_class = StandardResultsSetPagination
 
@@ -225,6 +227,7 @@ class ALbumsViewSet(viewsets.ModelViewSet):
                     album[val] = album_obj[album_count][val]
                 
                 artist_obj = ArtistModel.objects.filter(id=page[album_count]['artist_id']).values('id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at')
+                album['artist_name'] = artist_obj[0]['artist_name']
                 for val in ['id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at']:
                     artist[val] = artist_obj[0][val]
                     album['Artist'] = artist
@@ -236,7 +239,7 @@ class ALbumsViewSet(viewsets.ModelViewSet):
                     lyrics = {}
                     for val in ['id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at']:
                         track[val] = track_obj[track_count][val]
-                    
+                    track['artist_name'] = artist_obj[0]['artist_name']
                     genre_obj = GenreModel.objects.filter(id=track_obj[track_count]['genre_id']).values('id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at')
                     for val in ['id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at']:
                         genre[val] = genre_obj[0][val]
