@@ -210,7 +210,7 @@ class TracksViewSet(viewsets.ModelViewSet):
 
 class ALbumsViewSet(viewsets.ModelViewSet):
 
-    queryset = AlbumModel.objects.all()
+    queryset = AlbumModel.objects.all().exclude(album_title="Singles")
     serializer_class = AlbumSerializer
     pagination_class = StandardResultsSetPagination
 
