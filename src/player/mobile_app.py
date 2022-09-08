@@ -210,7 +210,7 @@ class TracksViewSet(viewsets.ModelViewSet):
 
 class ALbumsViewSet(viewsets.ModelViewSet):
 
-    queryset = AlbumModel.objects.all().exclude(album_title="Singles")
+    queryset = AlbumModel.objects.all()
     serializer_class = AlbumSerializer
     pagination_class = StandardResultsSetPagination
 
@@ -272,6 +272,8 @@ class ArtistsViewSet(viewsets.ModelViewSet):
             for artist_count in range(len(artist_obj)):
                 artist = {}
                 albums = []
+                tracks = []
+
                 for val in ['id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at']:
                     artist[val] = artist_obj[artist_count][val]
                 
@@ -281,32 +283,33 @@ class ArtistsViewSet(viewsets.ModelViewSet):
                     tracks = []
                     for val in ['id','album_title','album_cover','album_description','artist_id','album_price','user_id','created_by','created_at','updated_at']:
                         album[val] = album_obj[album_count][val]
-
-                    track_obj = TrackModel.objects.filter(album_id=album_obj[album_count]['id']).values('id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at')
-                    for track_count in range(len(track_obj)):
-                        track = {}
-                        genre = {}
-                        lyrics = {}
-                        for val in ['id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at']:
-                            track[val] = track_obj[track_count][val]
-                        
-                        genre_obj = GenreModel.objects.filter(id=track_obj[track_count]['genre_id']).values('id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at')
-                        for val in ['id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at']:
-                            genre[val] = genre_obj[0][val]
-                            track['Genre'] = genre
-
-                        try:
-                            lyrics_obj = LyricsModel.objects.filter(track_id=track_obj[track_count]['id']).values('id','lyrics_title','lyrics_detail','track_id','created_by','created_at','updated_at')
-                            for val in ['id','lyrics_title','lyrics_detail','track_id','created_by','created_at','updated_at']:
-                                lyrics[val] = lyrics_obj[0][val]
-                                track['Lyrics'] = lyrics
-                        except:
-                            track['Lyrics'] = ""
-                        tracks.append(track)
-                    album['Tracks'] = tracks
+                    album['artist_name'] = page[artist_count]['artist_name']
                     albums.append(album)
+
                 artist['Albums'] = albums
 
+                track_obj = TrackModel.objects.filter(artist_id=page[artist_count]['id']).values('id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at')
+                for track_count in range(len(track_obj)):
+                    track = {}
+                    genre = {}
+                    lyrics = {}
+                    for val in ['id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at']:
+                        track[val] = track_obj[track_count][val]
+                    track['artist_name'] = page[artist_count]['artist_name']
+                    genre_obj = GenreModel.objects.filter(id=track_obj[track_count]['genre_id']).values('id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at')
+                    for val in ['id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at']:
+                        genre[val] = genre_obj[0][val]
+                        track['Genre'] = genre
+
+                    try:
+                        lyrics_obj = LyricsModel.objects.filter(track_id=track_obj[track_count]['id']).values('id','lyrics_title','lyrics_detail','track_id','created_by','created_at','updated_at')
+                        for val in ['id','lyrics_title','lyrics_detail','track_id','created_by','created_at','updated_at']:
+                            lyrics[val] = lyrics_obj[0][val]
+                            track['Lyrics'] = lyrics
+                    except:
+                        track['Lyrics'] = ""
+                    tracks.append(track)
+                artist['Tracks'] = tracks
                 artists.append(artist)
         return Response(artists)
 class GenresViewSet(viewsets.ModelViewSet):
