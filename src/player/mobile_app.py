@@ -124,7 +124,7 @@ class PopularMusicViewSet(viewsets.ModelViewSet):
         track_obj = self.queryset.order_by('-viewcount').values('id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at')
         page = self.paginate_queryset(track_obj)
         if page is not None:  
-            serializer = self.get_serializer(page, many=True)
+            # serializer = self.get_serializer(page, many=True)
             for track_count in range(len(page)):
                 track = {}
                 artist = {}
@@ -158,3 +158,72 @@ class PopularMusicViewSet(viewsets.ModelViewSet):
                     track['Lyrics'] = ""
                 data.append(track)
         return Response(data)
+
+class TracksViewSet(viewsets.ModelViewSet):
+
+    queryset = TrackModel.objects.all()
+    serializer_class = TrackSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        tracks = []
+        track_obj = self.queryset.values('id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at')
+        page = self.paginate_queryset(track_obj)
+        if page is not None:  
+            # serializer = self.get_serializer(page, many=True)
+            for track_count in range(len(page)):
+                track = {}
+                artist = {}
+                album = {}
+                genre = {}
+                lyrics = {}
+
+                for val in ['id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at']:
+                    track[val] = page[track_count][val]
+                
+                artist_obj = ArtistModel.objects.filter(id=page[track_count]['artist_id']).values('id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at')
+                for val in ['id','artist_name','artist_title','artist_cover','artist_description','user_id','created_by','created_at','updated_at']:
+                    artist[val] = artist_obj[0][val]
+                    track['Artist'] = artist
+                
+                album_obj = AlbumModel.objects.filter(id=page[track_count]['album_id']).values('id','album_title','album_cover','album_description','artist_id','album_price','user_id','created_by','created_at','updated_at')
+                for val in ['id','album_title','album_cover','album_description','artist_id','album_price','user_id','created_by','created_at','updated_at']:
+                    album[val] = album_obj[0][val]
+                    track['Album'] = album
+
+                genre_obj = GenreModel.objects.filter(id=page[track_count]['genre_id']).values('id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at')
+                for val in ['id','genre_title','genre_cover','genre_description','created_by','created_at','updated_at']:
+                    genre[val] = genre_obj[0][val]
+                    track['Genre'] = genre
+                try:
+                    lyrics_obj = LyricsModel.objects.filter(track_id=page[track_count]['id']).values('id','lyrics_title','lyrics_detail','track_id','created_by','created_at','updated_at')
+                    for val in ['id','lyrics_title','lyrics_detail','track_id','created_by','created_at','updated_at']:
+                        lyrics[val] = lyrics_obj[0][val]
+                        track['Lyrics'] = lyrics
+                except:
+                    track['Lyrics'] = ""
+                tracks.append(track)
+
+        return Response(tracks)
+
+class ALbumsViewSet(viewsets.ModelViewSet):
+
+    queryset = AlbumModel.objects.all()
+    serializer_class = AlbumSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        albums = []
+        return Response(albums)
+
+class ArtistsViewSet(viewsets.ModelViewSet):
+
+    queryset = ArtistModel.objects.all()
+    serializer_class = ArtistSerializer
+    pagination_class = StandardResultsSetPagination
+
+class GenresViewSet(viewsets.ModelViewSet):
+
+    queryset = GenreModel.objects.all()
+    serializer_class = GenreSerializer
+    pagination_class = StandardResultsSetPagination
