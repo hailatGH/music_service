@@ -20,7 +20,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from . import webapprouters, mobileapprouters
+from . import mobile_app_routers, web_app_routers
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -37,8 +37,8 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('webapp/', include(webapprouters.router.urls)),
-    path('mobileapp/', include(mobileapprouters.router.urls)),
+    path('web_app/', include(web_app_routers.router.urls)),
+    path('mobile_app/', include(mobile_app_routers.router.urls)),
     path('OpenAPI_Config_Music_Service.yaml', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')

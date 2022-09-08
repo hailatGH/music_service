@@ -101,8 +101,8 @@ class TrackModel(models.Model):
         self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(1)])).values('user_id')[0]['user_id']
         respo = super(TrackModel, self).save(*args, **kwargs)
         try:
-            # url = "http://127.0.0.1:8000/count/musicupdate"
-            url = "https://analytics-service-v1-vdzflryflq-ew.a.run.app/count/musicupdate"
+            # url = "http://127.0.0.1:8000/music_update"
+            url = "https://analytics-service-v1-vdzflryflq-ew.a.run.app/music_update"
             data = {
                     "track_id": self.pk,
                     "album_id": int(str(self.album_id)[slice(1)]),

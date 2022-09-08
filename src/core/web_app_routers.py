@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 
-from player.viewset_web_app import *
+from player.web_app import *
 
 router = DefaultRouter(trailing_slash=False)
 
