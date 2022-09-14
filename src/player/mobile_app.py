@@ -192,7 +192,7 @@ class PopularMusicViewSet(viewsets.ModelViewSet):
 
 class TracksViewSet(viewsets.ModelViewSet):
 
-    queryset = TrackModel.objects.all().exclude(track_status=False)
+    queryset = TrackModel.objects.all()
     serializer_class = TrackSerializer
     pagination_class = StandardResultsSetPagination
 
