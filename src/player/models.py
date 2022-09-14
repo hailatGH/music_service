@@ -55,7 +55,8 @@ class AlbumModel(models.Model):
         return '%d: %s' % (self.pk, self.album_title)
 
     def save(self, *args, **kwargs):
-        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(1)])).values('user_id')[0]['user_id']
+        slice_index = str(self.artist_id).index(":")
+        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(slice_index)])).values('user_id')[0]['user_id']
         return super(AlbumModel, self).save(*args, **kwargs)
 
 class GenreModel(models.Model):
@@ -98,15 +99,17 @@ class TrackModel(models.Model):
         return '%d: %s' % (self.pk, self.track_name)
 
     def save(self, *args, **kwargs):
-        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(1)])).values('user_id')[0]['user_id']
+        slice_index_ar = str(self.artist_id).index(":")
+        slice_index_al = str(self.album_id).index(":")
+        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(slice_index_ar)])).values('user_id')[0]['user_id']
         respo = super(TrackModel, self).save(*args, **kwargs)
         try:
             # url = "http://127.0.0.1:8000/music_update"
             url = "https://analytics-service-v1-vdzflryflq-ew.a.run.app/music_update"
             data = {
                     "track_id": self.pk,
-                    "album_id": int(str(self.album_id)[slice(1)]),
-                    "artist_id": int(str(self.artist_id)[slice(1)]),
+                    "album_id": int(str(self.album_id)[slice(slice_index_al)]),
+                    "artist_id": int(str(self.artist_id)[slice(slice_index_ar)]),
                     "user_id": self.user_id,
                     "created_by": self.created_by,
                 }
@@ -181,7 +184,7 @@ class FavouritesModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '%d: %d' % (self.pk, self.user_id)
+        return '%d: %d' % (self.pk, self.track_id)
 
 class PurchasedTrackModel(models.Model):
 

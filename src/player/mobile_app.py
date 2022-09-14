@@ -15,6 +15,21 @@ class DataByUserId(viewsets.ModelViewSet):
     serializer_class = ArtistSerializer
     pagination_class = StandardResultsSetPagination
 
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
     def list(self, request, *args, **kwargs):
         data = []
         try:
@@ -119,6 +134,21 @@ class PopularMusicViewSet(viewsets.ModelViewSet):
     serializer_class = TrackSerializer
     pagination_class = StandardResultsSetPagination
 
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
     def list(self, request, *args, **kwargs):
         data = []
         track_obj = self.queryset.order_by('-viewcount').values('id','track_name','track_description','track_file','track_cover','track_status','track_release_date','artist_id','album_id','genre_id','track_price','user_id','created_by','viewcount','created_at','updated_at')
@@ -165,6 +195,21 @@ class TracksViewSet(viewsets.ModelViewSet):
     queryset = TrackModel.objects.all()
     serializer_class = TrackSerializer
     pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
         tracks = []
@@ -213,6 +258,21 @@ class ALbumsViewSet(viewsets.ModelViewSet):
     queryset = AlbumModel.objects.all().exclude(album_title="Singles")
     serializer_class = AlbumSerializer
     pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
         albums = []
@@ -263,6 +323,21 @@ class ArtistsViewSet(viewsets.ModelViewSet):
     queryset = ArtistModel.objects.all()
     serializer_class = ArtistSerializer
     pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
         artists = []
@@ -339,6 +414,21 @@ class GenresViewSet(viewsets.ModelViewSet):
     queryset = GenreModel.objects.all()
     serializer_class = GenreSerializer
     pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
         genres = []
