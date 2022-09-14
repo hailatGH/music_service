@@ -6,7 +6,7 @@ from .models import *
 from .serializers import *
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 1000
     page_size_query_param = 'page_size'
 
 class DataByUserId(viewsets.ModelViewSet):
@@ -255,7 +255,7 @@ class TracksViewSet(viewsets.ModelViewSet):
 
 class ALbumsViewSet(viewsets.ModelViewSet):
 
-    queryset = AlbumModel.objects.all().exclude(album_title="Singles")
+    queryset = AlbumModel.objects.all()
     serializer_class = AlbumSerializer
     pagination_class = StandardResultsSetPagination
 
