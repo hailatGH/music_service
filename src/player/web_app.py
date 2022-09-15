@@ -45,17 +45,62 @@ class PlayListViewSet(viewsets.ModelViewSet):
     serializer_class = PlayListSerializer
     pagination_class = StandardResultsSetPagination
 
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
 class PlayListTracksViewSet(viewsets.ModelViewSet):
     
     queryset = PlayListTracksModel.objects.all()
     serializer_class = PlayListTracksSerializer
     pagination_class = StandardResultsSetPagination
 
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
 class FavouritesViewSet(viewsets.ModelViewSet):
 
     queryset = FavouritesModel.objects.all()
     serializer_class = FavouritesSerializer
     pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
 class PurchasedTrackViewSet(viewsets.ModelViewSet):
 

@@ -3,6 +3,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from django.db import models
 from core import validators
+from django.core.mail import send_mail
 
 def Artists_Profile_Images(instance, filename):
     return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
@@ -123,7 +124,7 @@ class TrackModel(models.Model):
             
             retry_strategy = Retry(
                 total=10, 
-                backoff_factor=0.8, 
+                backoff_factor=0.5, 
                 status_forcelist=[429, 500, 502, 503, 504]
             )
             adapter = HTTPAdapter(max_retries=retry_strategy)
@@ -133,8 +134,18 @@ class TrackModel(models.Model):
 
             send_to_analytics = requests.post(url, json=data, headers=headers)
         except BaseException as e:
-            with open("exceptions.txt", "a") as f:
-                print(send_to_analytics, file=f)
+            track_id = self.pk
+            album_id = int(str(self.album_id)[slice(slice_index_al)])
+            artist_id = int(str(self.artist_id)[slice(slice_index_ar)])
+            user_id = self.user_id
+            created_by = self.created_by
+
+            Subject = "Data Consistancy Problem"
+            Email_Body = f"Error: {e}\n\nData:\n\ttrack_id:\t{track_id}\n\talbum_id:\t{album_id}\n\tartist_id:\t{artist_id}\n\tuser_id:\t{user_id}\n\tcreated_by:\t{created_by}\n"
+            Sender = 'kinideas.tech@gmail.com'
+            Receiver = 'hailat.alx@gmail.com'
+
+            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
                 
         return respo
 
