@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from django.core.mail import send_mail
 
 from .models import *
 
@@ -42,12 +43,6 @@ class PlayListSerializer(serializers.ModelSerializer):
             )
         ]
 
-class LyricsSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = LyricsModel
-        fields = '__all__'
-
 class TrackSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -74,7 +69,15 @@ class ArtistSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         artist = super().create(validated_data)
-        AlbumModel.objects.create(album_title="Singles", album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist, created_by=validated_data['created_by'])
+        try:
+            AlbumModel.objects.create(album_title="Singles", album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist, created_by=validated_data['created_by'])
+        except BaseException as e:
+            Subject = "Data Consistancy Problem"
+            Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist {validated_data['artist_cover']}."
+            Sender = 'kinideas.tech@gmail.com'
+            Receiver = 'hailat.alx@gmail.com'
+
+            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
         return artist
 
 class PurchasedTrackSerializer(serializers.ModelSerializer):
