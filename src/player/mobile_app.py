@@ -3,7 +3,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from .models import *
-from .serializers import *
+from .backupserializers import *
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 1000

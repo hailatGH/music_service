@@ -1,4 +1,3 @@
-import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from django.db import models
@@ -9,203 +8,152 @@ def Artists_Profile_Images(instance, filename):
     return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
     
 def Albums_Cover_Images(instance, filename):
-    return '/'.join(['Media_Files', 'Albums_Cover_Images', str(instance.artist_id) + "_" + str(instance.album_title) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Albums_Cover_Images', str(instance.album_name) + "_" + str(filename)])
     
 def Genres_Cover_Images(instance, filename):
-    return '/'.join(['Media_Files', 'Genres_Cover_Images', str(instance.genre_title) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Genres_Cover_Images', str(instance.genre_name) + "_" + str(filename)])
 
 def Track_Cover_Images(instance, filename):
-    return '/'.join(['Media_Files', 'Track_Cover_Images', str(instance.track_name) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Tracks_Cover_Images', str(instance.track_name) + "_" + str(filename)])
 
 def Track_Files(instance, filename):
-    return '/'.join(['Media_Files', 'Track_Files', str(instance.artist_id), str(instance.album_id), str(instance.track_name) + "_" + str(filename)])
-    
-class ArtistModel(models.Model):
-    
-    class Meta:
-        ordering = ['id']
+    return '/'.join(['Media_Files', 'Tracks_Audio_Files', str(instance.album_id), str(instance.track_name) + "_" + str(filename)])
 
-    artist_name = models.CharField(null=False, blank=True)
-    artist_title = models.CharField(null=False, blank=True)
-    artist_cover = models.ImageField(upload_to=Artists_Profile_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
-    artist_description = models.TextField(blank=True, null=True)
-    artist_status = models.BooleanField(default=False)
-    artist_release_date=models.DateTimeField()
-    user_id =  models.CharField(null=True, blank=True, max_length=1023)
-    created_by = models.CharField(null=False, blank=False, max_length=1023)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return '%d: %s' % (self.pk, self.artist_name)
-
-class AlbumModel(models.Model):
-    
-    class Meta:
-        ordering = ['id']
-
-    album_title = models.CharField(null=False, blank=True, max_length=100)
-    album_cover = models.ImageField(upload_to=Albums_Cover_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
-    album_description = models.TextField(blank=True, null=True)
-    album_price = models.IntegerField(null=True, blank=True)
-    album_status = models.BooleanField(default=False)
-    album_release_date=models.DateTimeField()
-    album_viewcount = models.IntegerField(null=False, blank=False, default=0)
-    artist_id = models.ForeignKey(ArtistModel, related_name='albums', on_delete=models.DO_NOTHING)
-    user_id =  models.CharField(null=True, blank=True, max_length=1023)
-    created_by = models.CharField(null=False, blank=False, max_length=1023)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return '%d: %s' % (self.pk, self.album_title)
-
-    def save(self, *args, **kwargs):
-        slice_index = str(self.artist_id).index(":")
-        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(slice_index)])).values('user_id')[0]['user_id']
-        return super(AlbumModel, self).save(*args, **kwargs)
-
-class GenreModel(models.Model):
+class ArtistsModel(models.Model):
 
     class Meta:
         ordering = ['id']
 
-    genre_title = models.CharField(null=False, blank=True, unique=True, max_length=100)
-    genre_cover = models.ImageField(upload_to=Genres_Cover_Images, validators=[validators.validate_image_extension], height_field=None, width_field=None, null=False, blank=True)
-    genre_description = models.TextField(blank=True, null=True)
-    genre_status = models.BooleanField(default=False)
-    genre_release_date=models.DateTimeField()
-    created_by = models.CharField(null=False, blank=False, max_length=1023)
+    artist_name = models.CharField(null=False, blank=True, max_length=256)
+    artist_title = models.CharField(null=True, blank=True, max_length=256)
+    artist_rating = models.IntegerField(null=True, blank=True, default=0)
+    artist_status = models.BooleanField(null=False, blank=True, default=False)
+    artist_description = models.CharField(null=True, blank=True, max_length=4096)
+    artist_viewcount = models.IntegerField(null=False, blank=True, default=0)
+    artist_profileImage = models.ImageField(null=False, blank=True, upload_to=Artists_Profile_Images, validators=[validators.validate_image_extension])
+    artist_FUI = models.CharField(null=False, blank=True, unique=True, max_length=1023)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return '%d: %s' % (self.pk, self.genre_title)
+    updated_at =models.DateTimeField(auto_now=True)
 
-class TrackModel(models.Model):
-    
+    def __str__(self):
+        return f"{self.pk}: {self.artist_name}"
+
+class AlbumsModel(models.Model):
+
     class Meta:
         ordering = ['id']
 
-    track_name = models.CharField(null=False, blank=True, unique=True, max_length=100)
-    track_description = models.TextField(null=True, blank=True)
-    track_file = models.FileField(upload_to=Track_Files, validators=[validators.validate_track_extension], null=False, blank=True)
-    track_cover = models.ImageField(upload_to=Track_Cover_Images, validators=[validators.validate_image_extension], null=False, blank=True)
-    track_price = models.IntegerField(null=False, blank=True)
-    track_status = models.BooleanField(default=False)
-    track_release_date=models.DateTimeField()
-    track_lyrics = models.TextField(blank=True, null=False)
-    track_viewcount = models.IntegerField(null=False, blank=False, default=0)
-    artist_id = models.ForeignKey(ArtistModel, on_delete=models.DO_NOTHING)
-    album_id = models.ForeignKey(AlbumModel, on_delete=models.DO_NOTHING)
-    genre_id = models.ForeignKey(GenreModel, on_delete=models.DO_NOTHING)
-    user_id =  models.CharField(null=True, blank=True, max_length=1023)
-    created_by = models.CharField(null=False, blank=False, max_length=1023)
+    album_name = models.CharField(null=False, blank=True, max_length=256)
+    album_rating = models.IntegerField(null=True, blank=True, default=0)
+    album_status = models.BooleanField(null=False, blank=True, default=False)
+    album_releaseDate = models.DateField(null=True, blank=True)
+    album_description = models.CharField(null=True, blank=True, max_length=4096)
+    album_viewcount = models.IntegerField(null=False, blank=True, default=0)
+    album_coverImage = models.ImageField(null=False, blank=True, upload_to=Albums_Cover_Images, validators=[validators.validate_image_extension])
+    artist_id = models.ManyToManyField(ArtistsModel)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
+    updated_at =models.DateTimeField(auto_now=True)
+
     def __str__(self):
-        return '%d: %s' % (self.pk, self.track_name)
+        return f"{self.pk}: {self.album_name}"
 
-    def save(self, *args, **kwargs):
-        slice_index_ar = str(self.artist_id).index(":")
-        slice_index_al = str(self.album_id).index(":")
-        self.user_id = ArtistModel.objects.filter(id=int(str(self.artist_id)[slice(slice_index_ar)])).values('user_id')[0]['user_id']
-        respo = super(TrackModel, self).save(*args, **kwargs)
-        try:
-            url = "http://127.0.0.1:8000/music_update"
-            # url = "https://analytics-service-v1-vdzflryflq-ew.a.run.app/music_update"
-            data = {
-                    "track_id": self.pk,
-                    "album_id": int(str(self.album_id)[slice(slice_index_al)]),
-                    "artist_id": int(str(self.artist_id)[slice(slice_index_ar)]),
-                    "user_id": self.user_id,
-                    "created_by": self.created_by,
-                }
-            headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-            
-            retry_strategy = Retry(
-                total=10, 
-                backoff_factor=0.5, 
-                status_forcelist=[429, 500, 502, 503, 504]
-            )
-            adapter = HTTPAdapter(max_retries=retry_strategy)
-            http = requests.Session()
-            http.mount("https://", adapter)
-            http.mount("http://", adapter)
-
-            send_to_analytics = requests.post(url, json=data, headers=headers)
-        except BaseException as e:
-            track_id = self.pk
-            album_id = int(str(self.album_id)[slice(slice_index_al)])
-            artist_id = int(str(self.artist_id)[slice(slice_index_ar)])
-            user_id = self.user_id
-            created_by = self.created_by
-
-            Subject = "Data Consistancy Problem"
-            Email_Body = f"Error: {e}\n\nData:\n\ttrack_id:\t{track_id}\n\talbum_id:\t{album_id}\n\tartist_id:\t{artist_id}\n\tuser_id:\t{user_id}\n\tcreated_by:\t{created_by}\n"
-            Sender = 'kinideas.tech@gmail.com'
-            Receiver = 'hailat.alx@gmail.com'
-
-            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
-                
-        return respo
-
-class PlayListModel(models.Model):
+class GenresModel(models.Model):
 
     class Meta:
         ordering = ['id']
-    
-    playlist_name = models.CharField(null=False, blank=True, max_length=100)
-    created_by = models.CharField(null=False, blank=False, max_length=1023)
+
+    genre_name = models.CharField(null=False, blank=True, max_length=256)
+    genre_rating = models.IntegerField(null=True, blank=True, default=0)
+    genre_status = models.BooleanField(null=False, blank=True, default=False)
+    genre_description = models.CharField(null=True, blank=True, max_length=4096)
+    genre_viewcount = models.IntegerField(null=False, blank=True, default=0)
+    genre_coverImage = models.ImageField(null=False, blank=True, upload_to=Genres_Cover_Images, validators=[validators.validate_image_extension])
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at =models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '%d: %s' % (self.pk, self.playlist_name)
+        return f"{self.pk}: {self.genre_name}"
+
+class TracksModel(models.Model):
+
+    class Meta:
+        ordering = ['id']
+
+    track_name = models.CharField(null=False, blank=True, max_length=256)
+    track_rating = models.IntegerField(null=True, blank=True, default=0)
+    track_status = models.BooleanField(null=False, blank=True, default=False)
+    track_releaseDate = models.DateField(null=True, blank=True)
+    track_description = models.CharField(null=True, blank=True, max_length=4096)
+    track_viewcount = models.IntegerField(null=False, blank=True, default=0)
+    track_coverImage = models.ImageField(null=False, blank=True, upload_to=Track_Cover_Images, validators=[validators.validate_image_extension])
+    track_audioFile = models.FileField(null=False, blank=True, upload_to=Track_Files, validators=[validators.validate_track_extension])
+    track_lyrics = models.CharField(null=True, blank=True, max_length=4096)
+    artists_featuring = models.CharField(null=False, blank=True, max_length=256)
+    artist_id = models.ManyToManyField(ArtistsModel)
+    album_id = models.ForeignKey(AlbumsModel, null=False, blank=True, on_delete=models.DO_NOTHING)
+    genre_id = models.ForeignKey(GenresModel, null=False, blank=True, on_delete=models.DO_NOTHING)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at =models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.pk}: {self.track_name}"
+
+class PlayListsModel(models.Model):
+
+    class Meta:
+        ordering = ['id']
+
+    playlist_name = models.CharField(null=False, blank=True, max_length=256)
+    user_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at =models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.pk}: {self.playlist_name}"
 
 class PlayListTracksModel(models.Model):
 
     class Meta:
         ordering = ['id']
-    
-    playlist_id = models.ForeignKey(PlayListModel, related_name='playlist_na', on_delete=models.CASCADE, null=False, blank=False)
-    track_id = models.ForeignKey(TrackModel, related_name='playlist_t', on_delete=models.CASCADE, null=False, blank=False)
+
+    playlist_id = models.ForeignKey(PlayListsModel, null=False, blank=True, on_delete=models.CASCADE)
+    track_id = models.ForeignKey(TracksModel, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '%d: %s' % (self.pk)
+        return f"{self.pk}: {self.playlist_id}"
 
 class FavouritesModel(models.Model):
 
     class Meta:
         ordering = ['id']
-    
-    track_id = models.ForeignKey(TrackModel, related_name='favouritelist', on_delete=models.CASCADE, null=False, blank=False)
-    created_by = models.CharField(null=False, blank=False, max_length=1023)
+
+    track_id = models.ForeignKey(TracksModel, null=False, blank=True, on_delete=models.CASCADE)
+    user_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at =models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return '%d: %d' % (self.pk, self.track_id)
-
-class PurchasedTrackModel(models.Model):
+class PurchasedTracksModel(models.Model):
 
     class Meta:
         ordering = ['id']
-    
-    track_id = models.IntegerField(null=False, blank=False)
-    user_id = models.CharField(null=False, blank=False, max_length=1023)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-class PurchasedAlbumModel(models.Model):
+    track_id = models.IntegerField(null=False, blank=True)
+    user_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at =models.DateTimeField(auto_now=True)
+
+class PurchasedAlbumsModel(models.Model):
 
     class Meta:
         ordering = ['id']
-    
-    album_id = models.IntegerField(null=False, blank=False)
-    user_id = models.CharField(null=False, blank=False, max_length=1023)
+
+    album_id = models.IntegerField(null=False, blank=True)
+    user_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at =models.DateTimeField(auto_now=True)

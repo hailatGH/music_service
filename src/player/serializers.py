@@ -1,23 +1,71 @@
+from dataclasses import field, fields
+from datetime import datetime
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from django.core.mail import send_mail
 
 from .models import *
 
-class FavouritesSerializer(serializers.ModelSerializer):
+class ArtistsSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = FavouritesModel
+        model = ArtistsModel
+        fields = '__all__'
+
+    def create(self, validated_data):
+        artist = super().create(validated_data)
+        try:
+            SingleAlbum = AlbumsModel(
+                album_name="Singles",
+                album_status=validated_data['artist_status'],
+                album_releaseDate=datetime.now(),
+                album_description=f"Contains all single musics of the {validated_data['artist_name']}!",
+                album_coverImage=validated_data['artist_profileImage'],
+                encoder_FUI=validated_data['encoder_FUI']
+            )
+            SingleAlbum.save()
+            SingleAlbum.artist_id.add(artist)
+        except BaseException as e:
+            Subject = "Data Consistancy Problem"
+            Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist: {validated_data['artist_name']}."
+            Sender = 'kinideas.tech@gmail.com'
+            Receiver = 'hailat.alx@gmail.com'
+
+            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
+        return artist
+
+class AlbumsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AlbumsModel
+        fields = '__all__'
+
+class GenresSerializer(serializers.ModelSerializer):
+
+     class Meta:
+        model = GenresModel
+        fields = '__all__'
+
+class TracksSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TracksModel
+        fields = '__all__'
+
+class PlayListsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = PlayListsModel
         fields = '__all__'
 
         validators = [
             UniqueTogetherValidator(
-                queryset=FavouritesModel.objects.all(),
-                fields=['track_id', 'user_id']
+                queryset=PlayListsModel.objects.all(),
+                fields=['playlist_name', 'user_FUI']
             )
         ]
 
-class PlayListTracksSerializer(serializers.ModelSerializer):
+class PlayListsTracksSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlayListTracksModel
@@ -30,64 +78,41 @@ class PlayListTracksSerializer(serializers.ModelSerializer):
             )
         ]
 
-class PlayListSerializer(serializers.ModelSerializer):
+class FavouritesSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = PlayListModel
+        model = FavouritesModel
         fields = '__all__'
 
         validators = [
             UniqueTogetherValidator(
-                queryset=PlayListModel.objects.all(),
-                fields=['playlist_name', 'user_id']
+                queryset=FavouritesModel.objects.all(),
+                fields=['track_id', 'user_FUI']
             )
         ]
 
-class TrackSerializer(serializers.ModelSerializer):
+class PurchasedTracksSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TrackModel
+        model = PurchasedTracksModel
         fields = '__all__'
 
-class GenreSerializer(serializers.ModelSerializer):
+        validators = [
+            UniqueTogetherValidator(
+                queryset=PurchasedTracksModel.objects.all(),
+                fields=['track_id', 'user_FUI']
+            )
+        ]
 
-     class Meta:
-        model = GenreModel
-        fields = '__all__'
-
-class AlbumSerializer(serializers.ModelSerializer):
+class PurchasedAlbumsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = AlbumModel
+        model = PurchasedAlbumsModel
         fields = '__all__'
 
-class ArtistSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = ArtistModel
-        fields = '__all__'
-
-    def create(self, validated_data):
-        artist = super().create(validated_data)
-        try:
-            AlbumModel.objects.create(album_title="Singles", album_cover=validated_data['artist_cover'], album_description="Contains all single musics of the Artist!", artist_id=artist, created_by=validated_data['created_by'])
-        except BaseException as e:
-            Subject = "Data Consistancy Problem"
-            Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist {validated_data['artist_cover']}."
-            Sender = 'kinideas.tech@gmail.com'
-            Receiver = 'hailat.alx@gmail.com'
-
-            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
-        return artist
-
-class PurchasedTrackSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PurchasedTrackModel
-        fields = '__all__'
-
-class PurchasedAlbumSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PurchasedAlbumModel
-        fields = '__all__'
+        validators = [
+            UniqueTogetherValidator(
+                queryset=PurchasedAlbumsModel.objects.all(),
+                fields=['album_id', 'user_FUI']
+            )
+        ]

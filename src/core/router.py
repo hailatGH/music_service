@@ -1,20 +1,19 @@
 from rest_framework.routers import DefaultRouter
 
-from player.views import *
+from player.webAppviews import *
+from player.mobileAppviews import *
 
-web_app_router = DefaultRouter(trailing_slash=False)
-web_app_router.register(r'artist', ArtistViewSet, basename="artist")
-web_app_router.register(r'album', AlbumViewSet, basename="album")
-web_app_router.register(r'genre', GenreViewSet, basename="genre")
-web_app_router.register(r'track', TrackViewSet, basename="track")
-web_app_router.register(r'lyrics', LyricsViewSet, basename="lyrics")
-web_app_router.register(r'playlists', PlayListViewSet, basename="playlists")
-web_app_router.register(r'playlisttracks', PlayListTracksViewSet, basename="playlisttracks")
-web_app_router.register(r'favourites', FavouritesViewSet, basename="favourites")
-web_app_router.register(r'purchasedtrack', PurchasedTrackViewSet, basename="purchasedtrack")
-web_app_router.register(r'purchasedalbum', PurchasedAlbumViewSet, basename="purchasedalbum")
+webApprouter = DefaultRouter(trailing_slash=False)
+webApprouter.register(r'artist', ArtistsWebViewSet, basename="artist")
+webApprouter.register(r'album', AlbumsWebViewSet, basename="album")
+webApprouter.register(r'genre', GenresWebViewSet, basename="genre")
+webApprouter.register(r'track', TracksWebViewSet, basename="track")
+webApprouter.register(r'playlist', PlayListsWebViewSet, basename="playlist")
+webApprouter.register(r'playlisttrack', PlayListTracksWebViewSet, basename="playlisttrack")
+webApprouter.register(r'purchasedtrack', PurchasedTracksWebViewSet, basename="purchasedtrack")
+webApprouter.register(r'purchasedalbum', PurchasedAlbumsWebViewSet, basename="purchasedalbum")
 
-mobile_app_router = DefaultRouter(trailing_slash=False)
+mobileApprouter = DefaultRouter(trailing_slash=False)
 # mobile_app_router.register(r'data_by_userid', DataByUserId, basename="databyuserid")
 # mobile_app_router.register(r'popular_tracks', PopularMusicViewSet, basename="popular_tracks")
 # mobile_app_router.register(r'tracks', TracksViewSet, basename="tracks")
