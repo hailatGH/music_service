@@ -1,3 +1,4 @@
+import re
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -33,13 +34,13 @@ class ArtistsMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        artists = self.queryset.order_by('-created_at').filter(artist_status=True).values('id','artist_name','artist_profileImage')
+        artists = self.queryset.filter(artist_status=True).order_by('-created_at').values('id','artist_name','artist_profileImage')
         page = self.paginate_queryset(artists)
         if page is not None:
             for artist_count in range(len(page)):
                 albums = AlbumsModel.objects.filter(album_status=True, artist_id=page[artist_count]['id'])
                 page[artist_count]['noOfAlbums'] = albums.count() - 1
-                page[artist_count]['noOfTracks'] = TracksModel.objects.filter(track_status=False, album_id=albums.filter(album_name='Singles').values('id')[0]['id']).count()
+                page[artist_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=albums.filter(album_name='Singles').values('id')[0]['id']).count()
         return Response(page)
 
 class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
@@ -66,11 +67,17 @@ class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
         artistId = request.query_params['artistId']
-        albums = self.queryset.order_by('-created_at').filter(album_status=True, artist_id=artistId).values('id','album_name','album_coverImage','album_description','album_price','artist_id')
+        albums = self.queryset.filter(album_status=True, artist_id=artistId).order_by('-created_at').values('id','album_name','album_coverImage','album_description','album_price','artist_id')
         page = self.paginate_queryset(albums)
         if page is not None:
             for album_count in range(len(page)):
-                artist_name = ArtistsModel.objects.filter(id=page[album_count]['artist_id']).values('artist_name')[0]['artist_name']
+                artists = ArtistsModel.objects.filter(id=page[album_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                else:
+                    artist_name = artists.values('artist_name')[0]['artist_name']
                 page[album_count]['artist_name'] = artist_name
                 page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(album_id=page[album_count]['id'], user_FUI=userId).exists()
         return Response(page)
@@ -98,11 +105,17 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
-        albums = self.queryset.order_by('-created_at').filter(album_status=True).exclude(album_name="Singles").values('id','album_name','album_coverImage','album_description','album_price','artist_id')
+        albums = self.queryset.filter(album_status=True).order_by('-created_at').exclude(album_name="Singles").values('id','album_name','album_coverImage','album_description','album_price','artist_id')
         page = self.paginate_queryset(albums)
         if page is not None:
             for album_count in range(len(page)):
-                artist_name = ArtistsModel.objects.filter(id=page[album_count]['artist_id']).values('artist_name')[0]['artist_name']
+                artists = ArtistsModel.objects.filter(id=page[album_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                else:
+                    artist_name = artists.values('artist_name')[0]['artist_name']
                 page[album_count]['artist_name'] = artist_name
                 page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(album_id=page[album_count]['id'], user_FUI=userId).exists()
         return Response(page)
@@ -131,15 +144,20 @@ class TracksByAlbumIdViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
         albumId = request.query_params['albumId']
-        tracks = self.queryset.order_by('-created_at').filter(track_status=False, album_id=albumId).values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
+        tracks = self.queryset.filter(track_status=True, album_id=albumId).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
         page = self.paginate_queryset(tracks)
         if page is not None:
             for track_count in range(len(page)):
-                artist_name = ArtistsModel.objects.filter(id=page[track_count]['artist_id']).values('artist_name')[0]['artist_name']
-                if page[track_count]['artists_featuring'] != "":
-                    page[track_count]['artist_name'] = artist_name + " ft. " + page[track_count]['artists_featuring']
+                artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                elif page[track_count]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
                 else:
-                    page[track_count]['artist_name'] = artist_name
+                    artist_name = artists.values('artist_name')[0]['artist_name']
+                page[track_count]['artist_name'] = artist_name
                 page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
         return Response(page)
 
@@ -165,7 +183,7 @@ class GenresMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        genres = self.queryset.order_by('-created_at').filter(genre_status=True).values('id','genre_name','genre_description','genre_coverImage')
+        genres = self.queryset.filter(genre_status=True).order_by('-created_at').values('id','genre_name','genre_description','genre_coverImage')
         page = self.paginate_queryset(genres)
         return Response(page)
 
@@ -192,16 +210,21 @@ class TracksByGenreIdViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
-        albumId = request.query_params['albumId']
-        tracks = self.queryset.order_by('-created_at').filter(track_status=False, genre_id=albumId).values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
+        genreId = request.query_params['genreId']
+        tracks = self.queryset.filter(track_status=True, genre_id=genreId).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
         page = self.paginate_queryset(tracks)
         if page is not None:
             for track_count in range(len(page)):
-                artist_name = ArtistsModel.objects.filter(id=page[track_count]['artist_id']).values('artist_name')[0]['artist_name']
-                if page[track_count]['artists_featuring'] != "":
-                    page[track_count]['artist_name'] = artist_name + " ft. " + page[track_count]['artists_featuring']
+                artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                elif page[track_count]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
                 else:
-                    page[track_count]['artist_name'] = artist_name
+                    artist_name = artists.values('artist_name')[0]['artist_name']
+                page[track_count]['artist_name'] = artist_name
                 page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
         return Response(page)
 
@@ -228,14 +251,135 @@ class TracksMobileViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
-        tracks = self.queryset.order_by('-created_at').filter(track_status=False).values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
+        tracks = self.queryset.filter(track_status=True).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
         page = self.paginate_queryset(tracks)
         if page is not None:
             for track_count in range(len(page)):
-                artist_name = ArtistsModel.objects.filter(id=page[track_count]['artist_id']).values('artist_name')[0]['artist_name']
-                if page[track_count]['artists_featuring'] != "":
-                    page[track_count]['artist_name'] = artist_name + " ft. " + page[track_count]['artists_featuring']
+                artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                elif page[track_count]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
                 else:
-                    page[track_count]['artist_name'] = artist_name
+                    artist_name = artists.values('artist_name')[0]['artist_name']
+                page[track_count]['artist_name'] = artist_name
+                page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
+        return Response(page)
+
+class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
+
+    queryset = FavouritesModel.objects.all()
+    serializer_class = FavouritesSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        userId = request.query_params['userId']
+        favouries = self.queryset.filter(user_FUI=userId).order_by('-created_at').values('id','track_id')
+        page = self.paginate_queryset(favouries)
+        if page is not None:
+            for fav_count in range(len(page)):
+                page[fav_count]['fav_id'] = page[fav_count]['id']
+                tracks = TracksModel.objects.filter(track_status=True, id=page[fav_count]['track_id']).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
+                for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id']:
+                    page[fav_count][val] = tracks[0][val]
+                artists = ArtistsModel.objects.filter(id=page[fav_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                elif page[fav_count]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + page[fav_count]['artists_featuring']
+                else:
+                    artist_name = artists.values('artist_name')[0]['artist_name']
+                page[fav_count]['artist_name'] = artist_name
+                page[fav_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[fav_count]['id'], user_FUI=userId).exists()
+        return Response(page)
+
+class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
+    
+    queryset = PlayListsModel.objects.all()
+    serializer_class = PlayListsSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        userId = request.query_params['userId']
+        playlist = self.queryset.filter(user_FUI=userId).order_by('-created_at').values('id','playlist_name','user_FUI')
+        page = self.paginate_queryset(playlist)
+        return Response(page)
+
+class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
+    
+    queryset = PlayListTracksModel.objects.all()
+    serializer_class = PlayListsTracksSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        userId = request.query_params['userId']
+        playlistId = request.query_params['playlistId']
+        playlistTracks = self.queryset.filter(playlist_id=playlistId).order_by('-created_at').values('id','playlist_id','track_id')
+        page = self.paginate_queryset(playlistTracks)
+        if page is not None:
+            for track_count in range(len(page)):
+                page[track_count]['playlist_track_id'] = page[track_count]['id']
+                tracks = TracksModel.objects.filter(id=page[track_count]['track_id']).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id')
+                for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id']:
+                    page[track_count][val] = tracks[0][val]
+                artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                elif page[track_count]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
+                else:
+                    artist_name = artists.values('artist_name')[0]['artist_name']
+                page[track_count]['artist_name'] = artist_name
                 page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
         return Response(page)

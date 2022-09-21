@@ -77,27 +77,6 @@ class PlayListTracksWebViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         return Response("Not Allowed")
 
-# class FavouritesWebViewSet(viewsets.ModelViewSet):
-
-#     queryset = FavouritesModel.objects.all()
-#     serializer_class = FavouritesSerializer
-#     pagination_class = StandardResultsSetPagination
-
-#     def create(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
-
-#     def retrieve(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
-
-#     def update(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
-
-#     def partial_update(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
-
-#     def destroy(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
-
 class PurchasedTracksWebViewSet(viewsets.ModelViewSet):
 
     queryset = PurchasedTracksModel.objects.all()
