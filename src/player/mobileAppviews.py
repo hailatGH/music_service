@@ -1,4 +1,3 @@
-import re
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -112,7 +111,7 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
                 artists = ArtistsModel.objects.filter(id=page[album_count]['artist_id'])
                 artist_name = ""
                 if artists.count() > 1:
-                    for artist_count in range(len(artists)):    
+                    for artist_count in range(len(artists)):
                         artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
                 else:
                     artist_name = artists.values('artist_name')[0]['artist_name']
