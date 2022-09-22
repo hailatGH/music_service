@@ -7,7 +7,6 @@ from django.core.mail import send_mail
 from .models import *
 
 class ArtistsSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = ArtistsModel
         fields = '__all__'
