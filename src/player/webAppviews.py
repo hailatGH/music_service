@@ -17,6 +17,33 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
     serializer_class = ArtistsSerializer
     pagination_class = StandardResultsSetPagination
 
+class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
+
+    queryset = AlbumsModel.objects.all()
+    serializer_class = AlbumsSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def list(self, request, *args, **kwargs):
+        artistId = request.query_params['artistId']
+        albums = self.queryset.filter(album_status=True, artist_id=artistId).order_by('-created_at').values('id','album_name','artist_id')
+        page = self.paginate_queryset(albums)
+        return Response(page)
+
 class AlbumsWebViewSet(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()

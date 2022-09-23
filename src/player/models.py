@@ -1,8 +1,5 @@
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 from django.db import models
 from core import validators
-from django.core.mail import send_mail
 
 def Artists_Profile_Images(instance, filename):
     return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
