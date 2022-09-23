@@ -79,6 +79,7 @@ class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
                     artist_name = artists.values('artist_name')[0]['artist_name']
                 page[album_count]['artist_name'] = artist_name
                 page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(album_id=page[album_count]['id'], user_FUI=userId).exists()
+                page[album_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).count()
         return Response(page)
 
 class AlbumsMobileViewSet(viewsets.ModelViewSet):
@@ -117,6 +118,7 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
                     artist_name = artists.values('artist_name')[0]['artist_name']
                 page[album_count]['artist_name'] = artist_name
                 page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(album_id=page[album_count]['id'], user_FUI=userId).exists()
+                page[album_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).count()
         return Response(page)
 
 class TracksByAlbumIdViewSet(viewsets.ModelViewSet):
