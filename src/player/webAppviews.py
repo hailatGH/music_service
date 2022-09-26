@@ -1,3 +1,4 @@
+from xxlimited import new
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -16,7 +17,6 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
     pagination_class = StandardResultsSetPagination
-
 class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
@@ -40,9 +40,41 @@ class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         artistId = request.query_params['artistId']
-        albums = self.queryset.filter(album_status=True, artist_id=artistId).order_by('-created_at').values('id','album_name','artist_id')
-        page = self.paginate_queryset(albums)
-        return Response(page)
+        indexOfcomma = 0
+        startOfno = 0
+        artist_id_list = []
+        data = []
+
+        # Slice all the artist id from query params using the ', ' operator and append the ids to the artistidlist
+        for i in range(len(artistId)):
+            if artistId[i] == ',':
+                indexOfcomma = i
+                artist_id_list.append(int(artistId[startOfno:indexOfcomma]))
+                startOfno = indexOfcomma + 1
+        artist_id_list.append(int(artistId[startOfno:]))
+        albums = self.queryset.filter(artist_id__in=artist_id_list).values('id','album_name')
+
+        # Count how many times an album is repeated with diffrent artist_id
+        tmp_data = []
+        for i in range(len(albums)):
+            tmpvalue = albums[i]['id']
+            count = 0
+            for j in range(len(albums)):
+                if tmpvalue == albums[j]['id']:
+                    count = count + 1
+            if count == len(artist_id_list):
+                for k in range(len(albums)):
+                    if albums[k]['id'] == tmpvalue:
+                        if albums[k] not in tmp_data:
+                            tmp_data.append(albums[k])
+
+        # Check if the listed albums in the tmp_data only have artist ids of the requested artist ids   
+        for i in range(len(tmp_data)):
+            artist_obj = self.queryset.filter(id=tmp_data[i]['id']).values('id','album_name','artist_id')
+            if len(artist_id_list) == len(artist_obj):
+                data.append(tmp_data[i])
+
+        return Response(data)
 
 class AlbumsWebViewSet(viewsets.ModelViewSet):
 

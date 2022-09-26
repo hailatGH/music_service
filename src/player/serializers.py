@@ -1,4 +1,4 @@
-from dataclasses import field, fields
+from ast import Delete
 from datetime import datetime
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
@@ -15,7 +15,7 @@ class ArtistsSerializer(serializers.ModelSerializer):
         artist = super().create(validated_data)
         try:
             SingleAlbum = AlbumsModel(
-                album_name="Singles",
+                album_name=validated_data['artist_name']+"_Singles",
                 album_status=validated_data['artist_status'],
                 album_releaseDate=datetime.now(),
                 album_description=f"Contains all single musics of the {validated_data['artist_name']}!",
@@ -32,6 +32,25 @@ class ArtistsSerializer(serializers.ModelSerializer):
 
             send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
         return artist
+    
+    def update(self, instance, validated_data):
+        album_name = f"{validated_data['artist_name']}_Singles"
+        try:
+            AlbumsModel.objects.filter(album_name=album_name).update(
+                album_name=validated_data['artist_name']+"_Singles",
+                album_status=validated_data['artist_status'],
+                album_releaseDate=datetime.now(),
+                album_description=f"Contains all single musics of the {validated_data['artist_name']}!",
+                encoder_FUI=validated_data['encoder_FUI']
+            )
+        except BaseException as e:
+            Subject = "Data Consistancy Problem"
+            Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist: {validated_data['artist_name']}."
+            Sender = 'kinideas.tech@gmail.com'
+            Receiver = 'hailat.alx@gmail.com'
+
+            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
+        return super().update(instance, validated_data)
 
 class AlbumsSerializer(serializers.ModelSerializer):
 

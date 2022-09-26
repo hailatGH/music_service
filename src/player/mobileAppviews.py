@@ -105,7 +105,7 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
-        albums = self.queryset.filter(album_status=True).order_by('-created_at').exclude(album_name="Singles").values('id','album_name','album_coverImage','album_description','album_price','artist_id')
+        albums = self.queryset.filter(album_status=True).order_by('-created_at').exclude(album_name__contains="Singles").values('id','album_name','album_coverImage','album_description','album_price','artist_id')
         page = self.paginate_queryset(albums)
         if page is not None:
             for album_count in range(len(page)):
