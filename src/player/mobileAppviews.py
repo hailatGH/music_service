@@ -33,13 +33,22 @@ class ArtistsMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        artists = self.queryset.filter(artist_status=True).order_by('-created_at').values('id','artist_name','artist_profileImage')
-        page = self.paginate_queryset(artists)
-        if page is not None:
-            for artist_count in range(len(page)):
-                albums = AlbumsModel.objects.filter(album_status=True, artist_id=page[artist_count]['id'])
-                page[artist_count]['noOfAlbums'] = albums.count() - 1
-                page[artist_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=albums.filter(album_name='Singles').values('id')[0]['id']).count()
+        try:
+            artists = self.queryset.filter(artist_status=True).order_by('-created_at').values('id','artist_name','artist_profileImage')
+            page = self.paginate_queryset(artists)
+            if page is not None:
+                for artist_count in range(len(page)):
+                    if AlbumsModel.objects.filter(album_status=True, artist_id=page[artist_count]['id']).exists():
+                        albums = AlbumsModel.objects.filter(album_status=True, artist_id=page[artist_count]['id'])
+                        page[artist_count]['noOfAlbums'] = albums.count() - 1 
+                        if TracksModel.objects.filter(track_status=True, album_id=albums.filter(album_name__contains='_Singles').values('id')[0]['id']).exists():
+                            page[artist_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=albums.filter(album_name='Singles').values('id')[0]['id']).count()
+                        else:
+                            page[artist_count]['noOfTracks'] = 0
+                    else:
+                        page[artist_count]['noOfAlbums'] = 0
+        except BaseException as e:
+            page = str(e)
         return Response(page)
 
 class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
@@ -79,7 +88,10 @@ class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
                     artist_name = artists.values('artist_name')[0]['artist_name']
                 page[album_count]['artist_name'] = artist_name
                 page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(album_id=page[album_count]['id'], user_FUI=userId).exists()
-                page[album_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).count()
+                if TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).exists():
+                    page[album_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).count()
+                else:
+                     page[album_count]['noOfTracks'] = 0
         return Response(page)
 
 class AlbumsMobileViewSet(viewsets.ModelViewSet):
@@ -118,7 +130,10 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
                     artist_name = artists.values('artist_name')[0]['artist_name']
                 page[album_count]['artist_name'] = artist_name
                 page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(album_id=page[album_count]['id'], user_FUI=userId).exists()
-                page[album_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).count()
+                if TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).exists():
+                    page[album_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=page[album_count]['id']).count()
+                else:
+                     page[album_count]['noOfTracks'] = 0
         return Response(page)
 
 class TracksByAlbumIdViewSet(viewsets.ModelViewSet):
