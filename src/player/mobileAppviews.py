@@ -42,11 +42,12 @@ class ArtistsMobileViewSet(viewsets.ModelViewSet):
                         albums = AlbumsModel.objects.filter(album_status=True, artist_id=page[artist_count]['id'])
                         page[artist_count]['noOfAlbums'] = albums.count() - 1 
                         if TracksModel.objects.filter(track_status=True, album_id=albums.filter(album_name__contains='_Singles').values('id')[0]['id']).exists():
-                            page[artist_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=albums.filter(album_name='Singles').values('id')[0]['id']).count()
+                            page[artist_count]['noOfTracks'] = TracksModel.objects.filter(track_status=True, album_id=albums.filter(album_name__contains='_Singles').values('id')[0]['id']).count()
                         else:
                             page[artist_count]['noOfTracks'] = 0
                     else:
                         page[artist_count]['noOfAlbums'] = 0
+                        page[artist_count]['noOfTracks'] = 0
         except BaseException as e:
             page = str(e)
         return Response(page)
