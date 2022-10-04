@@ -6,7 +6,7 @@ mv settings.py basesettings.py
 mv cloudsettings.py settings.py
 cd ../../
 git add .
-git commit -m "Completed the first version"
+git commit -m "Done"
 git push
 
 cd src/core/

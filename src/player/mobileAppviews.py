@@ -405,23 +405,23 @@ class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
         userId = request.query_params['userId']
         favouries = self.queryset.filter(user_FUI=userId).order_by('-created_at').values('id','track_id')
         page = self.paginate_queryset(favouries)
-        if page is not None:
-            for fav_count in range(len(page)):
-                page[fav_count]['fav_id'] = page[fav_count]['id']
-                tracks = TracksModel.objects.filter(track_status=True, id=page[fav_count]['track_id']).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
-                for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
-                    page[fav_count][val] = tracks[0][val]
-                artists = ArtistsModel.objects.filter(id=page[fav_count]['artist_id'])
-                artist_name = ""
-                if artists.count() > 1:
-                    for artist_count in range(len(artists)):    
-                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
-                elif page[fav_count]['artists_featuring'] != "":
-                    artist_name = artist_name + " ft. " + page[fav_count]['artists_featuring']
-                else:
-                    artist_name = artists.values('artist_name')[0]['artist_name']
-                page[fav_count]['artist_name'] = artist_name
-                page[fav_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[fav_count]['id'], user_FUI=userId).exists()
+        # if page is not None:
+        #     for fav_count in range(len(page)):
+        #         page[fav_count]['fav_id'] = page[fav_count]['id']
+        #         tracks = TracksModel.objects.filter(track_status=True, id=page[fav_count]['track_id']).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
+        #         for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
+        #             page[fav_count][val] = tracks[0][val]
+        #         artists = ArtistsModel.objects.filter(id=page[fav_count]['artist_id'])
+        #         artist_name = ""
+        #         if artists.count() > 1:
+        #             for artist_count in range(len(artists)):    
+        #                 artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+        #         elif page[fav_count]['artists_featuring'] != "":
+        #             artist_name = artist_name + " ft. " + page[fav_count]['artists_featuring']
+        #         else:
+        #             artist_name = artists.values('artist_name')[0]['artist_name']
+        #         page[fav_count]['artist_name'] = artist_name
+        #         page[fav_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[fav_count]['id'], user_FUI=userId).exists()
         return Response(page)
 
 class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
