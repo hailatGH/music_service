@@ -410,15 +410,15 @@ class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
                 page[fav_count]['fav_id'] = page[fav_count]['id']
                 track = TracksModel.objects.filter(track_status=True, id=page[fav_count]['track_id']).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
                 # for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
-                #     page[fav_count][val] = tracks[0][val]
+                #     page[fav_count][val] = track[0][val]
                 page.append(track)
                 artists = ArtistsModel.objects.filter(id=track[0]['artist_id'])
                 artist_name = ""
                 if artists.count() > 1:
                     for artist_count in range(len(artists)):    
                         artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
-                elif page[fav_count]['artists_featuring'] != "":
-                    artist_name = artist_name + " ft. " + page[fav_count]['artists_featuring']
+                elif track[0]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + track[0]['artists_featuring']
                 else:
                     artist_name = artists.values('artist_name')[0]['artist_name']
                 page[fav_count]['artist_name'] = artist_name
