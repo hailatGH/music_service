@@ -34,7 +34,7 @@ class ArtistsModel(models.Model):
     updated_at =models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk}: {self.artist_name}"
+        return f"{self.pk}-{self.artist_name}-{self.created_at.date()}/{self.updated_at.date()}"
 
 class AlbumsModel(models.Model):
 
@@ -49,13 +49,13 @@ class AlbumsModel(models.Model):
     album_viewcount = models.IntegerField(null=False, blank=True, default=0)
     album_coverImage = models.ImageField(null=False, blank=True, upload_to=Albums_Cover_Images, validators=[validators.validate_image_extension])
     album_price = models.IntegerField(null=False, blank=True, default=40)
-    artist_id = models.ManyToManyField(ArtistsModel)
+    artist_id = models.ManyToManyField(ArtistsModel, related_name = "albumasartist", related_query_name= "albumasartistquery")
     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk}: {self.album_name}"
+        return f"{self.pk}-{self.album_name}-{self.created_at.date()}/{self.updated_at.date()}"
 
 class GenresModel(models.Model):
 
@@ -73,7 +73,7 @@ class GenresModel(models.Model):
     updated_at =models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk}: {self.genre_name}"
+        return f"{self.pk}-{self.genre_name}-{self.created_at.date()}/{self.updated_at.date()}"
 
 class TracksModel(models.Model):
 
@@ -91,7 +91,7 @@ class TracksModel(models.Model):
     track_lyrics = models.CharField(null=True, blank=True, max_length=4096)
     track_price = models.IntegerField(null=False, blank=True, default=5)
     artists_featuring = models.CharField(null=False, blank=True, max_length=256)
-    artist_id = models.ManyToManyField(ArtistsModel)
+    artist_id = models.ManyToManyField(ArtistsModel, related_name = "trackasartist", related_query_name= "trackasartistquery")
     album_id = models.ForeignKey(AlbumsModel, null=False, blank=True, on_delete=models.DO_NOTHING)
     genre_id = models.ForeignKey(GenresModel, null=False, blank=True, on_delete=models.DO_NOTHING)
     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
@@ -99,7 +99,7 @@ class TracksModel(models.Model):
     updated_at =models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk}: {self.track_name}"
+        return f"{self.pk}-{self.track_name}-{self.created_at.date()}/{self.updated_at.date()}"
 
 class PlayListsModel(models.Model):
 
@@ -125,7 +125,7 @@ class PlayListTracksModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk}: {self.playlist_id}"
+        return f"{self.pk}-{self.playlist_id}-{self.created_at.date()}/{self.updated_at.date()}"
 
 class FavouritesModel(models.Model):
 
@@ -137,6 +137,9 @@ class FavouritesModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.created_at.date()}/{self.updated_at.date()}"
+
 class PurchasedTracksModel(models.Model):
 
     class Meta:
@@ -147,6 +150,9 @@ class PurchasedTracksModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.created_at.date()}/{self.updated_at.date()}"
+
 class PurchasedAlbumsModel(models.Model):
 
     class Meta:
@@ -156,3 +162,6 @@ class PurchasedAlbumsModel(models.Model):
     user_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.created_at.date()}/{self.updated_at.date()}"
