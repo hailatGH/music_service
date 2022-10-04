@@ -413,14 +413,14 @@ class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
                     page[fav_count][val] = track[0][val]
                 # page.append(track)
                 artists = ArtistsModel.objects.filter(id=track[0]['artist_id'])
-                # artist_name = ""
-                # if artists.count() > 1:
-                #     for artist_count in range(len(artists)):    
-                #         artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
-                # elif track[0]['artists_featuring'] != "":
-                #     artist_name = artist_name + " ft. " + track[0]['artists_featuring']
-                # else:
-                artist_name = artists.values('artist_name')[0]['artist_name']
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                elif track[0]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + track[0]['artists_featuring']
+                else:
+                    artist_name = artists.values('artist_name')[0]['artist_name']
                 page[fav_count]['artist_name'] = artist_name
                 page[fav_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[fav_count]['id'], user_FUI=userId).exists()
         return Response(page)
