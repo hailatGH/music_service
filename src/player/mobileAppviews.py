@@ -380,6 +380,46 @@ class TracksMobileViewSet(viewsets.ModelViewSet):
                 page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
         return Response(page)
 
+class PopularTracksMobileViewSet(viewsets.ModelViewSet):
+
+    queryset = TracksModel.objects.all()
+    serializer_class = TracksSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def list(self, request, *args, **kwargs):
+        userId = request.query_params['userId']
+        tracks = self.queryset.filter(track_status=True).order_by('-track_viewcount').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
+        page = self.paginate_queryset(tracks)
+        if page is not None:
+            for track_count in range(len(page)):
+                artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+                artist_name = ""
+                if artists.count() > 1:
+                    for artist_count in range(len(artists)):    
+                        artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                elif page[track_count]['artists_featuring'] != "":
+                    artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
+                else:
+                    artist_name = artists.values('artist_name')[0]['artist_name']
+                page[track_count]['artist_name'] = artist_name
+                page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
+        return Response(page)
+
 class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
 
     queryset = FavouritesModel.objects.all()

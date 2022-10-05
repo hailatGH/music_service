@@ -22,6 +22,7 @@ mobileApprouter.register(r'tracksByAlbumId', TracksByAlbumIdViewSet, basename="t
 mobileApprouter.register(r'genres', GenresMobileViewSet, basename="genres")
 mobileApprouter.register(r'tracksByGenreId', TracksByGenreIdViewSet, basename="tracksByGenreId")
 mobileApprouter.register(r'tracks', TracksMobileViewSet, basename="tracks")
+mobileApprouter.register(r'popularTracks', PopularTracksMobileViewSet, basename="popularTracks")
 mobileApprouter.register(r'favTracks', FavouritesByUserIdViewSet, basename="favTracks")
 mobileApprouter.register(r'playlists', PlayListsByUserIdViewSet, basename="playlists")
 mobileApprouter.register(r'tracksByPlaylistId', PlayListTracksByPlaylistIdViewSet, basename="tracksByPlaylistId")
