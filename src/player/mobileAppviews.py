@@ -12,6 +12,34 @@ class StandardResultsSetPagination(PageNumberPagination):
     
 # Class based model viewsets for the Mobile App
 
+class ArtistIdByUserId(viewsets.ModelViewSet):
+
+    queryset = ArtistsModel.objects.all()
+    serializer_class = ArtistsSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def list(self, request, *args, **kwargs):
+        userId = request.query_params['userId']
+        artist_obj = self.queryset.filter(artist_status=True, artist_FUI=userId)
+        if artist_obj.exists():
+            artist = artist_obj.values('id')     
+        return Response(artist)
+
 class ArtistsByUserId(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()
