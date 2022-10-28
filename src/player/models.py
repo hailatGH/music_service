@@ -4,6 +4,8 @@ from django.db import models
 from core import validators
 from datetime import date, timedelta
 
+today = date.today()
+
 def Artists_Profile_Images(instance, filename):
     return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
     
@@ -23,8 +25,6 @@ class ArtistsModel(models.Model):
 
     class Meta:
         ordering = ['id']
-
-    today = date.today()
 
     artist_name = models.CharField(null=False, blank=True, max_length=256)
     artist_title = models.CharField(null=True, blank=True, max_length=256)
@@ -65,7 +65,7 @@ class AlbumsModel(models.Model):
     album_name = models.CharField(null=False, blank=True, max_length=256)
     album_rating = models.IntegerField(null=True, blank=True, default=0)
     album_status = models.BooleanField(null=False, blank=True, default=False)
-    album_releaseDate = models.DateField(null=True, blank=True, default=date.today())
+    album_releaseDate = models.DateField(null=True, blank=True, default=today)
     album_description = models.CharField(null=True, blank=True, max_length=4096)
     album_viewcount = models.IntegerField(null=False, blank=True, default=0)
     album_coverImage = models.ImageField(null=False, blank=True, upload_to=Albums_Cover_Images, validators=[validators.validate_image_extension])
@@ -104,7 +104,7 @@ class TracksModel(models.Model):
     track_name = models.CharField(null=False, blank=True, max_length=256)
     track_rating = models.IntegerField(null=True, blank=True, default=0)
     track_status = models.BooleanField(null=False, blank=True, default=False)
-    track_releaseDate = models.DateField(null=True, blank=True, default=date.today())
+    track_releaseDate = models.DateField(null=True, blank=True, default=today)
     track_description = models.CharField(null=True, blank=True, max_length=4096)
     track_viewcount = models.IntegerField(null=False, blank=True, default=0)
     track_coverImage = models.ImageField(null=False, blank=True, upload_to=Track_Cover_Images, validators=[validators.validate_image_extension])
