@@ -104,7 +104,7 @@ class TracksModel(models.Model):
     track_name = models.CharField(null=False, blank=True, max_length=256)
     track_rating = models.IntegerField(null=True, blank=True, default=0)
     track_status = models.BooleanField(null=False, blank=True, default=False)
-    # track_releaseDate = models.DateField(null=True, blank=True, default=today)
+    track_releaseDate = models.DateField(null=True, blank=True, default=today)
     track_description = models.CharField(null=True, blank=True, max_length=4096)
     track_viewcount = models.IntegerField(null=False, blank=True, default=0)
     track_coverImage = models.ImageField(null=False, blank=True, upload_to=Track_Cover_Images, validators=[validators.validate_image_extension])
