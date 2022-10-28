@@ -81,6 +81,17 @@ class AlbumsWebViewSet(viewsets.ModelViewSet):
     serializer_class = AlbumsSerializer
     pagination_class = StandardResultsSetPagination
 
+class AlbumIdByAlbumNameWebViewSet(viewsets.ModelViewSet):
+
+    queryset = AlbumsModel.objects.all()
+    serializer_class = AlbumsSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        album_name = request.query_params['album_name']
+        album_id = self.queryset.filter(album_name=album_name).values('id')[0]['id']
+        return Response(album_id)
+
 class GenresWebViewSet(viewsets.ModelViewSet):
     
     queryset = GenresModel.objects.all()
@@ -144,4 +155,16 @@ class PurchasedAlbumsWebViewSet(viewsets.ModelViewSet):
 
     queryset = PurchasedAlbumsModel.objects.all()
     serializer_class = PurchasedAlbumsSerializer
+    pagination_class = StandardResultsSetPagination
+
+class AdminCollectionNamesWebViewSet(viewsets.ModelViewSet):
+
+    queryset = AdminCollectionNamesModel.objects.all()
+    serializer_class = AdminCollectionNamesSerializer
+    pagination_class = StandardResultsSetPagination
+
+class AdminCollectionTracksWebViewSet(viewsets.ModelViewSet):
+
+    queryset = AdminCollectionTracksModel.objects.all()
+    serializer_class = AdminCollectionTracksSerializer
     pagination_class = StandardResultsSetPagination

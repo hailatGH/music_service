@@ -1,4 +1,5 @@
 from ast import Delete
+from dataclasses import fields
 from datetime import datetime
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
@@ -134,3 +135,22 @@ class PurchasedAlbumsSerializer(serializers.ModelSerializer):
                 fields=['album_id', 'user_FUI']
             )
         ]
+
+class AdminCollectionNamesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AdminCollectionNamesModel
+        fields = '__all__'
+
+class AdminCollectionTracksSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AdminCollectionTracksModel
+        fields = '__all__'
+
+    validators = [
+        UniqueTogetherValidator(
+            queryset=AdminCollectionTracksModel.objects.all(),
+            fields=['collection_id', 'track_id']
+        )
+    ]

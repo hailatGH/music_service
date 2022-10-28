@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from core import validators
 
@@ -25,6 +26,7 @@ class ArtistsModel(models.Model):
     artist_title = models.CharField(null=True, blank=True, max_length=256)
     artist_rating = models.IntegerField(null=True, blank=True, default=0)
     artist_status = models.BooleanField(null=False, blank=True, default=False)
+    artist_releaseDate = models.DateField(null=True, blank=True)
     artist_description = models.CharField(null=True, blank=True, max_length=4096)
     artist_viewcount = models.IntegerField(null=False, blank=True, default=0)
     artist_profileImage = models.ImageField(null=False, blank=True, upload_to=Artists_Profile_Images, validators=[validators.validate_image_extension])
@@ -165,3 +167,27 @@ class PurchasedAlbumsModel(models.Model):
 
     def __str__(self):
         return f"{self.created_at.date()}/{self.updated_at.date()}"
+
+
+class AdminCollectionNamesModel(models.Model):
+
+    class Meta:
+        ordering = ['id']
+
+    collection_name = models.CharField(null=False, blank=True, max_length=256, unique=True)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at =models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.pk}: {self.collection_name}"    
+
+class AdminCollectionTracksModel(models.Model):
+
+    class Meta:
+        ordering = ['id']
+
+    collection_id = models.ForeignKey(AdminCollectionNamesModel, null=False, blank=True, on_delete=models.CASCADE)
+    track_id = models.ForeignKey(TracksModel, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
