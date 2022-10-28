@@ -32,6 +32,21 @@ class ArtistsModel(models.Model):
     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
+    
+    
+    def get_artisttracks_for_es(self):
+        tracks = self.trackasartist.all()
+        artist_tracks_list = []
+        for x in tracks:
+            artist_tracks_list.append({'id':x.id,'track_name':x.track_name,'track_description':x.track_description,'track_status':x.track_status,'encoder_FUI':x.encoder_FUI,'created_at':x.created_at.date(),'updated_at':x.updated_at.date(),})
+        return artist_tracks_list
+    
+    def get_artistalbums_for_es(self):
+        albums = self.albumasartist.all()
+        artist_tracks_list = []
+        for x in albums:
+            artist_tracks_list.append({'id':x.id,'album_name':x.album_name,'album_description':x.album_description,'album_status':x.album_status,'encoder_FUI':x.encoder_FUI,'created_at':x.created_at.date(),'updated_at':x.updated_at.date(),})
+        return artist_tracks_list
 
     def __str__(self):
         return f"{self.pk}-{self.artist_name}-{self.created_at.date()}/{self.updated_at.date()}"
@@ -92,8 +107,8 @@ class TracksModel(models.Model):
     track_price = models.IntegerField(null=False, blank=True, default=5)
     artists_featuring = models.CharField(null=False, blank=True, max_length=256)
     artist_id = models.ManyToManyField(ArtistsModel, related_name = "trackasartist", related_query_name= "trackasartistquery")
-    album_id = models.ForeignKey(AlbumsModel, null=False, blank=True, on_delete=models.DO_NOTHING)
-    genre_id = models.ForeignKey(GenresModel, null=False, blank=True, on_delete=models.DO_NOTHING)
+    album_id = models.ForeignKey(AlbumsModel,related_name = "trackasalbum", related_query_name= "trackasalbumquery",null=False, blank=True, on_delete=models.DO_NOTHING)
+    genre_id = models.ForeignKey(GenresModel, related_name = "genre_tracks",related_query_name= "genre_tracks", null=False, blank=True, on_delete=models.DO_NOTHING)
     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
