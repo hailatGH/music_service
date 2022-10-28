@@ -18,37 +18,37 @@ steps:
       - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
     id: Push
 
-  # # 2. Make migrations
-  # - name: gcr.io/google-appengine/exec-wrapper
-  #   args:
-  #     - '-i'
-  #     - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
-  #     - '-s'
-  #     - '${PROJECT_ID}:${_DEPLOY_REGION}:${_DB_INSTANCE}'
-  #     - '-e'
-  #     - 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}'
-  #     - '--'
-  #     - 'python'
-  #     - 'manage.py'
-  #     - 'makemigrations'
-  #     - 'player'
-  #   id: Make migrations
+  # 2. Make migrations
+  - name: gcr.io/google-appengine/exec-wrapper
+    args:
+      - '-i'
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '-s'
+      - '${PROJECT_ID}:${_DEPLOY_REGION}:${_DB_INSTANCE}'
+      - '-e'
+      - 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}'
+      - '--'
+      - 'python'
+      - 'manage.py'
+      - 'makemigrations'
+      - 'player'
+    id: Make migrations
 
-  # # 3. Migrate
-  # - name: gcr.io/google-appengine/exec-wrapper
-  #   args:
-  #     - '-i'
-  #     - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
-  #     - '-s'
-  #     - '${PROJECT_ID}:${_DEPLOY_REGION}:${_DB_INSTANCE}'
-  #     - '-e'
-  #     - 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}'
-  #     - '--'
-  #     - 'python'
-  #     - 'manage.py'
-  #     - 'migrate'
-  #     - '--run-syncdb'
-  #   id: Migrate
+  # 3. Migrate
+  - name: gcr.io/google-appengine/exec-wrapper
+    args:
+      - '-i'
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '-s'
+      - '${PROJECT_ID}:${_DEPLOY_REGION}:${_DB_INSTANCE}'
+      - '-e'
+      - 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}'
+      - '--'
+      - 'python'
+      - 'manage.py'
+      - 'migrate'
+      - '--run-syncdb'
+    id: Migrate
 
   #   # 4. Collect static
   # - name: gcr.io/google-appengine/exec-wrapper
