@@ -24,11 +24,13 @@ class ArtistsModel(models.Model):
     class Meta:
         ordering = ['id']
 
+    today = date.today()
+
     artist_name = models.CharField(null=False, blank=True, max_length=256)
     artist_title = models.CharField(null=True, blank=True, max_length=256)
     artist_rating = models.IntegerField(null=True, blank=True, default=0)
     artist_status = models.BooleanField(null=False, blank=True, default=False)
-    artist_releaseDate = models.DateField(null=True, blank=True, default=date.today())
+    artist_releaseDate = models.DateField(null=True, blank=True, default=today)
     artist_description = models.CharField(null=True, blank=True, max_length=4096)
     artist_viewcount = models.IntegerField(null=False, blank=True, default=0)
     artist_profileImage = models.ImageField(null=False, blank=True, upload_to=Artists_Profile_Images, validators=[validators.validate_image_extension])
