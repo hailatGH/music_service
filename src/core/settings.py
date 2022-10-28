@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'storages',
+    'django_elasticsearch_dsl',
 
     'core',
     'player',
@@ -188,3 +189,11 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'kinideas.tech@gmail.com'
 EMAIL_HOST_PASSWORD = 'kcufxkucwndjreua'
+
+ELASTIC_HOST_KEY= f"https://elastic:OOPjLQHlFr2CPkO5FCD5YIzm@kinmusic.es.europe-west1.gcp.cloud.es.io:9243"
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': [ELASTIC_HOST_KEY]
+    }
+}
