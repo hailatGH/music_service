@@ -574,31 +574,28 @@ class PurchasedTracksMobileViewset(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
-        if userId:
-            purchasedTracks = self.queryset.filter(user_FUI=userId).order_by('-created_at').values('id','track_id','user_FUI')
-            page = self.paginate_queryset(purchasedTracks)
-            if page is not None:
-                for track_count in range(len(page)):
-                    tracks = TracksModel.objects.filter(id=page[track_count]['track_id'])
-                    if tracks.exists():
-                        tracks = tracks.order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
-                        for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
-                            page[track_count][val] = tracks[0][val]
-                        # artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
-                        # artist_name = ""
-                        # if artists.count() > 1:
-                        #     for artist_count in range(len(artists)):    
-                        #         artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
-                        # elif page[track_count]['artists_featuring'] != "":
-                        #     artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
-                        # else:
-                        #     artist_name = artists.values('artist_name')[0]['artist_name']
-                        # page[track_count]['artist_name'] = artist_name
-                        # page[track_count]['is_purchasedByUser'] = True
-                    else:
-                        page="No purchased tracks found for this userId"
-        else:
-            page = "userId not found"
+        purchasedTracks = self.queryset.filter(user_FUI=userId).order_by('-created_at').values('id','track_id','user_FUI')
+        page = self.paginate_queryset(purchasedTracks)
+        # if page is not None:
+        #     for track_count in range(len(page)):
+        #         tracks = TracksModel.objects.filter(id=page[track_count]['track_id'])
+        #         if tracks.exists():
+        #             tracks = tracks.order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
+        #             for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
+        #                 page[track_count][val] = tracks[0][val]
+        #             artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+        #             artist_name = ""
+        #             if artists.count() > 1:
+        #                 for artist_count in range(len(artists)):    
+        #                     artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+        #             elif page[track_count]['artists_featuring'] != "":
+        #                 artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
+        #             else:
+        #                 artist_name = artists.values('artist_name')[0]['artist_name']
+        #             page[track_count]['artist_name'] = artist_name
+        #             page[track_count]['is_purchasedByUser'] = True
+        #         else:
+        #             page="No purchased tracks found for this userId"
         return Response(page)
 
 class AdminCollectionNamesMobileViewSet(viewsets.ModelViewSet):
