@@ -584,17 +584,17 @@ class PurchasedTracksMobileViewset(viewsets.ModelViewSet):
                         tracks = tracks.order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
                         for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
                             page[track_count][val] = tracks[0][val]
-                        artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
-                        artist_name = ""
-                        if artists.count() > 1:
-                            for artist_count in range(len(artists)):    
-                                artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
-                        elif page[track_count]['artists_featuring'] != "":
-                            artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
-                        else:
-                            artist_name = artists.values('artist_name')[0]['artist_name']
-                        page[track_count]['artist_name'] = artist_name
-                        page[track_count]['is_purchasedByUser'] = True
+                        # artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+                        # artist_name = ""
+                        # if artists.count() > 1:
+                        #     for artist_count in range(len(artists)):    
+                        #         artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                        # elif page[track_count]['artists_featuring'] != "":
+                        #     artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
+                        # else:
+                        #     artist_name = artists.values('artist_name')[0]['artist_name']
+                        # page[track_count]['artist_name'] = artist_name
+                        # page[track_count]['is_purchasedByUser'] = True
                     else:
                         page="No purchased tracks found for this userId"
         else:
