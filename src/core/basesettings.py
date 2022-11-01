@@ -190,7 +190,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'kinideas.tech@gmail.com'
 EMAIL_HOST_PASSWORD = 'kcufxkucwndjreua'
 
-ELASTIC_HOST_KEY= f"https://elastic:OOPjLQHlFr2CPkO5FCD5YIzm@kinmusic.es.europe-west1.gcp.cloud.es.io:9243"
+# ELASTIC_HOST_KEY= f"https://elastic:OOPjLQHlFr2CPkO5FCD5YIzm@kinmusic.es.europe-west1.gcp.cloud.es.io:9243"
+ELASTIC_HOST_KEY= f"https://elastic:iBDoYGCEeBHcjhtGPPo0rrI1@kin-music-search-577dcc.es.europe-west1.gcp.cloud.es.io:9243"
 
 ELASTICSEARCH_DSL = {
     'default': {

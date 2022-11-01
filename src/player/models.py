@@ -1,8 +1,9 @@
-from email.policy import default
-from enum import unique
 from django.db import models
 from core import validators
 from datetime import date, timedelta
+from django.core.files import File
+from PIL import Image, ImageOps
+from io import BytesIO
 
 today = date.today()
 
@@ -39,6 +40,15 @@ class ArtistsModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
     
+    def save(self, *args, **kwargs):
+        image = Image.open(self.artist_profileImage)
+        image = image.convert('RGB')
+        image = ImageOps.exif_transpose(image)
+        image_io = BytesIO()
+        image.save(image_io, "JPEG", optimize=True, quality=50)
+        compressed_image = File(image_io, name=str(self.artist_profileImage))
+        self.artist_profileImage = compressed_image
+        super(ArtistsModel, self).save(*args, **kwargs)
     
     def get_artisttracks_for_es(self):
         tracks = self.trackasartist.all()
@@ -75,6 +85,16 @@ class AlbumsModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        image = Image.open(self.album_coverImage)
+        image = image.convert('RGB')
+        image = ImageOps.exif_transpose(image)
+        image_io = BytesIO()
+        image.save(image_io, "JPEG", optimize=True, quality=50)
+        compressed_image = File(image_io, name=str(self.album_coverImage))
+        self.album_coverImage = compressed_image
+        super(AlbumsModel, self).save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.pk}-{self.album_name}-{self.created_at.date()}/{self.updated_at.date()}"
 
@@ -92,6 +112,16 @@ class GenresModel(models.Model):
     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        image = Image.open(self.genre_coverImage)
+        image = image.convert('RGB')
+        image = ImageOps.exif_transpose(image)
+        image_io = BytesIO()
+        image.save(image_io, "JPEG", optimize=True, quality=50)
+        compressed_image = File(image_io, name=str(self.genre_coverImage))
+        self.genre_coverImage = compressed_image
+        super(GenresModel, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.pk}-{self.genre_name}-{self.created_at.date()}/{self.updated_at.date()}"
@@ -118,6 +148,16 @@ class TracksModel(models.Model):
     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        image = Image.open(self.track_coverImage)
+        image = image.convert('RGB')
+        image = ImageOps.exif_transpose(image)
+        image_io = BytesIO()
+        image.save(image_io, "JPEG", optimize=True, quality=50)
+        compressed_image = File(image_io, name=str(self.track_coverImage))
+        self.track_coverImage = compressed_image
+        super(TracksModel, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.pk}-{self.track_name}-{self.created_at.date()}/{self.updated_at.date()}"
