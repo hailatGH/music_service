@@ -49,20 +49,6 @@ class ArtistsModel(models.Model):
         compressed_image = File(image_io, name=str(self.artist_profileImage))
         self.artist_profileImage = compressed_image
         super(ArtistsModel, self).save(*args, **kwargs)
-    
-    def get_artisttracks_for_es(self):
-        tracks = self.trackasartist.all()
-        artist_tracks_list = []
-        for x in tracks:
-            artist_tracks_list.append({'id':x.id,'track_name':x.track_name,'track_description':x.track_description,'track_status':x.track_status,'encoder_FUI':x.encoder_FUI,'created_at':x.created_at.date(),'updated_at':x.updated_at.date(),})
-        return artist_tracks_list
-    
-    def get_artistalbums_for_es(self):
-        albums = self.albumasartist.all()
-        artist_tracks_list = []
-        for x in albums:
-            artist_tracks_list.append({'id':x.id,'album_name':x.album_name,'album_description':x.album_description,'album_status':x.album_status,'encoder_FUI':x.encoder_FUI,'created_at':x.created_at.date(),'updated_at':x.updated_at.date(),})
-        return artist_tracks_list
 
     def __str__(self):
         return f"{self.pk}-{self.artist_name}-{self.created_at.date()}/{self.updated_at.date()}"
