@@ -517,9 +517,12 @@ class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
+        data = []
         playlist = self.queryset.filter(user_FUI=userId).order_by('-created_at').values('id','playlist_name','user_FUI')
+        data = playlist.count()
         page = self.paginate_queryset(playlist)
-        return Response(page)
+        data.append(page)
+        return Response(data)
 
 class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
     
