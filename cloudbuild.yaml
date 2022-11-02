@@ -66,7 +66,7 @@ steps:
   #     - '--no-input'
   #   id: Collect static
 
-  # 6. Deploy to Cloud Run
+  # 5. Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     args:
       - run

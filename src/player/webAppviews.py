@@ -161,14 +161,14 @@ class PurchasedAlbumsWebViewSet(viewsets.ModelViewSet):
     serializer_class = PurchasedAlbumsSerializer
     pagination_class = StandardResultsSetPagination
 
-# class AdminCollectionNamesWebViewSet(viewsets.ModelViewSet):
+class AdminCollectionNamesWebViewSet(viewsets.ModelViewSet):
 
-#     queryset = AdminCollectionNamesModel.objects.all()
-#     serializer_class = AdminCollectionNamesSerializer
-#     pagination_class = StandardResultsSetPagination
+    queryset = AdminCollectionNamesModel.objects.all()
+    serializer_class = AdminCollectionNamesSerializer
+    pagination_class = StandardResultsSetPagination
 
-# class AdminCollectionTracksWebViewSet(viewsets.ModelViewSet):
+class AdminCollectionTracksWebViewSet(viewsets.ModelViewSet):
 
-#     queryset = AdminCollectionTracksModel.objects.all()
-#     serializer_class = AdminCollectionTracksSerializer
-#     pagination_class = StandardResultsSetPagination
+    queryset = AdminCollectionTracksModel.objects.all()
+    serializer_class = AdminCollectionTracksSerializer
+    pagination_class = StandardResultsSetPagination

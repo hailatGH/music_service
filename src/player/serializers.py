@@ -136,21 +136,21 @@ class PurchasedAlbumsSerializer(serializers.ModelSerializer):
             )
         ]
 
-# class AdminCollectionNamesSerializer(serializers.ModelSerializer):
+class AdminCollectionNamesSerializer(serializers.ModelSerializer):
 
-#     class Meta:
-#         model = AdminCollectionNamesModel
-#         fields = '__all__'
+    class Meta:
+        model = AdminCollectionNamesModel
+        fields = '__all__'
 
-# class AdminCollectionTracksSerializer(serializers.ModelSerializer):
+class AdminCollectionTracksSerializer(serializers.ModelSerializer):
 
-#     class Meta:
-#         model = AdminCollectionTracksModel
-#         fields = '__all__'
+    class Meta:
+        model = AdminCollectionTracksModel
+        fields = '__all__'
 
-#     validators = [
-#         UniqueTogetherValidator(
-#             queryset=AdminCollectionTracksModel.objects.all(),
-#             fields=['collection_id', 'track_id']
-#         )
-#     ]
+    validators = [
+        UniqueTogetherValidator(
+            queryset=AdminCollectionTracksModel.objects.all(),
+            fields=['collection_id', 'track_id']
+        )
+    ]

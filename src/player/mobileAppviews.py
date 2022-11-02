@@ -624,75 +624,75 @@ class PurchasedTracksMobileViewset(viewsets.ModelViewSet):
                         page[track_count]['is_purchasedByUser'] = True
         return Response(page)
 
-# class AdminCollectionNamesMobileViewSet(viewsets.ModelViewSet):
+class AdminCollectionNamesMobileViewSet(viewsets.ModelViewSet):
 
-#     queryset = AdminCollectionNamesModel.objects.all()
-#     serializer_class = AdminCollectionNamesSerializer
-#     pagination_class = StandardResultsSetPagination
+    queryset = AdminCollectionNamesModel.objects.all()
+    serializer_class = AdminCollectionNamesSerializer
+    pagination_class = StandardResultsSetPagination
 
-#     def create(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def retrieve(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def update(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def partial_update(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def destroy(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def list(self, request, *args, **kwargs):
-#         return super().list(request, *args, **kwargs)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
-# class AdminCollectionTracksMobileViewSet(viewsets.ModelViewSet):
+class AdminCollectionTracksMobileViewSet(viewsets.ModelViewSet):
 
-#     queryset = AdminCollectionTracksModel.objects.all()
-#     serializer_class = AdminCollectionTracksSerializer
-#     pagination_class = StandardResultsSetPagination
+    queryset = AdminCollectionTracksModel.objects.all()
+    serializer_class = AdminCollectionTracksSerializer
+    pagination_class = StandardResultsSetPagination
 
-#     def create(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def retrieve(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def update(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def partial_update(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def destroy(self, request, *args, **kwargs):
-#         return Response("Not Allowed")
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
 
-#     def list(self, request, *args, **kwargs):
-#         userId = request.query_params['userId']
-#         collectionId = request.query_params['collectionId']
-#         tracks = self.queryset.filter(collection_id=collectionId).order_by('-created_at').values('id','collection_id','track_id')
-#         page = []
-#         if tracks.exists():
-#             page = self.paginate_queryset(tracks)
-#             if page is not None:
-#                 for track_count in range(len(page)):
-#                     page[track_count]['collection_track_id'] = page[track_count]['id']
-#                     tracks = TracksModel.objects.filter(id=page[track_count]['track_id']).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
-#                     if tracks.exists():
-#                         for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
-#                             page[track_count][val] = tracks[0][val]
-#                         artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
-#                         artist_name = ""
-#                         if artists.exists():
-#                             if artists.count() > 1:
-#                                 for artist_count in range(len(artists)):    
-#                                     artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
-#                             elif page[track_count]['artists_featuring'] != "":
-#                                 artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
-#                             else:
-#                                 artist_name = artists.values('artist_name')[0]['artist_name']
-#                         page[track_count]['artist_name'] = artist_name
-#                         page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
-#             return Response(page)
+    def list(self, request, *args, **kwargs):
+        userId = request.query_params['userId']
+        collectionId = request.query_params['collectionId']
+        tracks = self.queryset.filter(collection_id=collectionId).order_by('-created_at').values('id','collection_id','track_id')
+        page = []
+        if tracks.exists():
+            page = self.paginate_queryset(tracks)
+            if page is not None:
+                for track_count in range(len(page)):
+                    page[track_count]['collection_track_id'] = page[track_count]['id']
+                    tracks = TracksModel.objects.filter(id=page[track_count]['track_id']).order_by('-created_at').values('id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI')
+                    if tracks.exists():
+                        for val in ['id','track_name','track_description','track_coverImage','track_audioFile','track_lyrics','track_price','artists_featuring','artist_id','album_id','genre_id','encoder_FUI']:
+                            page[track_count][val] = tracks[0][val]
+                        artists = ArtistsModel.objects.filter(id=page[track_count]['artist_id'])
+                        artist_name = ""
+                        if artists.exists():
+                            if artists.count() > 1:
+                                for artist_count in range(len(artists)):    
+                                    artist_name = artist_name + ", " + artists.values('artist_name')[artist_count]['artist_name']
+                            elif page[track_count]['artists_featuring'] != "":
+                                artist_name = artist_name + " ft. " + page[track_count]['artists_featuring']
+                            else:
+                                artist_name = artists.values('artist_name')[0]['artist_name']
+                        page[track_count]['artist_name'] = artist_name
+                        page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(track_id=page[track_count]['id'], user_FUI=userId).exists()
+            return Response(page)
