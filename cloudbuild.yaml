@@ -50,23 +50,7 @@ steps:
       - '--run-syncdb'
     id: Migrate
 
-  # 4. Index
-  - name: gcr.io/google-appengine/exec-wrapper
-    args:
-      - '-i'
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
-      - '-s'
-      - '${PROJECT_ID}:${_DEPLOY_REGION}:${_DB_INSTANCE}'
-      - '-e'
-      - 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}'
-      - '--'
-      - 'python'
-      - 'manage.py'
-      - 'search_index'
-      - '--rebuild'
-    id: Index
-
-  #   # 5. Collect static
+  #   # 4. Collect static
   # - name: gcr.io/google-appengine/exec-wrapper
   #   args:
   #     - '-i'

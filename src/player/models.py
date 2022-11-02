@@ -228,25 +228,38 @@ class PurchasedAlbumsModel(models.Model):
         return f"{self.created_at.date()}/{self.updated_at.date()}"
 
 
-class AdminCollectionNamesModel(models.Model):
+# class AdminCollectionNamesModel(models.Model):
 
-    class Meta:
-        ordering = ['id']
+#     class Meta:
+#         ordering = ['id']
 
-    collection_name = models.CharField(null=False, blank=True, max_length=256, unique=True)
-    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at =models.DateTimeField(auto_now=True)
+#     collection_name = models.CharField(null=False, blank=True, max_length=256, unique=True)
+#     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at =models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.pk}: {self.collection_name}"    
+#     def __str__(self):
+#         return f"{self.pk}: {self.collection_name}"    
+# # class AdminCollectionNamesmodel(models.Model):
+# #     id = models.BigAutoField(primary_key=True)
+# #     collection_name = models.CharField(unique=True, max_length=256)
+# #     encoder_fui = models.CharField(db_column='encoder_FUI', max_length=1023)  # Field name made lowercase.
+# #     created_at = models.DateTimeField()
+# #     updated_at = models.DateTimeField()
 
-class AdminCollectionTracksModel(models.Model):
+# #     class Meta:
+# #         managed = False
+# #         db_table = 'player_admincollectionnamesmodel'
 
-    class Meta:
-        ordering = ['id']
+# #     def __str__(self):
+# #         return f"{self.pk}: {self.collection_name}" 
 
-    collection_id = models.ForeignKey(AdminCollectionNamesModel, null=False, blank=True, on_delete=models.CASCADE)
-    track_id = models.ForeignKey(TracksModel, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class AdminCollectionTracksModel(models.Model):
+
+#     class Meta:
+#         ordering = ['id']
+
+#     collection_id = models.ForeignKey(AdminCollectionNamesModel, null=False, blank=True, on_delete=models.CASCADE)
+#     track_id = models.ForeignKey(TracksModel, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)

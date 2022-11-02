@@ -325,4 +325,5 @@ class PlayerMusicgenreDocument(Document):
 #             "user_FUI",
             
 #         ]
-#python manage.py search_index --rebuild
+# python manage.py search_index --rebuild
+# python manage.py inspectdb > index_models.py
