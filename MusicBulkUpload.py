@@ -3,21 +3,29 @@ from pathlib import Path
 import json
 import requests
 
-URL = "http://127.0.0.1:8001/webApp/"
+URL = "http://127.0.0.1:8000/webApp/"
 ENCODER_ID = "hailatFUID"
 
-artists_path = sorted(os.listdir('./uploads/'))
+artists_path = sorted(os.listdir('./ROOT/'))
 artists = []
 for artist_path in artists_path:
     artist = {}
     albums = []
 
-    if os.path.isdir(f'./uploads/{artist_path}'):
-
-        for line in open(f'./uploads/{artist_path}/info.txt', 'r').readlines():
-            artist[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
-        artist['artist_profileImage'] = str(os.path.abspath(f'./uploads/{artist_path}/cover.jpg'))
-        albums_path = sorted(os.listdir(f'./uploads/{artist_path}/'))
+    if os.path.isdir(f'./ROOT/{artist_path}'):
+        for artist_file in os.listdir(f'./ROOT/{artist_path}/'):
+            artist_file = artist_file.lower()
+            if artist_file.endswith(".txt"):
+                for line in open(f'./ROOT/{artist_path}/{artist_file}', 'r').readlines():
+                    artist[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+            if artist_file.endswith(".jpg"):
+                artist['artist_profileImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
+            if artist_file.endswith(".png"):
+                artist['artist_profileImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
+            if artist_file.endswith('.jpeg'):
+                artist['artist_profileImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
+        
+        albums_path = sorted(os.listdir(f'./ROOT/{artist_path}/'))
         for album_path in albums_path:
             album = {}
             tracks = []
@@ -25,46 +33,86 @@ for artist_path in artists_path:
             stracks = []
 
             if album_path == 'Singles':
-                tracks_path = sorted(os.listdir(f'./uploads/{artist_path}/Singles/'))
+                tracks_path = sorted(os.listdir(f'./ROOT/{artist_path}/Singles/'))
                 for track_path in tracks_path:
                     track = {}
-                    if os.path.isdir(f'./uploads/{artist_path}/Singles/{track_path}'):
-                        for line in open(f'./uploads/{artist_path}/Singles/{track_path}/info.txt', 'r').readlines():
-                            track[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
-                        track['track_coverImage'] = str(os.path.abspath(f'./uploads/{artist_path}/Singles/{track_path}/cover.jpg'))
-                        track['track_audioFile'] = str(os.path.abspath(f'./uploads/{artist_path}/Singles/{track_path}/audio.mp3'))
-                        
-                        with open(f'./uploads/{artist_path}/Singles/{track_path}/lyrics.txt') as lyrics:
-                            lines = lyrics.readlines()
-                            lyrics = ""
-                            for line in lines:
-                                lyrics = lyrics + line
-                            track['track_lyrics'] = lyrics
+                    if os.path.isdir(f'./ROOT/{artist_path}/Singles/{track_path}'):
+                        for strack_file in os.listdir(f'./ROOT/{artist_path}/Singles/{track_path}'):
+                            strack_file = strack_file.lower()
+                            if strack_file.endswith(".txt"):
+                                if strack_file == "lyrics.txt":
+                                    with open(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}') as lyrics:
+                                        lines = lyrics.readlines()
+                                        lyrics = ""
+                                        for line in lines:
+                                            lyrics = lyrics + line
+                                        track['track_lyrics'] = lyrics
+                                else:
+                                    for line in open(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}', 'r').readlines():
+                                        track[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+
+                            if strack_file.endswith(".jpg"):
+                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                            if strack_file.endswith(".png"):
+                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                            if strack_file.endswith(".jpeg"):
+                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+
+                            if strack_file.endswith(".aac"):
+                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                            if strack_file.endswith(".mp3"):
+                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                            if strack_file.endswith(".wav"):
+                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
 
                         stracks.append(track)
                 artist['Singles'] = stracks
                 continue
 
-            if os.path.isdir(f'./uploads/{artist_path}/{album_path}'):
-                for line in open(f'./uploads/{artist_path}/{album_path}/info.txt', 'r').readlines():
-                    album[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
-                album['album_coverImage'] = str(os.path.abspath(f'./uploads/{artist_path}/{album_path}/cover.jpg'))
+            if os.path.isdir(f'./ROOT/{artist_path}/{album_path}'):
+                for album_file in os.listdir(f'./ROOT/{artist_path}/{album_path}'):
+                    album_file = album_file.lower()
+                    if album_file.endswith(".txt"):
+                        for line in open(f'./ROOT/{artist_path}/{album_path}/{album_file}', 'r').readlines():
+                            album[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+                    if album_file.endswith(".jpg"):
+                        album['album_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{album_file}'))
+                    if album_file.endswith(".png"):
+                        album['album_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{album_file}'))
+                    if album_file.endswith(".jpeg"):
+                        album['album_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{album_file}'))
 
-                tracks_path = sorted(os.listdir(f'./uploads/{artist_path}/{album_path}/'))
+                tracks_path = sorted(os.listdir(f'./ROOT/{artist_path}/{album_path}/'))
                 for track_path in tracks_path:
                     track = {}
-                    if os.path.isdir(f'./uploads/{artist_path}/{album_path}/{track_path}'):
-                        for line in open(f'./uploads/{artist_path}/{album_path}/{track_path}/info.txt', 'r').readlines():
-                            track[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
-                        track['track_coverImage'] = str(os.path.abspath(f'./uploads/{artist_path}/{album_path}/{track_path}/cover.jpg'))
-                        track['track_audioFile'] = str(os.path.abspath(f'./uploads/{artist_path}/{album_path}/{track_path}/audio.mp3'))
-                        
-                        with open(f'./uploads/{artist_path}/{album_path}/{track_path}/lyrics.txt') as lyrics:
-                            lines = lyrics.readlines()
-                            lyrics = ""
-                            for line in lines:
-                                lyrics = lyrics + " " + line
-                            track['track_lyrics'] = lyrics
+                    if os.path.isdir(f'./ROOT/{artist_path}/{album_path}/{track_path}'):
+                        for track_file in os.listdir(f'./ROOT/{artist_path}/{album_path}/{track_path}'):
+                            track_file = track_file.lower()
+                            if track_file.endswith(".txt"):
+                                if track_file == "lyrics.txt":
+                                    with open(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}') as lyrics:
+                                        lines = lyrics.readlines()
+                                        lyrics = ""
+                                        for line in lines:
+                                            lyrics = lyrics + line
+                                        track['track_lyrics'] = lyrics
+                                else:
+                                    for line in open(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}', 'r').readlines():
+                                        track[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+
+                            if track_file.endswith(".jpg"):
+                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                            if track_file.endswith(".png"):
+                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                            if track_file.endswith(".jpeg"):
+                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+
+                            if track_file.endswith(".aac"):
+                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                            if track_file.endswith(".mp3"):
+                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                            if track_file.endswith(".wav"):
+                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
 
                         tracks.append(track)
 

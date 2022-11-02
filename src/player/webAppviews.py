@@ -16,6 +16,7 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
     pagination_class = StandardResultsSetPagination
+
 class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
@@ -89,7 +90,10 @@ class AlbumIdByAlbumNameWebViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         album_name = request.query_params['album_name']
-        album_id = self.queryset.filter(album_name=album_name).values('id')[0]['id']
+        album_id = "No album with that name"
+        album = self.queryset.filter(album_name=album_name).values('id')
+        if album.exists():
+            album_id = album[0]['id']
         return Response(album_id)
 
 class GenresWebViewSet(viewsets.ModelViewSet):

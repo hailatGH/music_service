@@ -132,4 +132,5 @@ dmypy.json
 media/
 uploads/
 musics/
+ROOT/
 .DS_Store

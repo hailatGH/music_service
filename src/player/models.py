@@ -1,11 +1,11 @@
 from django.db import models
 from core import validators
-from datetime import date, timedelta
+from django.utils import timezone
 from django.core.files import File
 from PIL import Image, ImageOps
 from io import BytesIO
 
-today = date.today()
+today = timezone.now()
 
 def Artists_Profile_Images(instance, filename):
     return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
@@ -31,7 +31,7 @@ class ArtistsModel(models.Model):
     artist_title = models.CharField(null=True, blank=True, max_length=256)
     artist_rating = models.IntegerField(null=True, blank=True, default=0)
     artist_status = models.BooleanField(null=False, blank=True, default=False)
-    # artist_releaseDate = models.DateField(null=True, blank=True, default=today)
+    artist_releaseDate = models.DateField(null=True, blank=True, default=timezone.now())
     artist_description = models.CharField(null=True, blank=True, max_length=4096)
     artist_viewcount = models.IntegerField(null=False, blank=True, default=0)
     artist_profileImage = models.ImageField(null=False, blank=True, upload_to=Artists_Profile_Images, validators=[validators.validate_image_extension])
