@@ -62,7 +62,7 @@ class PlayerMusicartistDocument(Document):
             "artist_name",
             "artist_title",
             "artist_rating",
-            "artist_releaseDate",
+            # "artist_releaseDate",
             "artist_status",
             "artist_description",
             "artist_viewcount",
