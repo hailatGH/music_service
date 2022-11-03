@@ -7,7 +7,7 @@ from .serializers import *
 
 # Standard Results Set Pagination 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 15
+    page_size = 10000
     page_size_query_param = 'page_size'
     
 # Class based model viewsets for the Mobile App
