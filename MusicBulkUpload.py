@@ -4,7 +4,7 @@ import json
 import requests
 
 URL = "http://127.0.0.1:8000/webApp/"
-URL = "https://music-service-dev-vdzflryflq-ew.a.run.app/webApp/"
+# URL = "https://music-service-dev-vdzflryflq-ew.a.run.app/webApp/"
 ENCODER_ID = "hailatFUID"
 
 artists_path = sorted(os.listdir('./ROOT/'))

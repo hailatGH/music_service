@@ -82,31 +82,31 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'kinmusic-music-database',
-        'USER': 'kinmusic-database-user',
-        'PASSWORD': 'kinmusic-database-user-password',
-        'HOST': '34.76.172.119',
-        'PORT': '5432',
-            
-        
-        'OPTIONS': {
-            'sslmode': 'disable', #leave this line intact  verify-ca
-            'sslrootcert': '/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/server-ca.pem',
-            'sslcert': "/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/client-cert.pem",
-            'sslkey': "/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/client-key.pem",
-        }
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'kinmusic-music-database',
+#         'USER': 'kinmusic-database-user',
+#         'PASSWORD': 'kinmusic-database-user-password',
+#         'HOST': '34.76.172.119',
+#         'PORT': '5432',
+            
+        
+#         'OPTIONS': {
+#             'sslmode': 'disable', #leave this line intact  verify-ca
+#             'sslrootcert': '/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/server-ca.pem',
+#             'sslcert': "/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/client-cert.pem",
+#             'sslkey': "/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/client-key.pem",
+#         }
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

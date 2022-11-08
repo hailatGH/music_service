@@ -225,8 +225,8 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
 
-    def retrieve(self, request, *args, **kwargs):
-        return Response("Not Allowed")
+    # def retrieve(self, request, *args, **kwargs):
+    #     return Response("Not Allowed")
 
     def update(self, request, *args, **kwargs):
         return Response("Not Allowed")
