@@ -523,7 +523,7 @@ class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user_FUI = request.data['user_FUI']
 
-        userExists = requests.get(f'http://0.0.0.0:8001/subscribedUsers/{user_FUI}')
+        userExists = requests.get(f'https://kinideas-profile-vdzflryflq-ew.a.run.app/subscribedUsers/{user_FUI}')
         if userExists.status_code == 200:
             return super().create(request, *args, **kwargs)
 
@@ -561,7 +561,7 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
         user_FUI = request.query_params['userId']
         playlistId = request.data['playlist_id']
 
-        userExists = requests.get(f'https://kinideas-profile-vdzflryflq-ew.a.run.app//{user_FUI}')
+        userExists = requests.get(f'https://kinideas-profile-vdzflryflq-ew.a.run.app/subscribedUsers/{user_FUI}')
         if userExists.status_code == 200:
             return super().create(request, *args, **kwargs)
 
