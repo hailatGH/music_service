@@ -1,6 +1,8 @@
 from rest_framework import viewsets
+from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+import requests
 
 from .models import *
 from .serializers import *
@@ -519,7 +521,17 @@ class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        user_FUI = request.data['user_FUI']
+
+        userExists = requests.get(f'http://0.0.0.0:8001/subscribedUsers/{user_FUI}')
+        if userExists.status_code == 200:
+            return super().create(request, *args, **kwargs)
+
+        noOfPlaylists = self.queryset.filter(user_FUI=user_FUI).count()
+        if noOfPlaylists < 2:
+            return super().create(request, *args, **kwargs)
+
+        return Response("Maximum number of playlists allowd to create for unsubscribed users is 2!", status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
@@ -535,13 +547,9 @@ class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
-        data = []
         playlist = self.queryset.filter(user_FUI=userId).order_by('-created_at').values('id','playlist_name','user_FUI')
-        if playlist.exists():
-            data.append(playlist.count())
-            page = self.paginate_queryset(playlist)
-            data.append(page)
-        return Response(data)
+        page = self.paginate_queryset(playlist)
+        return Response(page)
 
 class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
     
@@ -550,7 +558,18 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        user_FUI = request.query_params['userId']
+        playlistId = request.data['playlist_id']
+
+        userExists = requests.get(f'http://0.0.0.0:8001/subscribedUsers/{user_FUI}')
+        if userExists.status_code == 200:
+            return super().create(request, *args, **kwargs)
+
+        noOfTracksInAPlaylist = self.queryset.filter(playlist_id=playlistId).count()
+        if noOfTracksInAPlaylist < 10:
+            return super().create(request, *args, **kwargs)
+            
+        return Response("Maximum number of tracks in a playlist allowd to create for unsubscribed users is 10!", status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
