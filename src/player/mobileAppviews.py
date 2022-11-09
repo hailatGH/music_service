@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 import requests
+from datetime import datetime
 
 from .models import *
 from .serializers import *
@@ -523,15 +524,19 @@ class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user_FUI = request.data['user_FUI']
 
+        # userExists = requests.get(f'http://0.0.0.0:8001/subscribedUsers/{user_FUI}')
         userExists = requests.get(f'https://kinideas-profile-vdzflryflq-ew.a.run.app/subscribedUsers/{user_FUI}')
         if userExists.status_code == 200:
-            return super().create(request, *args, **kwargs)
+            expireDate = userExists.json()['subscription_expiry_date'].replace("T", " ").replace("Z", "")
+            now = str(datetime.now())[:len(expireDate)]
+            if now <= expireDate:
+                return super().create(request, *args, **kwargs)
 
         noOfPlaylists = self.queryset.filter(user_FUI=user_FUI).count()
         if noOfPlaylists < 2:
             return super().create(request, *args, **kwargs)
 
-        return Response("Maximum number of playlists allowd to create for unsubscribed users is 2!", status=status.HTTP_400_BAD_REQUEST)
+        return Response("Maximum number of playlists allowd to create for unsubscribed(expired subscription) users is 2!", status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
@@ -561,15 +566,19 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
         user_FUI = request.query_params['userId']
         playlistId = request.data['playlist_id']
 
+        # userExists = requests.get(f'http://0.0.0.0:8001/subscribedUsers/{user_FUI}')
         userExists = requests.get(f'https://kinideas-profile-vdzflryflq-ew.a.run.app/subscribedUsers/{user_FUI}')
         if userExists.status_code == 200:
-            return super().create(request, *args, **kwargs)
+            expireDate = userExists.json()['subscription_expiry_date'].replace("T", " ").replace("Z", "")
+            now = str(datetime.now())[:len(expireDate)]
+            if now <= expireDate:
+                return super().create(request, *args, **kwargs)
 
         noOfTracksInAPlaylist = self.queryset.filter(playlist_id=playlistId).count()
-        if noOfTracksInAPlaylist < 10:
+        if noOfTracksInAPlaylist < 2:
             return super().create(request, *args, **kwargs)
             
-        return Response("Maximum number of tracks in a playlist allowd to create for unsubscribed users is 10!", status=status.HTTP_400_BAD_REQUEST)
+        return Response("Maximum number of tracks in a playlist allowd to create for unsubscribed(expired subscription) users is 10!", status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
