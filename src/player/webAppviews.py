@@ -4,7 +4,6 @@ from rest_framework.response import Response
 
 from .models import *
 from .serializers import *
-# import wave
 
 # Standard Results Set Pagination 
 class StandardResultsSetPagination(PageNumberPagination):
