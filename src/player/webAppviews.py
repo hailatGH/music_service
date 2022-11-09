@@ -5,6 +5,9 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 
+import subprocess
+import wave
+
 # Standard Results Set Pagination 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -107,6 +110,32 @@ class TracksWebViewSet(viewsets.ModelViewSet):
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
     pagination_class = StandardResultsSetPagination
+
+    # def create(self, request, *args, **kwargs):
+    #     # filename = request.data['track_audioFile']
+    #     # wave_read = wave.open(filename, "rb")
+    #     # channels = wave_read.getnchannels()
+    #     # print("Number of channels:", channels)
+
+    #     # import required modules
+    #     from os import path
+    #     from pydub import AudioSegment
+        
+    #     # assign files
+    #     input_file = request.data['track_audioFile']
+    #     request.data['track_audioFile'] = output_file = "result.ogg"
+        
+    #     # convert mp3 file to wav file
+    #     sound = AudioSegment.from_mp3(input_file)
+    #     sound.export(output_file, format="ogg")
+    #     return Response("Hello")
+    #     # return super().create(request, *args, **kwargs)
+
+    # def create(self, request, *args, **kwargs):
+    #     import ffmpy3
+    #     ffmpy3.FFmpeg(inputs={request.data['track_audioFile']: None}, outputs={'output.ogg': None})
+    #     return Response("Hello")
+        #  return super().create(request, *args, **kwargs)
 
 class PlayListsWebViewSet(viewsets.ModelViewSet):
     

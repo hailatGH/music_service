@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.files import File
 from PIL import Image, ImageOps
 from io import BytesIO
+from ffmpy3 import FFmpeg
 
 today = timezone.now()
 
