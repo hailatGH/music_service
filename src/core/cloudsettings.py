@@ -1,4 +1,7 @@
-import io, os, environ, google.auth
+import io
+import os
+import environ
+import google.auth
 from google.cloud import secretmanager
 from urllib.parse import urlparse
 
@@ -64,7 +67,7 @@ STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_DEFAULT_ACL = "publicRead"
 
 # ELASTIC_HOST_KEY= f"https://elastic:OOPjLQHlFr2CPkO5FCD5YIzm@kinmusic.es.europe-west1.gcp.cloud.es.io:9243"
-ELASTIC_HOST_KEY= f"https://elastic:iBDoYGCEeBHcjhtGPPo0rrI1@kin-music-search-577dcc.es.europe-west1.gcp.cloud.es.io:9243"
+ELASTIC_HOST_KEY = f"https://elastic:iBDoYGCEeBHcjhtGPPo0rrI1@kin-music-search-577dcc.es.europe-west1.gcp.cloud.es.io:9243"
 
 ELASTICSEARCH_DSL = {
     'default': {

@@ -80,12 +80,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+# https: // docs.djangoproject.com/en/4.0/ref/settings/  # databases
 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'kinmusic-music-database',
+#         'NAME': 'kinmusic-music-database-dev',
 #         'USER': 'kinmusic-database-user',
 #         'PASSWORD': 'kinmusic-database-user-password',
 #         'HOST': '34.76.172.119',
@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 
 #         'OPTIONS': {
-#             'sslmode': 'disable', #leave this line intact  verify-ca
+#             'sslmode': 'disable',  # leave this line intact  verify-ca
 #             'sslrootcert': '/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/server-ca.pem',
 #             'sslcert': "/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/client-cert.pem",
 #             'sslkey': "/home/sabian/Desktop/search project/search_new_model/kin_search_app/certeficates/client-key.pem",
@@ -198,8 +198,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'kinideas.tech@gmail.com'
 EMAIL_HOST_PASSWORD = 'kcufxkucwndjreua'
 
-ELASTIC_HOST_KEY = f"https://elastic:OOPjLQHlFr2CPkO5FCD5YIzm@kinmusic.es.europe-west1.gcp.cloud.es.io:9243"
-# ELASTIC_HOST_KEY= f"https://elastic:iBDoYGCEeBHcjhtGPPo0rrI1@kin-music-search-577dcc.es.europe-west1.gcp.cloud.es.io:9243"
+# ELASTIC_HOST_KEY = f"https://elastic:OOPjLQHlFr2CPkO5FCD5YIzm@kinmusic.es.europe-west1.gcp.cloud.es.io:9243"
+ELASTIC_HOST_KEY = f"https://elastic:iBDoYGCEeBHcjhtGPPo0rrI1@kin-music-search-577dcc.es.europe-west1.gcp.cloud.es.io:9243"
 
 ELASTICSEARCH_DSL = {
     'default': {
