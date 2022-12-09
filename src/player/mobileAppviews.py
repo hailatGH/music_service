@@ -567,7 +567,7 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
         playlistId = request.data['playlist_id']
 
         # userExists = requests.get(f'http://0.0.0.0:8001/subscribedUsers/{user_FUI}')
-        userExists = requests.get(f'https://kinideas-profile-vdzflryflq-ew.a.run.app/subscribedUsers/{user_FUI}')
+        userExists = requests.get(f'https://kinideas-profile-dev-vdzflryflq-ew.a.run.app/subscribedUsers/{user_FUI}')
         if userExists.status_code == 200:
             expireDate = userExists.json()['subscription_expiry_date'].replace("T", " ").replace("Z", "")
             now = str(datetime.now())[:len(expireDate)]
