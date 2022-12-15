@@ -1,73 +1,37 @@
-import io, os, environ, google.auth
-from google.cloud import secretmanager
-from urllib.parse import urlparse
-
+import os
+import django
+from django.utils.encoding import force_str
 from .basesettings import *
+django.utils.encoding.force_text = force_str
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ALLOWED_HOSTS = [
+    "music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io"]
+CSRF_TRUSTED_ORIGINS = [
+    'https://music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/']
 
-DEBUG = True
-
-env = environ.Env(
-    SECRET_KEY=(str, os.getenv("SECRET_KEY")),
-    DATABASE_URL=(str, os.getenv("DATABASE_URL")),
-    GS_BUCKET_NAME=(str, os.getenv("GS_BUCKET_NAME")),
-)
-
-try:
-    _, os.environ["GOOGLE_CLOUD_PROJECT"] = google.auth.default()
-except google.auth.exceptions.DefaultCredentialsError:
-    pass
-
-if os.getenv("PYTHON_ENV") == "dev":
-    DEBUG = True
-
-elif os.getenv("GOOGLE_CLOUD_PROJECT", None):
-    project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
-
-    client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.getenv("SETTINGS_NAME", "music_service_settings")
-    name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
-    payload = client.access_secret_version(name=name).payload.data.decode(
-        "UTF-8"
-    )
-
-    env.read_env(io.StringIO(payload))
-else:
-    raise Exception(
-        "No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found."
-    )
-
-SECRET_KEY = env("SECRET_KEY")
-
-MUSIC_SERVICE_URL = env("MUSIC_SERVICE_URL", default=None)
-
-if MUSIC_SERVICE_URL:
-    ALLOWED_HOSTS = [urlparse(MUSIC_SERVICE_URL).netloc]
-    CSRF_TRUSTED_ORIGINS = [MUSIC_SERVICE_URL]
-else:
-    ALLOWED_HOSTS = ["*"]
-
-DATABASES = {"default": env.db()}
-
-if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
-    DATABASES["default"]["HOST"] = "cloudsql-proxy"
-    DATABASES["default"]["PORT"] = 5432
-
-if "core" not in INSTALLED_APPS:
-    INSTALLED_APPS += ["core"]
-
-GS_BUCKET_NAME = env("GS_BUCKET_NAME")
-STATICFILES_DIRS = []
-DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-GS_DEFAULT_ACL = "publicRead"
-
-# ELASTIC_HOST_KEY= f"https://elastic:OOPjLQHlFr2CPkO5FCD5YIzm@kinmusic.es.europe-west1.gcp.cloud.es.io:9243"
-ELASTIC_HOST_KEY= f"https://elastic:iBDoYGCEeBHcjhtGPPo0rrI1@kin-music-search-577dcc.es.europe-west1.gcp.cloud.es.io:9243"
-
-ELASTICSEARCH_DSL = {
+DATABASES = {
     'default': {
-        'hosts': [ELASTIC_HOST_KEY]
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': "music_database",
+        'USER': "zemadatabaseadmin",
+        'PASSWORD': "StrongP@ssword",
+        'HOST': "zema-postgresql-v100.postgres.database.azure.com",
+        'PORT': '5432',
+        'OPTIONS': {'sslmode': 'disable'}
     }
 }
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, '/static/'),
+]
+AZURE_ACCOUNT_NAME = 'zemastroragev100'
+AZURE_ACCOUNT_KEY = 'AFsY2hZVbyYBKisEkRL+toNNJ7yBOzoJ/cruOxurFHnU84vE+Cmloq9S2ZkCxYaxrM5QemPsUiX5+ASt4WEg8w=='
+AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
+AZURE_LOCATION = 'zemacontainer'
+AZURE_CONTAINER = 'zemacontainer'
+
+STATIC_LOCATION = 'static'
+STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+
+STATICFILES_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+DEFAULT_FILE_STORAGE = 'core.custom_storage.AzureMediaStorage'
