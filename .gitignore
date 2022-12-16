@@ -1,3 +1,13 @@
+venv
+.dockerignore
+src/core/__pycache__
+src/player/__pycache__
+src/db.sqlite3
+src/static
+src/media
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
