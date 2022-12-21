@@ -5,21 +5,21 @@ from django.utils.encoding import force_str
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
-
 from .basesettings import *
 
 django.utils.encoding.force_text = force_str
+load_dotenv()
 
 # keyVaultName = os.environ["KEY_VAULT_NAME"]
-load_dotenv()
-keyVaultName = os.getenv('KEY_VAULT_NAMES')
-KVUri = f"https://{keyVaultName}.vault.azure.net"
+# keyVaultName = os.getenv('KEY_VAULT_NAMES')
+# KVUri = f"https://{keyVaultName}.vault.azure.net"
 
-credential = DefaultAzureCredential()
-client = SecretClient(vault_url=KVUri, credential=credential)
+# credential = DefaultAzureCredential()
+# client = SecretClient(vault_url=KVUri, credential=credential)
 
-if client.get_secret("DEBUG") == 'True':
-    DEBUG = True
+# if client.get_secret("DEBUG") == 'True':
+
+DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = [
     "music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io"]
