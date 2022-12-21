@@ -11,8 +11,8 @@ from .basesettings import *
 django.utils.encoding.force_text = force_str
 load_dotenv()
 
-keyVaultName = os.environ["KEY_VAULT_NAME"]
-KVUri = f"https://{keyVaultName}.vault.azure.net"
+# keyVaultName = os.environ["KEY_VAULT_NAME"]
+KVUri = f"https://zema-secrets.vault.azure.net"
 
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
