@@ -25,10 +25,10 @@ else:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': "music_database",
+        'USER': "zemadatabaseadmin",
+        'PASSWORD': "StrongP@ssword",
+        'PORT': "5432",
         'HOST': "zema-postgresql-v100.postgres.database.azure.com",
         'OPTIONS': {'sslmode': 'disable'}
     }
