@@ -25,9 +25,9 @@ else:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': (str, os.getenv('DB_NAME')),
-        'USER': (str, os.getenv('DB_USER')),
-        'PASSWORD': (str, os.getenv('DB_PASSWORD')),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
         'PORT': os.getenv('DB_PORT'),
         'HOST': "zema-postgresql-v100.postgres.database.azure.com",
         'OPTIONS': {'sslmode': 'disable'}
