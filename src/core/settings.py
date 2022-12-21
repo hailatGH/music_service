@@ -22,12 +22,6 @@ if URL:
 else:
     ALLOWED_HOSTS = ["*"]
 
-# ALLOWED_HOSTS = [
-#     "music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io"]
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/']
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -35,7 +29,7 @@ DATABASES = {
         'USER': (str, os.getenv('DB_USER')),
         'PASSWORD': (str, os.getenv('DB_PASSWORD')),
         'HOST': (str, os.getenv('DB_HOST')),
-        'PORT': (str, os.getenv('DB_PORT')),
+        'PORT': (int, os.getenv('DB_PORT')),
         'OPTIONS': {'sslmode': 'disable'}
     }
 }
