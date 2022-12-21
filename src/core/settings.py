@@ -7,7 +7,8 @@ from .basesettings import *
 
 django.utils.encoding.force_text = force_str
 
-keyVaultName = os.environ["KEY_VAULT_NAME"]
+# keyVaultName = os.environ["KEY_VAULT_NAME"]
+keyVaultName = "zema-secrets"
 KVUri = f"https://{keyVaultName}.vault.azure.net"
 
 credential = DefaultAzureCredential()
