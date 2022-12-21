@@ -7,14 +7,26 @@ from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 from .basesettings import *
 
+
 django.utils.encoding.force_text = force_str
 load_dotenv()
 
-if os.getenv('ENV') == "ENV":
-    DEBUG = True
+keyVaultName = os.environ["KEY_VAULT_NAME"]
+KVUri = f"https://{keyVaultName}.vault.azure.net"
 
-SECRET_KEY = (str, os.getenv("SECRET_KEY"))
-URL = os.getenv('URL')
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=KVUri, credential=credential)
+
+if client.get_secret("ENV") == "DEV":
+    DEBUG = False
+# if os.getenv('ENV') == "ENV":
+#     DEBUG = True
+
+# SECRET_KEY = (str, os.getenv("SECRET_KEY"))
+# URL = os.getenv('URL')
+
+URL = "https://music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/"
+
 
 if URL:
     ALLOWED_HOSTS = [urlparse(URL).netloc]
