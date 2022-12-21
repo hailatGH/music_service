@@ -31,22 +31,23 @@ else:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': (str, os.getenv('DB_NAME')),
+        'USER': (str, os.getenv('DB_USER')),
+        'PASSWORD': (str, os.getenv('DB_PASSWORD')),
+        'HOST': (str, os.getenv('DB_HOST')),
+        'PORT': (str, os.getenv('DB_PORT')),
         'OPTIONS': {'sslmode': 'disable'}
     }
 }
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '/static/'),
 ]
-AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_KEY')
-AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')
+AZURE_ACCOUNT_NAME = 'zemastroragev100'
+AZURE_ACCOUNT_KEY = 'AFsY2hZVbyYBKisEkRL+toNNJ7yBOzoJ/cruOxurFHnU84vE+Cmloq9S2ZkCxYaxrM5QemPsUiX5+ASt4WEg8w=='
+AZURE_LOCATION = 'zemacontainer'
+AZURE_CONTAINER = 'zemacontainer'
 AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-AZURE_LOCATION = os.getenv('AZURE_ACCOUNT_KEY')
-AZURE_CONTAINER = os.getenv('AZURE_ACCOUNT_KEY')
 
 STATIC_LOCATION = 'static'
 STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
