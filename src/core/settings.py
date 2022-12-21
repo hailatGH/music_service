@@ -1,7 +1,7 @@
 import os
 import django
 from django.utils.encoding import force_str
-
+from urllib.parse import urlparse
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
@@ -20,11 +20,19 @@ load_dotenv()
 # if client.get_secret("DEBUG") == 'True':
 
 DEBUG = os.getenv('DEBUG')
+SECRET_KEY = (str, os.getenv("SECRET_KEY"))
+URL = os.getenv('URL')
 
-ALLOWED_HOSTS = [
-    "music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io"]
-CSRF_TRUSTED_ORIGINS = [
-    'https://music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/']
+if URL:
+    ALLOWED_HOSTS = [urlparse(URL).netloc]
+    CSRF_TRUSTED_ORIGINS = [URL]
+else:
+    ALLOWED_HOSTS = ["*"]
+
+# ALLOWED_HOSTS = [
+#     "music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io"]
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/']
 
 DATABASES = {
     'default': {
