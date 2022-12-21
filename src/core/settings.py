@@ -10,7 +10,9 @@ from .basesettings import *
 django.utils.encoding.force_text = force_str
 load_dotenv()
 
-DEBUG = os.getenv('DEBUG')
+if os.getenv('ENV') == "ENV":
+    DEBUG = True
+
 SECRET_KEY = (str, os.getenv("SECRET_KEY"))
 URL = os.getenv('URL')
 
@@ -40,11 +42,11 @@ DATABASES = {
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '/static/'),
 ]
-AZURE_ACCOUNT_NAME = 'zemastroragev100'
-AZURE_ACCOUNT_KEY = 'AFsY2hZVbyYBKisEkRL+toNNJ7yBOzoJ/cruOxurFHnU84vE+Cmloq9S2ZkCxYaxrM5QemPsUiX5+ASt4WEg8w=='
+AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_KEY')
+AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')
 AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-AZURE_LOCATION = 'zemacontainer'
-AZURE_CONTAINER = 'zemacontainer'
+AZURE_LOCATION = os.getenv('AZURE_ACCOUNT_KEY')
+AZURE_CONTAINER = os.getenv('AZURE_ACCOUNT_KEY')
 
 STATIC_LOCATION = 'static'
 STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
