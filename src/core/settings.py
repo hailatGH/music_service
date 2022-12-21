@@ -14,7 +14,8 @@ KVUri = f"https://{keyVaultName}.vault.azure.net"
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
 
-DEBUG = client.get_secret("DEBUG")
+if client.get_secret("DEBUG") == 'True':
+    DEBUG = True
 
 ALLOWED_HOSTS = [
     "music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io"]
