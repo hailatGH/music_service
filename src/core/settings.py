@@ -12,35 +12,42 @@ load_dotenv()
 
 DEBUG = os.getenv('DEBUG')
 SECRET_KEY = (str, os.getenv("SECRET_KEY"))
+URL = os.getenv('URL')
 
-if os.getenv('URL'):
-    ALLOWED_HOSTS = [urlparse(os.getenv('URL')).netloc]
-    CSRF_TRUSTED_ORIGINS = [os.getenv('URL')]
+if URL:
+    ALLOWED_HOSTS = [urlparse(URL).netloc]
+    CSRF_TRUSTED_ORIGINS = [URL]
 else:
     ALLOWED_HOSTS = ["*"]
 
+# ALLOWED_HOSTS = [
+#     "music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io"]
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/']
+
+
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        'OPTIONS': {'sslmode': os.getenv('DB_SSL_MODE')}
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': "music_database",
+        'USER': "zemadatabaseadmin",
+        'PASSWORD': "StrongP@ssword",
+        'HOST': "zema-postgresql-v100.postgres.database.azure.com",
+        'PORT': '5432',
+        'OPTIONS': {'sslmode': 'disable'}
     }
 }
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '/static/'),
 ]
-AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME')
-AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')
+AZURE_ACCOUNT_NAME = 'zemastroragev100'
+AZURE_ACCOUNT_KEY = 'AFsY2hZVbyYBKisEkRL+toNNJ7yBOzoJ/cruOxurFHnU84vE+Cmloq9S2ZkCxYaxrM5QemPsUiX5+ASt4WEg8w=='
 AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-AZURE_LOCATION = os.getenv('AZURE_LOCATION')
-AZURE_CONTAINER = os.getenv('AZURE_CONTAINER')
+AZURE_LOCATION = 'zemacontainer'
+AZURE_CONTAINER = 'zemacontainer'
 
 STATIC_LOCATION = 'static'
 STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
 
-STATICFILES_STORAGE = os.getenv('STATICFILES_STORAGE')
-DEFAULT_FILE_STORAGE = os.getenv('DEFAULT_FILE_STORAGE')
+STATICFILES_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+DEFAULT_FILE_STORAGE = 'core.custom_storage.AzureMediaStorage'
