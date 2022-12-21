@@ -28,8 +28,8 @@ DATABASES = {
         'NAME': (str, os.getenv('DB_NAME')),
         'USER': (str, os.getenv('DB_USER')),
         'PASSWORD': (str, os.getenv('DB_PASSWORD')),
-        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
+        'HOST': "zema-postgresql-v100.postgres.database.azure.com",
         'OPTIONS': {'sslmode': 'disable'}
     }
 }
