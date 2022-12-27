@@ -1,7 +1,7 @@
 venv
 .dockerignore
 src/core/__pycache__
-src/player/__pycache__
+src/music/__pycache__
 src/db.sqlite3
 src/static
 src/media
