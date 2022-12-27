@@ -3,47 +3,49 @@ from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
 
 
-from .models import  AlbumsModel,  ArtistsModel, TracksModel, GenresModel
+from .models import AlbumsModel,  ArtistsModel, TracksModel, GenresModel
 
-#***************************************************************************
-#***************************************************************************
-#*****************************       ***************************************
-##############################ARTIST#######################################
-#*****************************       ***************************************
-#***************************************************************************
-#***************************************************************************
+# ***************************************************************************
+# ***************************************************************************
+# *****************************       ***************************************
+############################## ARTIST#######################################
+# *****************************       ***************************************
+# ***************************************************************************
+# ***************************************************************************
+
 
 @registry.register_document
-class PlayerMusicartistDocument(Document):
+class MusicartistDocument(Document):
 
     trackasartist = fields.ObjectField(properties={
-        "id":fields.IntegerField(),
-        "track_name":fields.TextField(),
-        "track_description":fields.TextField(),
-        "track_status":fields.BooleanField(),
-        "track_lyrics":fields.TextField(),
-        "encoder_FUI":fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),
-        }
+        "id": fields.IntegerField(),
+        "track_name": fields.TextField(),
+        "track_description": fields.TextField(),
+        "track_status": fields.BooleanField(),
+        "track_lyrics": fields.TextField(),
+        "encoder_FUI": fields.TextField(),
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
+    }
     )
-    
-    albumasartist = fields.ObjectField( properties={
-        "id":fields.IntegerField(),
-        "album_name":fields.TextField(), 
-        "album_description":fields.TextField(),
-        "album_status":fields.BooleanField(),
-        "encoder_FUI":fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),        
-        }
-        
+
+    albumasartist = fields.ObjectField(properties={
+        "id": fields.IntegerField(),
+        "album_name": fields.TextField(),
+        "album_description": fields.TextField(),
+        "album_status": fields.BooleanField(),
+        "encoder_FUI": fields.TextField(),
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
+    }
+
     )
+
     def prepare_trackasartist(self, instance):
         return instance.get_artisttracks_for_es()
+
     def prepare_albumasartist(self, instance):
         return instance.get_artistalbums_for_es()
-    
 
     class Index:
         name = "music_artist"
@@ -52,11 +54,10 @@ class PlayerMusicartistDocument(Document):
             'number_of_replicas': 0,
         }
 
-
     class Django:
         model = ArtistsModel
         related_models = [AlbumsModel, TracksModel]
-        
+
         fields = [
             "id",
             "artist_name",
@@ -71,46 +72,48 @@ class PlayerMusicartistDocument(Document):
             "encoder_FUI",
             "created_at",
             "updated_at",
-            
+
         ]
+
     def get_instances_from_related(self, related_instance):
 
-            if isinstance(related_instance, AlbumsModel):
-                return related_instance.artist_id.all()
-            elif isinstance(related_instance, TracksModel):
-                return related_instance.artist_id.all()   
-#***************************************************************************
-#***************************************************************************
-#*****************************       ***************************************
-##############################ALBUM#######################################
-#*****************************       ***************************************
-#***************************************************************************
-#***************************************************************************
+        if isinstance(related_instance, AlbumsModel):
+            return related_instance.artist_id.all()
+        elif isinstance(related_instance, TracksModel):
+            return related_instance.artist_id.all()
+# ***************************************************************************
+# ***************************************************************************
+# *****************************       ***************************************
+############################## ALBUM#######################################
+# *****************************       ***************************************
+# ***************************************************************************
+# ***************************************************************************
+
 
 @registry.register_document
-class PlayerMusicalbumDocument(Document):
+class MusicalbumDocument(Document):
 
     trackasalbum = fields.ObjectField(properties={
         "id": fields.IntegerField(),
         "track_name": fields.TextField(),
-        "track_description":fields.TextField(),
+        "track_description": fields.TextField(),
         "track_status": fields.BooleanField(),
         "track_lyrics": fields.TextField(),
         "encoder_FUI": fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),
-        }
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
+    }
     )
     artist_id = fields.ObjectField(properties={
         "id": fields.IntegerField(),
-        "artist_name": fields.TextField(), 
+        "artist_name": fields.TextField(),
         "artist_title": fields.TextField(),
-        "artist_description":fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),
-        }
+        "artist_description": fields.TextField(),
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
+    }
     )
-    
+
     # def prepare_album_tracks(self, instance):
     #     return instance.get_albumtracks_for_es()
 
@@ -124,7 +127,7 @@ class PlayerMusicalbumDocument(Document):
     class Django:
         model = AlbumsModel
         related_models = [ArtistsModel, TracksModel]
-        
+
         fields = [
             "id",
             "album_name",
@@ -138,52 +141,53 @@ class PlayerMusicalbumDocument(Document):
             "encoder_FUI",
             "created_at",
             "updated_at",
-            #"artist_id",
+            # "artist_id",
         ]
+
     def get_instances_from_related(self, related_instance):
 
-            if isinstance(related_instance, ArtistsModel):
-                return related_instance.albumasartist.all()
-            elif isinstance(related_instance, TracksModel):
-                return related_instance.album_id
-#***************************************************************************
-#***************************************************************************
-#*****************************       ***************************************
-##############################TRACK#######################################
-#*****************************       ***************************************
-#***************************************************************************
-#***************************************************************************
+        if isinstance(related_instance, ArtistsModel):
+            return related_instance.albumasartist.all()
+        elif isinstance(related_instance, TracksModel):
+            return related_instance.album_id
+# ***************************************************************************
+# ***************************************************************************
+# *****************************       ***************************************
+############################## TRACK#######################################
+# *****************************       ***************************************
+# ***************************************************************************
+# ***************************************************************************
+
 
 @registry.register_document
 class MusictrackDocument(Document):
-    album_id = fields.ObjectField( properties= {
+    album_id = fields.ObjectField(properties={
         "id": fields.IntegerField(),
-        "album_name": fields.TextField(), 
-        "album_description":fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),
-        }
+        "album_name": fields.TextField(),
+        "album_description": fields.TextField(),
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
+    }
     )
-    genre_id= fields.ObjectField(properties={
+    genre_id = fields.ObjectField(properties={
         "id": fields.IntegerField(),
         "genre_name": fields.TextField(),
         "genre_description": fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
     }
     )
     artist_id = fields.ObjectField(properties={
         "id": fields.IntegerField(),
-        "artist_name": fields.TextField(), 
+        "artist_name": fields.TextField(),
         "artist_title": fields.TextField(),
-        "artist_description":fields.TextField(),
+        "artist_description": fields.TextField(),
         "artist_FUI": fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),
-        }
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
+    }
     )
 
-    
     class Index:
         name = "music_track"
         settings = {
@@ -193,8 +197,8 @@ class MusictrackDocument(Document):
 
     class Django:
         model = TracksModel
-        
-        related_models = [ AlbumsModel,ArtistsModel, GenresModel,] 
+
+        related_models = [AlbumsModel, ArtistsModel, GenresModel,]
 
         fields = [
             "id",
@@ -215,38 +219,40 @@ class MusictrackDocument(Document):
             # "artist_id",
             # "album_id",
             # "genre_id",
-            
+
         ]
+
     def get_instances_from_related(self, related_instance):
-            if isinstance(related_instance, ArtistsModel):
-                return related_instance.trackasartist.all()
-            elif isinstance(related_instance, AlbumsModel):
-                return related_instance.trackasalbum.all()
-            elif isinstance(related_instance, GenresModel):
-                return related_instance.genre_tracks.all() 
-#***************************************************************************
-#***************************************************************************
-#*****************************       ***************************************
-##############################GENRE#######################################
-#*****************************       ***************************************
-#***************************************************************************
-#***************************************************************************
+        if isinstance(related_instance, ArtistsModel):
+            return related_instance.trackasartist.all()
+        elif isinstance(related_instance, AlbumsModel):
+            return related_instance.trackasalbum.all()
+        elif isinstance(related_instance, GenresModel):
+            return related_instance.genre_tracks.all()
+# ***************************************************************************
+# ***************************************************************************
+# *****************************       ***************************************
+############################## GENRE#######################################
+# *****************************       ***************************************
+# ***************************************************************************
+# ***************************************************************************
+
 
 @registry.register_document
-class PlayerMusicgenreDocument(Document):
+class MusicgenreDocument(Document):
     genre_tracks = fields.ObjectField(properties={
         "id": fields.IntegerField(),
         "track_name": fields.TextField(),
-        "track_description":fields.TextField(),
+        "track_description": fields.TextField(),
         "track_status": fields.BooleanField(),
         "track_lyrics": fields.TextField(),
         "encoder_FUI": fields.TextField(),
-        "created_at":fields.DateField(),
-        "updated_at":fields.DateField(),
-        }
-        
-        ) 
-            
+        "created_at": fields.DateField(),
+        "updated_at": fields.DateField(),
+    }
+
+    )
+
     class Index:
         name = "music_genre"
         settings = {
@@ -254,10 +260,9 @@ class PlayerMusicgenreDocument(Document):
             'number_of_replicas': 0,
         }
 
-
     class Django:
         model = GenresModel
-        related_models = [ TracksModel,]
+        related_models = [TracksModel,]
         fields = [
             "id",
             "genre_name",
@@ -269,13 +274,14 @@ class PlayerMusicgenreDocument(Document):
             "encoder_FUI",
             "created_at",
             "updated_at",
-            
+
         ]
+
     def get_instances_from_related(self, related_instance):
 
         if isinstance(related_instance, TracksModel):
             return related_instance.genre_id
-    
+
 
 # @registry.register_document
 # class PurchasedTracksModelDocument(Document):
@@ -293,13 +299,13 @@ class PlayerMusicgenreDocument(Document):
 
 #     class Django:
 #         model = PurchasedTracksModel
-        
+
 
 #         fields = [
 #             "id",
 #             "track_id",
 #             "user_FUI",
-            
+
 #         ]
 
 # @registry.register_document
@@ -318,12 +324,12 @@ class PlayerMusicgenreDocument(Document):
 
 #     class Django:
 #         model = PurchasedAlbumsModel
-        
+
 #         fields = [
 #             "id",
 #             "album_id",
 #             "user_FUI",
-            
+
 #         ]
 # python manage.py search_index --rebuild
 # python manage.py inspectdb > index_models.py

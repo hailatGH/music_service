@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     'storages',
     'django_elasticsearch_dsl',
 
-    'core',
-    'player',
+    'music',
 ]
 
 

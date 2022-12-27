@@ -20,7 +20,7 @@ def update_document(sender, **kwargs):
     model_name = sender._meta.model_name
     instance = kwargs['instance']
 
-    if app_label == 'player':
+    if app_label == 'music':
         # If it is `books.Publisher` that is being updated.
         if model_name == 'ArtistsModel':
             artistinstances = instance.ArtistsModel.all()
@@ -29,9 +29,9 @@ def update_document(sender, **kwargs):
             for _instance in artistinstances:
                 registry.update(_instance)
             for _instance in trackinstances:
-                registry.update(_instance)    
+                registry.update(_instance)
             for _instance in albuminstances:
-                registry.update(_instance)    
+                registry.update(_instance)
         if model_name == 'AlbumsModel':
             albuminstances = instance.AlbumsModel.all()
             artistinstances = instance.ArtistsModel.all()
@@ -41,14 +41,14 @@ def update_document(sender, **kwargs):
             for _instance in artistinstances:
                 registry.update(_instance)
             for _instance in trackinstances:
-                registry.update(_instance)  
+                registry.update(_instance)
         if model_name == 'GenresModel':
             genreinstances = instance.GenresModel.all()
             trackinstances = instance.TracksModel.all()
             for _instance in genreinstances:
                 registry.update(_instance)
             for _instance in trackinstances:
-                registry.update(_instance)    
+                registry.update(_instance)
         if model_name == 'TracksModel':
             trackinstances = instance.TracksModel.all()
             genreinstances = instance.GenresModel.all()
@@ -61,7 +61,7 @@ def update_document(sender, **kwargs):
             for _instance in albuminstances:
                 registry.update(_instance)
             for _instance in artistinstances:
-                registry.update(_instance)    
+                registry.update(_instance)
 
 
 @receiver(post_delete)
@@ -75,7 +75,7 @@ def delete_document(sender, **kwargs):
     model_name = sender._meta.model_name
     instance = kwargs['instance']
 
-    if app_label == 'player':
+    if app_label == 'music':
         # If it is `books.Publisher` that is being updated.
         if model_name == 'ArtistsModel':
             artistinstances = instance.ArtistsModel.all()
@@ -84,9 +84,9 @@ def delete_document(sender, **kwargs):
             for _instance in artistinstances:
                 registry.update(_instance)
             for _instance in trackinstances:
-                registry.update(_instance)    
+                registry.update(_instance)
             for _instance in albuminstances:
-                registry.update(_instance)    
+                registry.update(_instance)
         if model_name == 'AlbumsModel':
             albuminstances = instance.AlbumsModel.all()
             artistinstances = instance.ArtistsModel.all()
@@ -96,14 +96,14 @@ def delete_document(sender, **kwargs):
             for _instance in artistinstances:
                 registry.update(_instance)
             for _instance in trackinstances:
-                registry.update(_instance)  
+                registry.update(_instance)
         if model_name == 'GenresModel':
             genreinstances = instance.GenresModel.all()
             trackinstances = instance.TracksModel.all()
             for _instance in genreinstances:
                 registry.update(_instance)
             for _instance in trackinstances:
-                registry.update(_instance)    
+                registry.update(_instance)
         if model_name == 'TracksModel':
             trackinstances = instance.TracksModel.all()
             genreinstances = instance.GenresModel.all()
@@ -116,9 +116,9 @@ def delete_document(sender, **kwargs):
             for _instance in albuminstances:
                 registry.update(_instance)
             for _instance in artistinstances:
-                registry.update(_instance)    
+                registry.update(_instance)
 
-    # if app_label == 'player':
+    # if app_label == 'music':
     #     # If it is `books.Publisher` that is being updated.
     #     if model_name == 'ArtistsModel':
     #         instances = instance.ArtistsModel.all()
