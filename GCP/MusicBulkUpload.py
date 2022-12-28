@@ -3,9 +3,10 @@ from pathlib import Path
 import json
 import requests
 
-URL = "http://127.0.0.1:8000/webApp/"
+# URL = "http://127.0.0.1:8000/webApp/"
 # URL = "https://music-service-dev-vdzflryflq-ew.a.run.app/webApp/"
-ENCODER_ID = "hailatFUID"
+URL = "https://music-service.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/webApp/"
+ENCODER_ID = "0Yi6yM0YmDWd55AfF0cYea2iXsc2"
 
 artists_path = sorted(os.listdir('./ROOT/'))
 artists = []
@@ -18,14 +19,18 @@ for artist_path in artists_path:
             artist_file = artist_file.lower()
             if artist_file.endswith(".txt"):
                 for line in open(f'./ROOT/{artist_path}/{artist_file}', 'r').readlines():
-                    artist[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+                    artist[line.strip()[:line.strip().index(':')]] = line.strip()[
+                        line.strip().index(':') + 2:]
             if artist_file.endswith(".jpg"):
-                artist['artist_profileImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
+                artist['artist_profileImage'] = str(
+                    os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
             if artist_file.endswith(".png"):
-                artist['artist_profileImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
+                artist['artist_profileImage'] = str(
+                    os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
             if artist_file.endswith('.jpeg'):
-                artist['artist_profileImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
-        
+                artist['artist_profileImage'] = str(
+                    os.path.abspath(f'./ROOT/{artist_path}/{artist_file}'))
+
         albums_path = sorted(os.listdir(f'./ROOT/{artist_path}/'))
         for album_path in albums_path:
             album = {}
@@ -34,7 +39,8 @@ for artist_path in artists_path:
             stracks = []
 
             if album_path == 'Singles':
-                tracks_path = sorted(os.listdir(f'./ROOT/{artist_path}/Singles/'))
+                tracks_path = sorted(os.listdir(
+                    f'./ROOT/{artist_path}/Singles/'))
                 for track_path in tracks_path:
                     track = {}
                     if os.path.isdir(f'./ROOT/{artist_path}/Singles/{track_path}'):
@@ -50,21 +56,28 @@ for artist_path in artists_path:
                                         track['track_lyrics'] = lyrics
                                 else:
                                     for line in open(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}', 'r').readlines():
-                                        track[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+                                        track[line.strip()[:line.strip().index(':')]] = line.strip()[
+                                            line.strip().index(':') + 2:]
 
                             if strack_file.endswith(".jpg"):
-                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                                track['track_coverImage'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
                             if strack_file.endswith(".png"):
-                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                                track['track_coverImage'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
                             if strack_file.endswith(".jpeg"):
-                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                                track['track_coverImage'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
 
                             if strack_file.endswith(".aac"):
-                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                                track['track_audioFile'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
                             if strack_file.endswith(".mp3"):
-                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                                track['track_audioFile'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
                             if strack_file.endswith(".wav"):
-                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
+                                track['track_audioFile'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/Singles/{track_path}/{strack_file}'))
 
                         stracks.append(track)
                 artist['Singles'] = stracks
@@ -75,15 +88,20 @@ for artist_path in artists_path:
                     album_file = album_file.lower()
                     if album_file.endswith(".txt"):
                         for line in open(f'./ROOT/{artist_path}/{album_path}/{album_file}', 'r').readlines():
-                            album[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+                            album[line.strip()[:line.strip().index(':')]] = line.strip()[
+                                line.strip().index(':') + 2:]
                     if album_file.endswith(".jpg"):
-                        album['album_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{album_file}'))
+                        album['album_coverImage'] = str(os.path.abspath(
+                            f'./ROOT/{artist_path}/{album_path}/{album_file}'))
                     if album_file.endswith(".png"):
-                        album['album_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{album_file}'))
+                        album['album_coverImage'] = str(os.path.abspath(
+                            f'./ROOT/{artist_path}/{album_path}/{album_file}'))
                     if album_file.endswith(".jpeg"):
-                        album['album_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{album_file}'))
+                        album['album_coverImage'] = str(os.path.abspath(
+                            f'./ROOT/{artist_path}/{album_path}/{album_file}'))
 
-                tracks_path = sorted(os.listdir(f'./ROOT/{artist_path}/{album_path}/'))
+                tracks_path = sorted(os.listdir(
+                    f'./ROOT/{artist_path}/{album_path}/'))
                 for track_path in tracks_path:
                     track = {}
                     if os.path.isdir(f'./ROOT/{artist_path}/{album_path}/{track_path}'):
@@ -99,29 +117,38 @@ for artist_path in artists_path:
                                         track['track_lyrics'] = lyrics
                                 else:
                                     for line in open(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}', 'r').readlines():
-                                        track[line.strip()[:line.strip().index(':')]] = line.strip()[line.strip().index(':') + 2:]
+                                        track[line.strip()[:line.strip().index(':')]] = line.strip()[
+                                            line.strip().index(':') + 2:]
 
                             if track_file.endswith(".jpg"):
-                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                                track['track_coverImage'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
                             if track_file.endswith(".png"):
-                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                                track['track_coverImage'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
                             if track_file.endswith(".jpeg"):
-                                track['track_coverImage'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                                track['track_coverImage'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
 
                             if track_file.endswith(".aac"):
-                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                                track['track_audioFile'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
                             if track_file.endswith(".mp3"):
-                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                                track['track_audioFile'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
                             if track_file.endswith(".wav"):
-                                track['track_audioFile'] = str(os.path.abspath(f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
+                                track['track_audioFile'] = str(os.path.abspath(
+                                    f'./ROOT/{artist_path}/{album_path}/{track_path}/{track_file}'))
 
                         tracks.append(track)
 
                 album['Tracks'] = tracks
                 albums.append(album)
-                
+
         artist['Albums'] = albums
         artists.append(artist)
+
+# print(artists)
 
 for i in range(len(artists)):
     artist = artists[i]
@@ -134,20 +161,22 @@ for i in range(len(artists)):
         "artist_title": artist['artist_title'],
         "artist_rating": 0,
         "artist_status": "true",
-        "artist_releaseDate": artist['artist_releaseDate'], 
+        "artist_releaseDate": artist['artist_releaseDate'],
         "artist_description": artist['artist_description'],
         "artist_viewcount": 0,
         "artist_FUI": artist['artist_FUI'],
         "encoder_FUI": ENCODER_ID,
     }), files=artistFiles)
 
-    print(f"Artist: ", artist['artist_name'], "Status : ",artist_response.status_code)
+    print(f"Artist: ", artist['artist_name'],
+          "Status : ", artist_response.status_code)
 
     if artist_response.status_code == 201:
         artist['id'] = json.loads(artist_response.content)['id']
 
         if len(artist['Singles']):
-            album_id = requests.get(f"{URL}albumIdByAlbumName?album_name={artist['artist_name']}_Singles")
+            album_id = requests.get(
+                f"{URL}albumIdByAlbumName?album_name={artist['artist_name']}_Singles")
 
             for s in range(len(artist['Singles'])):
                 track = artist['Singles'][s]
@@ -172,7 +201,8 @@ for i in range(len(artists)):
                     "genre_id": track['genre_id'],
                 }), files=trackFiles)
 
-                print(f"Track: ", track['track_name'], "Status : ",track_response.status_code)
+                print(f"Track: ", track['track_name'],
+                      "Status : ", track_response.status_code)
 
         for j in range(len(artist['Albums'])):
             album = artist['Albums'][j]
@@ -184,7 +214,7 @@ for i in range(len(artists)):
                 "album_name": album['album_name'],
                 "album_rating": 0,
                 "album_status": "true",
-                "album_releaseDate": album['album_releaseDate'], 
+                "album_releaseDate": album['album_releaseDate'],
                 "album_description": album['album_description'],
                 "album_viewcount": 0,
                 "album_price": int(album['album_price']),
@@ -192,7 +222,8 @@ for i in range(len(artists)):
                 "encoder_FUI": ENCODER_ID,
             }), files=albumFiles)
 
-            print(f"Album: ", album['album_name'], "Status : ",album_response.status_code)
+            print(f"Album: ", album['album_name'],
+                  "Status : ", album_response.status_code)
             if album_response.status_code == 201:
                 album['id'] = json.loads(album_response.content)['id']
 
@@ -219,4 +250,5 @@ for i in range(len(artists)):
                         "genre_id": track['genre_id'],
                     }), files=trackFiles)
 
-                    print(f"Track: ", track['track_name'], "Status : ",track_response.status_code)
+                    print(f"Track: ", track['track_name'],
+                          "Status : ", track_response.status_code)
