@@ -8,8 +8,8 @@ from datetime import datetime
 from .models import *
 from .serializers import *
 
-# Standard Results Set Pagination
 
+# Standard Results Set Pagination
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 15
