@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from music.webAppviews import *
 from music.mobileAppviews import *
 
-webApprouter = DefaultRouter(trailing_slash=False)
+webApprouter = DefaultRouter(trailing_slash=True)
 webApprouter.register(r'artist', ArtistsWebViewSet, basename="artist")
 webApprouter.register(r'albumsByArtistId',
                       AlbumsByArtistIdViewSet, basename="albumsByArtistId")
