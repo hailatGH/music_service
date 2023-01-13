@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'storages',
-    # 'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl',
 
     'music',
 ]
