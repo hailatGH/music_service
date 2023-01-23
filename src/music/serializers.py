@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 
 from .models import *
 
+
 class ArtistsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArtistsModel
@@ -31,9 +32,10 @@ class ArtistsSerializer(serializers.ModelSerializer):
             Sender = 'kinideas.tech@gmail.com'
             Receiver = 'hailat.alx@gmail.com'
 
-            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
+            send_mail(Subject, Email_Body, Sender, [
+                      Receiver], fail_silently=False,)
         return artist
-    
+
     def update(self, instance, validated_data):
         album_name = f"{validated_data['artist_name']}_Singles"
         try:
@@ -50,8 +52,10 @@ class ArtistsSerializer(serializers.ModelSerializer):
             Sender = 'kinideas.tech@gmail.com'
             Receiver = 'hailat.alx@gmail.com'
 
-            send_mail(Subject, Email_Body, Sender, [Receiver], fail_silently=False,)
+            send_mail(Subject, Email_Body, Sender, [
+                      Receiver], fail_silently=False,)
         return super().update(instance, validated_data)
+
 
 class AlbumsSerializer(serializers.ModelSerializer):
 
@@ -59,11 +63,13 @@ class AlbumsSerializer(serializers.ModelSerializer):
         model = AlbumsModel
         fields = '__all__'
 
+
 class GenresSerializer(serializers.ModelSerializer):
 
-     class Meta:
+    class Meta:
         model = GenresModel
         fields = '__all__'
+
 
 class TracksSerializer(serializers.ModelSerializer):
 
@@ -71,8 +77,9 @@ class TracksSerializer(serializers.ModelSerializer):
         model = TracksModel
         fields = '__all__'
 
+
 class PlayListsSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = PlayListsModel
         fields = '__all__'
@@ -83,6 +90,7 @@ class PlayListsSerializer(serializers.ModelSerializer):
                 fields=['playlist_name', 'user_FUI']
             )
         ]
+
 
 class PlayListsTracksSerializer(serializers.ModelSerializer):
 
@@ -97,8 +105,9 @@ class PlayListsTracksSerializer(serializers.ModelSerializer):
             )
         ]
 
+
 class FavouritesSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = FavouritesModel
         fields = '__all__'
@@ -109,6 +118,7 @@ class FavouritesSerializer(serializers.ModelSerializer):
                 fields=['track_id', 'user_FUI']
             )
         ]
+
 
 class PurchasedTracksSerializer(serializers.ModelSerializer):
 
@@ -123,6 +133,7 @@ class PurchasedTracksSerializer(serializers.ModelSerializer):
             )
         ]
 
+
 class PurchasedAlbumsSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -136,21 +147,21 @@ class PurchasedAlbumsSerializer(serializers.ModelSerializer):
             )
         ]
 
-class AdminCollectionNamesSerializer(serializers.ModelSerializer):
+# class AdminCollectionNamesSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = AdminCollectionNamesModel
-        fields = '__all__'
+#     class Meta:
+#         model = AdminCollectionNamesModel
+#         fields = '__all__'
 
-class AdminCollectionTracksSerializer(serializers.ModelSerializer):
+# class AdminCollectionTracksSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = AdminCollectionTracksModel
-        fields = '__all__'
+#     class Meta:
+#         model = AdminCollectionTracksModel
+#         fields = '__all__'
 
-    validators = [
-        UniqueTogetherValidator(
-            queryset=AdminCollectionTracksModel.objects.all(),
-            fields=['collection_id', 'track_id']
-        )
-    ]
+#     validators = [
+#         UniqueTogetherValidator(
+#             queryset=AdminCollectionTracksModel.objects.all(),
+#             fields=['collection_id', 'track_id']
+#         )
+#     ]

@@ -9,23 +9,23 @@ today = timezone.now()
 
 
 def Artists_Profile_Images(instance, filename):
-    return '/'.join(['Media_Files', 'Artists_Profile_Images', str(instance.artist_name) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Artists_Profile_Images', str(filename)])
 
 
 def Albums_Cover_Images(instance, filename):
-    return '/'.join(['Media_Files', 'Albums_Cover_Images', str(instance.album_name) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Albums_Cover_Images', str(filename)])
 
 
 def Genres_Cover_Images(instance, filename):
-    return '/'.join(['Media_Files', 'Genres_Cover_Images', str(instance.genre_name) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Genres_Cover_Images', str(filename)])
 
 
 def Track_Cover_Images(instance, filename):
-    return '/'.join(['Media_Files', 'Tracks_Cover_Images', str(instance.track_name) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Tracks_Cover_Images', str(filename)])
 
 
 def Track_Files(instance, filename):
-    return '/'.join(['Media_Files', 'Tracks_Audio_Files', str(instance.album_id), str(instance.track_name) + "_" + str(filename)])
+    return '/'.join(['Media_Files', 'Tracks_Audio_Files', str(filename)])
 
 
 class ArtistsModel(models.Model):
@@ -50,21 +50,21 @@ class ArtistsModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def get_artisttracks_for_es(self):
-        tracks = self.trackasartist.all()
-        artist_tracks_list = []
-        for x in tracks:
-            artist_tracks_list.append({'id': x.id, 'track_name': x.track_name, 'track_description': x.track_description, 'track_status': x.track_status,
-                                      'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
-        return artist_tracks_list
+    # def get_artisttracks_for_es(self):
+    #     tracks = self.trackasartist.all()
+    #     artist_tracks_list = []
+    #     for x in tracks:
+    #         artist_tracks_list.append({'id': x.id, 'track_name': x.track_name, 'track_description': x.track_description, 'track_status': x.track_status,
+    #                                   'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
+    #     return artist_tracks_list
 
-    def get_artistalbums_for_es(self):
-        albums = self.albumasartist.all()
-        artist_albums_list = []
-        for x in albums:
-            artist_albums_list.append({'id': x.id, 'album_name': x.album_name, 'album_description': x.album_description, 'album_status': x.album_status,
-                                      'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
-        return artist_albums_list
+    # def get_artistalbums_for_es(self):
+    #     albums = self.albumasartist.all()
+    #     artist_albums_list = []
+    #     for x in albums:
+    #         artist_albums_list.append({'id': x.id, 'album_name': x.album_name, 'album_description': x.album_description, 'album_status': x.album_status,
+    #                                   'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
+    #     return artist_albums_list
 
     def save(self, *args, **kwargs):
         image = Image.open(self.artist_profileImage)
@@ -262,28 +262,28 @@ class PurchasedAlbumsModel(models.Model):
         return f"{self.created_at.date()}/{self.updated_at.date()}"
 
 
-class AdminCollectionNamesModel(models.Model):
+# class AdminCollectionNamesModel(models.Model):
 
-    class Meta:
-        ordering = ['id']
+#     class Meta:
+#         ordering = ['id']
 
-    collection_name = models.CharField(
-        null=False, blank=True, max_length=256, unique=True)
-    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+#     collection_name = models.CharField(
+#         null=False, blank=True, max_length=256, unique=True)
+#     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.pk}: {self.collection_name}"
+#     def __str__(self):
+#         return f"{self.pk}: {self.collection_name}"
 
 
-class AdminCollectionTracksModel(models.Model):
+# class AdminCollectionTracksModel(models.Model):
 
-    class Meta:
-        ordering = ['id']
+#     class Meta:
+#         ordering = ['id']
 
-    collection_id = models.ForeignKey(
-        AdminCollectionNamesModel, null=False, blank=True, on_delete=models.CASCADE)
-    track_id = models.ForeignKey(TracksModel, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+#     collection_id = models.ForeignKey(
+#         AdminCollectionNamesModel, null=False, blank=True, on_delete=models.CASCADE)
+#     track_id = models.ForeignKey(TracksModel, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
