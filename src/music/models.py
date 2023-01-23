@@ -5,7 +5,7 @@ from django.core.files import File
 from PIL import Image, ImageOps
 from io import BytesIO
 
-today = timezone.now()
+# today = timezone.now()
 
 
 def Artists_Profile_Images(instance, filename):
@@ -37,8 +37,7 @@ class ArtistsModel(models.Model):
     artist_title = models.CharField(null=True, blank=True, max_length=256)
     artist_rating = models.IntegerField(null=True, blank=True, default=0)
     artist_status = models.BooleanField(null=False, blank=True, default=False)
-    artist_releaseDate = models.DateField(
-        null=True, blank=True, default=timezone.now())
+    artist_releaseDate = models.DateField(null=True, blank=True)
     artist_description = models.CharField(
         null=True, blank=True, max_length=4096)
     artist_viewcount = models.IntegerField(null=False, blank=True, default=0)
@@ -46,7 +45,7 @@ class ArtistsModel(models.Model):
                                             validators.validate_image_extension])
     artist_FUI = models.CharField(
         null=False, blank=True, unique=True, max_length=1023)
-    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    # encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -88,7 +87,7 @@ class AlbumsModel(models.Model):
     album_name = models.CharField(null=False, blank=True, max_length=256)
     album_rating = models.IntegerField(null=True, blank=True, default=0)
     album_status = models.BooleanField(null=False, blank=True, default=False)
-    album_releaseDate = models.DateField(null=True, blank=True, default=today)
+    album_releaseDate = models.DateField(null=True, blank=True)
     album_description = models.CharField(
         null=True, blank=True, max_length=4096)
     album_viewcount = models.IntegerField(null=False, blank=True, default=0)
@@ -97,7 +96,7 @@ class AlbumsModel(models.Model):
     album_price = models.IntegerField(null=False, blank=True, default=40)
     artist_id = models.ManyToManyField(
         ArtistsModel, related_name="albumasartist", related_query_name="albumasartistquery")
-    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    # encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -128,7 +127,7 @@ class GenresModel(models.Model):
     genre_viewcount = models.IntegerField(null=False, blank=True, default=0)
     genre_coverImage = models.ImageField(null=False, blank=True, upload_to=Genres_Cover_Images, validators=[
                                          validators.validate_image_extension])
-    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    # encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -154,7 +153,7 @@ class TracksModel(models.Model):
     track_name = models.CharField(null=False, blank=True, max_length=256)
     track_rating = models.IntegerField(null=True, blank=True, default=0)
     track_status = models.BooleanField(null=False, blank=True, default=False)
-    track_releaseDate = models.DateField(null=True, blank=True, default=today)
+    track_releaseDate = models.DateField(null=True, blank=True)
     track_description = models.CharField(
         null=True, blank=True, max_length=4096)
     track_viewcount = models.IntegerField(null=False, blank=True, default=0)
@@ -164,15 +163,13 @@ class TracksModel(models.Model):
                                        validators.validate_track_extension])
     track_lyrics = models.CharField(null=True, blank=True, max_length=4096)
     track_price = models.IntegerField(null=False, blank=True, default=5)
-    artists_featuring = models.CharField(
-        null=False, blank=True, max_length=256)
     artist_id = models.ManyToManyField(
         ArtistsModel, related_name="trackasartist", related_query_name="trackasartistquery")
     album_id = models.ForeignKey(AlbumsModel, related_name="trackasalbum",
-                                 related_query_name="trackasalbumquery", null=False, blank=True, on_delete=models.DO_NOTHING)
+                                 related_query_name="trackasalbumquery", null=True, blank=True, on_delete=models.DO_NOTHING)
     genre_id = models.ForeignKey(GenresModel, related_name="genre_tracks",
                                  related_query_name="genre_tracks", null=False, blank=True, on_delete=models.DO_NOTHING)
-    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    # encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -269,7 +266,7 @@ class PurchasedAlbumsModel(models.Model):
 
 #     collection_name = models.CharField(
 #         null=False, blank=True, max_length=256, unique=True)
-#     encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    # encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
 #     created_at = models.DateTimeField(auto_now_add=True)
 #     updated_at = models.DateTimeField(auto_now=True)
 

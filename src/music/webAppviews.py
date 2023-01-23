@@ -5,17 +5,22 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 
-# Standard Results Set Pagination 
+# Standard Results Set Pagination
+
+
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
 
 # Class based model viewsets for the Web App
+
+
 class ArtistsWebViewSet(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
     pagination_class = StandardResultsSetPagination
+
 
 class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
 
@@ -52,7 +57,8 @@ class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
                 artist_id_list.append(int(artistId[startOfno:indexOfcomma]))
                 startOfno = indexOfcomma + 1
         artist_id_list.append(int(artistId[startOfno:]))
-        albums = self.queryset.filter(artist_id__in=artist_id_list).values('id','album_name')
+        albums = self.queryset.filter(
+            artist_id__in=artist_id_list).values('id', 'album_name')
 
         # Count how many times an album is repeated with diffrent artist_id
         tmp_data = []
@@ -68,19 +74,22 @@ class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
                         if albums[k] not in tmp_data:
                             tmp_data.append(albums[k])
 
-        # Check if the listed albums in the tmp_data only have artist ids of the requested artist ids   
+        # Check if the listed albums in the tmp_data only have artist ids of the requested artist ids
         for i in range(len(tmp_data)):
-            artist_obj = self.queryset.filter(id=tmp_data[i]['id']).values('id','album_name','artist_id')
+            artist_obj = self.queryset.filter(id=tmp_data[i]['id']).values(
+                'id', 'album_name', 'artist_id')
             if len(artist_id_list) == len(artist_obj):
                 data.append(tmp_data[i])
 
         return Response(data)
+
 
 class AlbumsWebViewSet(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
     serializer_class = AlbumsSerializer
     pagination_class = StandardResultsSetPagination
+
 
 class AlbumIdByAlbumNameWebViewSet(viewsets.ModelViewSet):
 
@@ -96,20 +105,23 @@ class AlbumIdByAlbumNameWebViewSet(viewsets.ModelViewSet):
             album_id = album[0]['id']
         return Response(album_id)
 
+
 class GenresWebViewSet(viewsets.ModelViewSet):
-    
+
     queryset = GenresModel.objects.all()
     serializer_class = GenresSerializer
     pagination_class = StandardResultsSetPagination
 
+
 class TracksWebViewSet(viewsets.ModelViewSet):
-    
+
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
     pagination_class = StandardResultsSetPagination
 
+
 class PlayListsWebViewSet(viewsets.ModelViewSet):
-    
+
     queryset = PlayListsModel.objects.all()
     serializer_class = PlayListsSerializer
     pagination_class = StandardResultsSetPagination
@@ -129,8 +141,9 @@ class PlayListsWebViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         return Response("Not Allowed")
 
+
 class PlayListTracksWebViewSet(viewsets.ModelViewSet):
-    
+
     queryset = PlayListTracksModel.objects.all()
     serializer_class = PlayListsTracksSerializer
     pagination_class = StandardResultsSetPagination
@@ -150,10 +163,12 @@ class PlayListTracksWebViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         return Response("Not Allowed")
 
+
 class PurchasedTracksWebViewSet(viewsets.ModelViewSet):
 
     queryset = PurchasedTracksModel.objects.all()
-    serializer_class  = PurchasedTracksSerializer
+    serializer_class = PurchasedTracksSerializer
+
 
 class PurchasedAlbumsWebViewSet(viewsets.ModelViewSet):
 
@@ -161,14 +176,14 @@ class PurchasedAlbumsWebViewSet(viewsets.ModelViewSet):
     serializer_class = PurchasedAlbumsSerializer
     pagination_class = StandardResultsSetPagination
 
-class AdminCollectionNamesWebViewSet(viewsets.ModelViewSet):
+# class AdminCollectionNamesWebViewSet(viewsets.ModelViewSet):
 
-    queryset = AdminCollectionNamesModel.objects.all()
-    serializer_class = AdminCollectionNamesSerializer
-    pagination_class = StandardResultsSetPagination
+#     queryset = AdminCollectionNamesModel.objects.all()
+#     serializer_class = AdminCollectionNamesSerializer
+#     pagination_class = StandardResultsSetPagination
 
-class AdminCollectionTracksWebViewSet(viewsets.ModelViewSet):
+# class AdminCollectionTracksWebViewSet(viewsets.ModelViewSet):
 
-    queryset = AdminCollectionTracksModel.objects.all()
-    serializer_class = AdminCollectionTracksSerializer
-    pagination_class = StandardResultsSetPagination
+#     queryset = AdminCollectionTracksModel.objects.all()
+#     serializer_class = AdminCollectionTracksSerializer
+#     pagination_class = StandardResultsSetPagination

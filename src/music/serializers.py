@@ -13,48 +13,48 @@ class ArtistsSerializer(serializers.ModelSerializer):
         model = ArtistsModel
         fields = '__all__'
 
-    def create(self, validated_data):
-        artist = super().create(validated_data)
-        try:
-            SingleAlbum = AlbumsModel(
-                album_name=validated_data['artist_name']+"_Singles",
-                album_status=validated_data['artist_status'],
-                album_releaseDate=datetime.now(),
-                album_description=f"Contains all single musics of the {validated_data['artist_name']}!",
-                album_coverImage=validated_data['artist_profileImage'],
-                encoder_FUI=validated_data['encoder_FUI']
-            )
-            SingleAlbum.save()
-            SingleAlbum.artist_id.add(artist)
-        except BaseException as e:
-            Subject = "Data Consistancy Problem"
-            Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist: {validated_data['artist_name']}."
-            Sender = 'kinideas.tech@gmail.com'
-            Receiver = 'hailat.alx@gmail.com'
+    # def create(self, validated_data):
+    #     artist = super().create(validated_data)
+    #     try:
+    #         SingleAlbum = AlbumsModel(
+    #             album_name=validated_data['artist_name']+"_Singles",
+    #             album_status=validated_data['artist_status'],
+    #             album_releaseDate=datetime.now(),
+    #             album_description=f"Contains all single musics of the {validated_data['artist_name']}!",
+    #             album_coverImage=validated_data['artist_profileImage'],
+    #             # encoder_FUI=validated_data['encoder_FUI']
+    #         )
+    #         SingleAlbum.save()
+    #         SingleAlbum.artist_id.add(artist)
+    #     except BaseException as e:
+    #         Subject = "Data Consistancy Problem"
+    #         Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist: {validated_data['artist_name']}."
+    #         Sender = 'kinideas.tech@gmail.com'
+    #         Receiver = 'hailat.alx@gmail.com'
 
-            send_mail(Subject, Email_Body, Sender, [
-                      Receiver], fail_silently=False,)
-        return artist
+    #         send_mail(Subject, Email_Body, Sender, [
+    #                   Receiver], fail_silently=False,)
+    #     return artist
 
-    def update(self, instance, validated_data):
-        album_name = f"{validated_data['artist_name']}_Singles"
-        try:
-            AlbumsModel.objects.filter(album_name=album_name).update(
-                album_name=validated_data['artist_name']+"_Singles",
-                album_status=validated_data['artist_status'],
-                album_releaseDate=datetime.now(),
-                album_description=f"Contains all single musics of the {validated_data['artist_name']}!",
-                encoder_FUI=validated_data['encoder_FUI']
-            )
-        except BaseException as e:
-            Subject = "Data Consistancy Problem"
-            Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist: {validated_data['artist_name']}."
-            Sender = 'kinideas.tech@gmail.com'
-            Receiver = 'hailat.alx@gmail.com'
+    # def update(self, instance, validated_data):
+    #     album_name = f"{validated_data['artist_name']}_Singles"
+    #     try:
+    #         AlbumsModel.objects.filter(album_name=album_name).update(
+    #             album_name=validated_data['artist_name']+"_Singles",
+    #             album_status=validated_data['artist_status'],
+    #             album_releaseDate=datetime.now(),
+    #             album_description=f"Contains all single musics of the {validated_data['artist_name']}!",
+    #             # encoder_FUI=validated_data['encoder_FUI']
+    #         )
+    #     except BaseException as e:
+    #         Subject = "Data Consistancy Problem"
+    #         Email_Body = f"Error: {e}\n\nIssue: Singles album is not created for the artist: {validated_data['artist_name']}."
+    #         Sender = 'kinideas.tech@gmail.com'
+    #         Receiver = 'hailat.alx@gmail.com'
 
-            send_mail(Subject, Email_Body, Sender, [
-                      Receiver], fail_silently=False,)
-        return super().update(instance, validated_data)
+    #         send_mail(Subject, Email_Body, Sender, [
+    #                   Receiver], fail_silently=False,)
+    #     return super().update(instance, validated_data)
 
 
 class AlbumsSerializer(serializers.ModelSerializer):
