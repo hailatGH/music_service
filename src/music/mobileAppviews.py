@@ -1,6 +1,5 @@
 from functools import cmp_to_key
 from operator import itemgetter as i
-
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -15,6 +14,7 @@ from .serializers import *
 
 def paginateTrackResponse(response, page, pageSize, userId):
     paginated_response = []
+
     filtered_response = [
         data for data in response if data['track_status']]
 
@@ -70,6 +70,25 @@ def list_contains(List1, val):
             return True
     return False
 
+
+def fetchTracksDetail(filtered_response, kay_id):
+    tracks = []
+
+    for track_count in range(len(filtered_response)):
+        track = TracksModel.objects.filter(
+            id=filtered_response[track_count]['track_id']).values()
+        artist_id = []
+        for artist_count in range(len(track.values('artist_id'))):
+            artist_id.append(track.values('artist_id')
+                             [artist_count]['artist_id'])
+        track = list(track)
+        track[0][kay_id] = filtered_response[track_count]['id']
+        track[0]['album_id'] = track[0].pop('album_id_id')
+        track[0]['genre_id'] = track[0].pop('genre_id_id')
+        track[0]['artist_id'] = artist_id
+        tracks.append(track[0])
+
+    return tracks
 
 # Standard Results Set Pagination
 
@@ -590,7 +609,7 @@ class PopularTracksMobileViewSet(viewsets.ModelViewSet):
 
         if response:
             sorted_response = multikeysort(
-                response, ['-track_viewcount', '-track_rating'])
+                response, ['-track_viewcount', 'track_releaseDate'])
 
             paginated_response = paginateTrackResponse(
                 sorted_response, page, pageSize, userId)
@@ -620,6 +639,7 @@ class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         pageSize = 2
+        paginated_response = []
 
         try:
             page = int(request.query_params['page'])
@@ -637,23 +657,7 @@ class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
         if response:
             filtered_response = [
                 data for data in response if data['user_FUI'] == userId]
-
-            fav_tracks = []
-
-            for track_count in range(len(filtered_response)):
-                track = TracksModel.objects.filter(
-                    id=filtered_response[track_count]['track_id']).values()
-                artist_id = []
-                for artist_count in range(len(track.values('artist_id'))):
-                    artist_id.append(track.values('artist_id')
-                                     [artist_count]['artist_id'])
-                track = list(track)
-                track[0]['fav_id'] = filtered_response[track_count]['id']
-                track[0]['album_id'] = track[0].pop('album_id_id')
-                track[0]['genre_id'] = track[0].pop('genre_id_id')
-                track[0]['artist_id'] = artist_id
-                fav_tracks.append(track[0])
-
+            fav_tracks = fetchTracksDetail(filtered_response, 'fav_id')
             paginated_response = paginateTrackResponse(
                 fav_tracks, page, pageSize, userId)
 
@@ -680,7 +684,7 @@ class PlayListsByUserIdViewSet(viewsets.ModelViewSet):
                 return super().create(request, *args, **kwargs)
 
         noOfPlaylists = self.queryset.filter(user_FUI=user_FUI).count()
-        if noOfPlaylists < 2:
+        if noOfPlaylists < 100:
             return super().create(request, *args, **kwargs)
 
         return Response("Maximum number of playlists allowd to create for unsubscribed(expired subscription) users is 2!", status=status.HTTP_400_BAD_REQUEST)
@@ -709,7 +713,6 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
 
     queryset = PlayListTracksModel.objects.all()
     serializer_class = PlayListsTracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         user_FUI = request.query_params['userId']
@@ -727,7 +730,7 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
 
         noOfTracksInAPlaylist = self.queryset.filter(
             playlist_id=playlistId).count()
-        if noOfTracksInAPlaylist < 2:
+        if noOfTracksInAPlaylist < 100:
             return super().create(request, *args, **kwargs)
 
         return Response("Maximum number of tracks in a playlist allowd to create for unsubscribed(expired subscription) users is 10!", status=status.HTTP_400_BAD_REQUEST)
@@ -745,80 +748,73 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        playlistId = request.query_params['playlistId']
-        playlistTracks = self.queryset.filter(playlist_id=playlistId).order_by(
-            '-created_at').values('id', 'playlist_id', 'track_id')
-        page = []
-        if playlistTracks.exists():
-            page = self.paginate_queryset(playlistTracks)
-            if page is not None:
-                for track_count in range(len(page)):
-                    page[track_count]['playlist_track_id'] = page[track_count]['id']
-                    tracks = TracksModel.objects.filter(id=page[track_count]['track_id']).order_by('-created_at').values('id', 'track_name', 'track_description',
-                                                                                                                         'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI')
-                    if tracks.exists():
-                        for val in ['id', 'track_name', 'track_description', 'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI']:
-                            page[track_count][val] = tracks[0][val]
-                        artists = ArtistsModel.objects.filter(
-                            id=page[track_count]['artist_id'])
-                        artist_name = ""
-                        if artists.exists():
-                            if artists.count() > 1:
-                                for artist_count in range(len(artists)):
-                                    artist_name = artist_name + ", " + \
-                                        artists.values('artist_name')[
-                                            artist_count]['artist_name']
-                            elif page[track_count]['artists_featuring'] != "":
-                                artist_name = artist_name + " ft. " + \
-                                    page[track_count]['artists_featuring']
-                            else:
-                                artist_name = artists.values('artist_name')[
-                                    0]['artist_name']
-                        page[track_count]['artist_name'] = artist_name
-                        page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
-                            track_id=page[track_count]['id'], user_FUI=userId).exists()
-        return Response(page)
+        pageSize = 2
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        try:
+            playlistId = request.query_params['playlistId']
+        except:
+            playlistId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['playlist_id'] == int(playlistId)]
+
+            playList_tracks = fetchTracksDetail(
+                filtered_response, 'playlist_track_id')
+
+            paginated_response = paginateTrackResponse(
+                playList_tracks, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class PurchasedTracksMobileViewset(viewsets.ModelViewSet):
 
     queryset = PurchasedTracksModel.objects.all()
     serializer_class = PurchasedTracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        purchasedTracks = self.queryset.filter(user_FUI=userId).order_by(
-            '-created_at').values('id', 'track_id', 'user_FUI')
-        page = []
-        if purchasedTracks.exists():
-            page = self.paginate_queryset(purchasedTracks)
-            if page is not None:
-                for track_count in range(len(page)):
-                    tracks = TracksModel.objects.filter(id=page[track_count]['track_id']).order_by('-created_at').values('id', 'track_name', 'track_description',
-                                                                                                                         'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI')
-                    if tracks.exists():
-                        for val in ['id', 'track_name', 'track_description', 'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI']:
-                            page[track_count][val] = tracks[0][val]
-                        artists = ArtistsModel.objects.filter(
-                            id=page[track_count]['artist_id'])
-                        artist_name = ""
-                        if artists.exists():
-                            if artists.count() > 1:
-                                for artist_count in range(len(artists)):
-                                    artist_name = artist_name + ", " + \
-                                        artists.values('artist_name')[
-                                            artist_count]['artist_name']
-                            elif page[track_count]['artists_featuring'] != "":
-                                artist_name = artist_name + " ft. " + \
-                                    page[track_count]['artists_featuring']
-                            else:
-                                artist_name = artists.values('artist_name')[
-                                    0]['artist_name']
-                        page[track_count]['artist_name'] = artist_name
-                        page[track_count]['is_purchasedByUser'] = True
-        return Response(page)
+        pageSize = 2
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['user_FUI'] == userId]
+
+            purchased_track = fetchTracksDetail(
+                filtered_response, 'purchasedTrack_id')
+
+            paginated_response = paginateTrackResponse(
+                purchased_track, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 # class AdminCollectionNamesMobileViewSet(viewsets.ModelViewSet):
