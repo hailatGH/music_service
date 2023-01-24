@@ -1,5 +1,3 @@
-from functools import cmp_to_key
-from operator import itemgetter as i
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -10,85 +8,7 @@ from datetime import datetime
 
 from .models import *
 from .serializers import *
-
-
-def paginateTrackResponse(response, page, pageSize, userId):
-    paginated_response = []
-
-    filtered_response = [
-        data for data in response if data['track_status']]
-
-    indexEnd = (page * pageSize)
-    indexStart = indexEnd - pageSize
-
-    for val in filtered_response:
-        index = filtered_response.index(val)
-        if (index >= indexStart and index < indexEnd):
-            paginated_response.append(filtered_response[index])
-
-    for track in paginated_response:
-        artists = ArtistsModel.objects.filter(
-            id__in=track['artist_id']).values('artist_name')
-        artist_name = ""
-
-        for artist in artists:
-            artist_name = artist_name + artist['artist_name'] + " x "
-
-        track['artist_name'] = artist_name[:len(artist_name) - 3]
-        track['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
-            track_id=track['id'], user_FUI=userId).exists()
-
-    return paginated_response
-
-
-def cmp(x, y):
-    return (x > y) - (x < y)
-
-
-def multikeysort(items, columns):
-    comparers = [
-        ((i(col[1:].strip()), -1) if col.startswith('-')
-         else (i(col.strip()), 1))
-        for col in columns
-    ]
-
-    def comparer(left, right):
-        comparer_iter = (
-            cmp(fn(left), fn(right)) * mult
-            for fn, mult in comparers
-        )
-        return next((result for result in comparer_iter if result), 0)
-    return sorted(items, key=cmp_to_key(comparer))
-
-
-def list_contains(List1, val):
-    for item in List1:
-        if item == val:
-            print(item, end='')
-            print(" - ", end='')
-            print(val)
-            return True
-    return False
-
-
-def fetchTracksDetail(filtered_response, kay_id):
-    tracks = []
-
-    for track_count in range(len(filtered_response)):
-        track = TracksModel.objects.filter(
-            id=filtered_response[track_count]['track_id']).values()
-        artist_id = []
-        for artist_count in range(len(track.values('artist_id'))):
-            artist_id.append(track.values('artist_id')
-                             [artist_count]['artist_id'])
-        track = list(track)
-        track[0][kay_id] = filtered_response[track_count]['id']
-        track[0]['album_id'] = track[0].pop('album_id_id')
-        track[0]['genre_id'] = track[0].pop('genre_id_id')
-        track[0]['artist_id'] = artist_id
-        tracks.append(track[0])
-
-    return tracks
+from .functions import *
 
 # Standard Results Set Pagination
 
@@ -205,7 +125,7 @@ class AlbumsByUserId(viewsets.ModelViewSet):
         return Response(page)
 
 
-class TracksByArtistId(viewsets.ModelViewSet):
+class TracksByUserId(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
@@ -226,7 +146,77 @@ class TracksByArtistId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
+        userId = request.query_params['userId']
+        tracks = self.queryset.filter(track_status=True, owner_FUI=userId).order_by(
+            '-track_releaseDate').values('id', 'track_name', 'track_coverImage', 'track_description')
+        page = []
+        if tracks.exists():
+            page = self.paginate_queryset(tracks)
+        return Response(page)
+
+
+class ArtistsMobileViewSet(viewsets.ModelViewSet):
+
+    queryset = ArtistsModel.objects.all()
+    serializer_class = ArtistsSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def list(self, request, *args, **kwargs):
         pageSize = 3
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            paginated_response = paginateArtistResponse(
+                response, page, pageSize)
+
+        return Response(paginated_response)
+
+
+class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
+
+    queryset = AlbumsModel.objects.all()
+    serializer_class = AlbumsSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def list(self, request, *args, **kwargs):
+        pageSize = 3
+        paginated_response = []
 
         try:
             page = int(request.query_params['page'])
@@ -234,131 +224,32 @@ class TracksByArtistId(viewsets.ModelViewSet):
             page = 1
 
         try:
-            userId = request.query_params['userId']
+            userId = int(request.query_params['userId'])
         except:
             userId = 1
+
+        try:
+            artistId = int(request.query_params['artistId'])
+        except:
+            artistId = 1
 
         response = json.loads(json.dumps(
             super().list(request, *args, **kwargs).data))
 
-        artistId = []
-        artistId.append(userId)
-
         if response:
             filtered_response = [
-                data for data in response if list_contains(data['artist_id'], int(userId))]
+                data for data in response if list_contains(data['artist_id'], artistId)]
 
-            paginated_response = paginateTrackResponse(
+            paginated_response = paginateAlbumResponse(
                 filtered_response, page, pageSize, userId)
 
         return Response(paginated_response)
-
-
-class ArtistsMobileViewSet(viewsets.ModelViewSet):
-
-    queryset = ArtistsModel.objects.all()
-    serializer_class = ArtistsSerializer
-    pagination_class = StandardResultsSetPagination
-
-    def create(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def retrieve(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def update(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def partial_update(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def destroy(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def list(self, request, *args, **kwargs):
-        artists = self.queryset.filter(artist_status=True).order_by(
-            '-artist_rating').values('id', 'artist_name', 'artist_profileImage', 'artist_description')
-        page = []
-        if artists.exists():
-            page = self.paginate_queryset(artists)
-            if page is not None:
-                for artist_count in range(len(page)):
-                    albums = AlbumsModel.objects.filter(
-                        album_status=True, artist_id=page[artist_count]['id'])
-                    if albums.exists():
-                        page[artist_count]['noOfAlbums'] = albums.count() - 1
-                        tracks = TracksModel.objects.filter(
-                            track_status=True, artist_id=page[artist_count]['id'])
-                        if tracks.exists():
-                            page[artist_count]['noOfTracks'] = tracks.count()
-                        else:
-                            page[artist_count]['noOfTracks'] = 0
-                    else:
-                        page[artist_count]['noOfAlbums'] = 0
-                        page[artist_count]['noOfTracks'] = 0
-        return Response(page)
-
-
-class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
-
-    queryset = AlbumsModel.objects.all()
-    serializer_class = AlbumsSerializer
-    pagination_class = StandardResultsSetPagination
-
-    def create(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def retrieve(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def update(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def partial_update(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def destroy(self, request, *args, **kwargs):
-        return Response("Not Allowed")
-
-    def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        artistId = request.query_params['artistId']
-        albums = self.queryset.filter(album_status=True, artist_id=artistId).order_by(
-            '-album_rating').values('id', 'album_name', 'album_coverImage', 'album_description', 'album_price', 'artist_id')
-        page = []
-        if albums.exists():
-            page = self.paginate_queryset(albums)
-            if page is not None:
-                for album_count in range(len(page)):
-                    artists = ArtistsModel.objects.filter(
-                        id=page[album_count]['artist_id'])
-                    artist_name = ""
-                    if artists.exists():
-                        if artists.count() > 1:
-                            for artist_count in range(len(artists)):
-                                artist_name = artist_name + ", " + \
-                                    artists.values('artist_name')[
-                                        artist_count]['artist_name']
-                        else:
-                            artist_name = artists.values('artist_name')[
-                                0]['artist_name']
-                    page[album_count]['artist_name'] = artist_name
-                    page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(
-                        album_id=page[album_count]['id'], user_FUI=userId).exists()
-                    tracks = TracksModel.objects.filter(
-                        track_status=True, album_id=page[album_count]['id'])
-                    if tracks.exists():
-                        page[album_count]['noOfTracks'] = tracks.count()
-                    else:
-                        page[album_count]['noOfTracks'] = 0
-        return Response(page)
 
 
 class AlbumsMobileViewSet(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
     serializer_class = AlbumsSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -376,36 +267,27 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        albums = self.queryset.filter(album_status=True).order_by('-album_rating').exclude(album_name__contains="_Singles").values(
-            'id', 'album_name', 'album_coverImage', 'album_description', 'album_price', 'artist_id')
-        page = []
-        if albums.exists():
-            page = self.paginate_queryset(albums)
-            if page is not None:
-                for album_count in range(len(page)):
-                    artists = ArtistsModel.objects.filter(
-                        id=page[album_count]['artist_id'])
-                    artist_name = ""
-                    if artists.exists():
-                        if artists.count() > 1:
-                            for artist_count in range(len(artists)):
-                                artist_name = artist_name + ", " + \
-                                    artists.values('artist_name')[
-                                        artist_count]['artist_name']
-                        else:
-                            artist_name = artists.values('artist_name')[
-                                0]['artist_name']
-                    page[album_count]['artist_name'] = artist_name
-                    page[album_count]['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(
-                        album_id=page[album_count]['id'], user_FUI=userId).exists()
-                    tracks = TracksModel.objects.filter(
-                        track_status=True, album_id=page[album_count]['id'])
-                    if tracks.exists():
-                        page[album_count]['noOfTracks'] = tracks.count()
-                    else:
-                        page[album_count]['noOfTracks'] = 0
-        return Response(page)
+        pageSize = 3
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = int(request.query_params['userId'])
+        except:
+            userId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            paginated_response = paginateAlbumResponse(
+                response, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class TracksByAlbumIdViewSet(viewsets.ModelViewSet):
@@ -463,7 +345,6 @@ class GenresMobileViewSet(viewsets.ModelViewSet):
 
     queryset = GenresModel.objects.all()
     serializer_class = GenresSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -487,6 +368,24 @@ class GenresMobileViewSet(viewsets.ModelViewSet):
         if genres.exists():
             page = self.paginate_queryset(genres)
         return Response(page)
+
+    def list(self, request, *args, **kwargs):
+        pageSize = 3
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            paginated_response = paginateGenreResponse(
+                response, page, pageSize)
+
+        return Response(paginated_response)
 
 
 class TracksByGenreIdViewSet(viewsets.ModelViewSet):
@@ -562,6 +461,7 @@ class TracksMobileViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         pageSize = 3
+        paginated_response = []
 
         try:
             page = int(request.query_params['page'])
