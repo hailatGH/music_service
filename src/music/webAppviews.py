@@ -120,6 +120,13 @@ class TracksWebViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
 
+class TracksDetailWebViewSet(viewsets.ModelViewSet):
+
+    queryset = TrackDetailModel.objects.all()
+    serializer_class = TracksDetailSerializer
+    pagination_class = StandardResultsSetPagination
+
+
 class PlayListsWebViewSet(viewsets.ModelViewSet):
 
     queryset = PlayListsModel.objects.all()

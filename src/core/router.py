@@ -19,6 +19,8 @@ webApprouter.register(
     r'purchasedtrack', PurchasedTracksWebViewSet, basename="purchasedtrack")
 webApprouter.register(
     r'purchasedalbum', PurchasedAlbumsWebViewSet, basename="purchasedalbum")
+webApprouter.register(r'trackDetail',
+                      TracksDetailWebViewSet, basename="trackDetail")
 # webApprouter.register(r'adminCollectionName', AdminCollectionNamesWebViewSet, basename="adminCollectionName")
 # webApprouter.register(r'adminCollectionTrack', AdminCollectionTracksWebViewSet, basename="adminCollectionTrack")
 

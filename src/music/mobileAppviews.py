@@ -122,7 +122,11 @@ class ArtistIdByUserId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
         artist_obj = self.queryset.filter(
             artist_status=True, artist_FUI=userId)
         artist = []
@@ -153,9 +157,13 @@ class ArtistsByUserId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        artists = self.queryset.filter(artist_status=True, encoder_FUI=userId).order_by(
-            '-artist_rating').values('id', 'artist_name', 'artist_profileImage', 'artist_description')
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        artists = self.queryset.filter(artist_status=True, owner_FUI=userId).values(
+            'id', 'artist_name', 'artist_profileImage', 'artist_description')
         page = []
         if artists.exists():
             page = self.paginate_queryset(artists)
@@ -184,9 +192,13 @@ class AlbumsByUserId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        albums = self.queryset.filter(album_status=True, encoder_FUI=userId).exclude(album_name__contains="_Singles").order_by(
-            '-album_rating').values('id', 'album_name', 'album_coverImage', 'album_description')
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        albums = self.queryset.filter(album_status=True, owner_FUI=userId).values(
+            'id', 'album_name', 'album_coverImage', 'album_description')
         page = []
         if albums.exists():
             page = self.paginate_queryset(albums)

@@ -78,6 +78,13 @@ class TracksSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TracksDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TrackDetailModel
+        fields = '__all__'
+
+
 class PlayListsSerializer(serializers.ModelSerializer):
 
     class Meta:
