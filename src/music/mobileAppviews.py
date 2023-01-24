@@ -1,3 +1,6 @@
+from functools import cmp_to_key
+from operator import itemgetter as i
+
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -10,7 +13,66 @@ from .models import *
 from .serializers import *
 
 
+def paginateTrackResponse(response, page, pageSize, userId):
+    paginated_response = []
+    filtered_response = [
+        data for data in response if data['track_status']]
+
+    indexEnd = (page * pageSize)
+    indexStart = indexEnd - pageSize
+
+    for val in filtered_response:
+        index = filtered_response.index(val)
+        if (index >= indexStart and index < indexEnd):
+            paginated_response.append(filtered_response[index])
+
+    for track in paginated_response:
+        artists = ArtistsModel.objects.filter(
+            id__in=track['artist_id']).values('artist_name')
+        artist_name = ""
+
+        for artist in artists:
+            artist_name = artist_name + artist['artist_name'] + " x "
+
+        track['artist_name'] = artist_name[:len(artist_name) - 3]
+        track['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
+            track_id=track['id'], user_FUI=userId).exists()
+
+    return paginated_response
+
+
+def cmp(x, y):
+    return (x > y) - (x < y)
+
+
+def multikeysort(items, columns):
+    comparers = [
+        ((i(col[1:].strip()), -1) if col.startswith('-')
+         else (i(col.strip()), 1))
+        for col in columns
+    ]
+
+    def comparer(left, right):
+        comparer_iter = (
+            cmp(fn(left), fn(right)) * mult
+            for fn, mult in comparers
+        )
+        return next((result for result in comparer_iter if result), 0)
+    return sorted(items, key=cmp_to_key(comparer))
+
+
+def list_contains(List1, val):
+    for item in List1:
+        if item == val:
+            print(item, end='')
+            print(" - ", end='')
+            print(val)
+            return True
+    return False
+
+
 # Standard Results Set Pagination
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 15
@@ -112,11 +174,10 @@ class AlbumsByUserId(viewsets.ModelViewSet):
         return Response(page)
 
 
-class TracksByUserId(viewsets.ModelViewSet):
+class TracksByArtistId(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -134,14 +195,32 @@ class TracksByUserId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        tracks = self.queryset.filter(track_status=True, artist_id=userId).order_by(
-            '-track_releaseDate').values('id', 'track_name', 'track_coverImage', 'track_description')
-        page = []
-        if tracks.exists():
-            tracks = tracks.order_by('-track_rating')
-            page = self.paginate_queryset(tracks)
-        return Response(page)
+        pageSize = 3
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        artistId = []
+        artistId.append(userId)
+
+        if response:
+            filtered_response = [
+                data for data in response if list_contains(data['artist_id'], int(userId))]
+
+            paginated_response = paginateTrackResponse(
+                filtered_response, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class ArtistsMobileViewSet(viewsets.ModelViewSet):
@@ -302,7 +381,6 @@ class TracksByAlbumIdViewSet(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -320,34 +398,34 @@ class TracksByAlbumIdViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        albumId = request.query_params['albumId']
-        tracks = self.queryset.filter(track_status=True, album_id=albumId).order_by('-track_rating').values('id', 'track_name', 'track_description',
-                                                                                                            'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI')
-        page = []
-        if tracks.exists():
-            page = self.paginate_queryset(tracks)
-            if page is not None:
-                for track_count in range(len(page)):
-                    artists = ArtistsModel.objects.filter(
-                        id=page[track_count]['artist_id'])
-                    artist_name = ""
-                    if artists.exists():
-                        if artists.count() > 1:
-                            for artist_count in range(len(artists)):
-                                artist_name = artist_name + ", " + \
-                                    artists.values('artist_name')[
-                                        artist_count]['artist_name']
-                        elif page[track_count]['artists_featuring'] != "":
-                            artist_name = artist_name + " ft. " + \
-                                page[track_count]['artists_featuring']
-                        else:
-                            artist_name = artists.values('artist_name')[
-                                0]['artist_name']
-                    page[track_count]['artist_name'] = artist_name
-                    page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
-                        track_id=page[track_count]['id'], user_FUI=userId).exists()
-        return Response(page)
+        pageSize = 3
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        try:
+            albumId = request.query_params['albumId']
+        except:
+            albumId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['album_id'] == albumId]
+
+            paginated_response = paginateTrackResponse(
+                filtered_response, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class GenresMobileViewSet(viewsets.ModelViewSet):
@@ -384,7 +462,6 @@ class TracksByGenreIdViewSet(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -402,41 +479,40 @@ class TracksByGenreIdViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        genreId = request.query_params['genreId']
-        tracks = self.queryset.filter(track_status=True, genre_id=genreId).order_by('-track_rating').values('id', 'track_name', 'track_description',
-                                                                                                            'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI')
-        page = []
-        if tracks.exists():
-            page = self.paginate_queryset(tracks)
-            if page is not None:
-                for track_count in range(len(page)):
-                    artists = ArtistsModel.objects.filter(
-                        id=page[track_count]['artist_id'])
-                    artist_name = ""
-                    if artists.exists():
-                        if artists.count() > 1:
-                            for artist_count in range(len(artists)):
-                                artist_name = artist_name + ", " + \
-                                    artists.values('artist_name')[
-                                        artist_count]['artist_name']
-                        elif page[track_count]['artists_featuring'] != "":
-                            artist_name = artist_name + " ft. " + \
-                                page[track_count]['artists_featuring']
-                        else:
-                            artist_name = artists.values('artist_name')[
-                                0]['artist_name']
-                    page[track_count]['artist_name'] = artist_name
-                    page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
-                        track_id=page[track_count]['id'], user_FUI=userId).exists()
-        return Response(page)
+        pageSize = 3
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        try:
+            genreId = int(request.query_params['genreId'])
+        except:
+            genreId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['genre_id'] == genreId]
+
+            paginated_response = paginateTrackResponse(
+                filtered_response, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class TracksMobileViewSet(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -454,56 +530,32 @@ class TracksMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        result = json.loads(json.dumps(
+        pageSize = 3
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        response = json.loads(json.dumps(
             super().list(request, *args, **kwargs).data))
-        # del result['results'][0]['artist_id']
-        # result['results'][0]['test'] = "Test"
-        return Response(result)
 
-    # def list(self, request, *args, **kwargs):
-    #     userId = request.query_params['userId']
-    #     tracks = self.queryset.filter(track_status=True).order_by('-track_rating').values('id', 'track_name', 'track_description', 'track_coverImage',
-    #                                                                                       'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id')
-    #     page = []
-    #     if tracks.exists():
-    #         page = self.paginate_queryset(tracks)
-    #         if page is not None:
-    #             unique_list = []
-    #             for track in page:
-    #                 if track not in unique_list:
-    #                     unique_list.append(track)
-    #             page = unique_list
+        if response:
+            paginated_response = paginateTrackResponse(
+                response, page, pageSize, userId)
 
-    #             for track_count in range(len(page)):
-    #                 artists = ArtistsModel.objects.filter(
-    #                     id=page[track_count]['artist_id'])
-    #                 print(len(artists))
-        # artist_name = ""
-        # if artists.exists():
-        #     if artists.count() > 1:
-        #         for artist_count in range(len(artists)):
-        #             artist_name = artist_name + ", " + \
-        #                 artists.values('artist_name')[
-        #                     artist_count]['artist_name']
-        #     elif page[track_count]['artists_featuring'] != "":
-        #         artist_name = artist_name + " ft. " + \
-        #             page[track_count]['artists_featuring']
-        #     else:
-        #         artist_name = artists.values('artist_name')[
-        #             0]['artist_name']
-
-        # page[track_count]['artist_name'] = artists.values('artist_name')[0]['artist_name']
-        # page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
-        # track_id=page[track_count]['id'], user_FUI=userId).exists()
-
-        # return Response(page)
+        return Response(paginated_response)
 
 
 class PopularTracksMobileViewSet(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -521,40 +573,35 @@ class PopularTracksMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        tracks = self.queryset.filter(track_status=True).order_by('-track_viewcount', '-track_rating').values('id', 'track_name', 'track_description',
-                                                                                                              'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI')
-        page = []
-        if tracks.exists():
-            page = self.paginate_queryset(tracks)
-            if page is not None:
-                for track_count in range(len(page)):
-                    artists = ArtistsModel.objects.filter(
-                        id=page[track_count]['artist_id'])
-                    artist_name = ""
-                    if artists.exists():
-                        if artists.count() > 1:
-                            for artist_count in range(len(artists)):
-                                artist_name = artist_name + ", " + \
-                                    artists.values('artist_name')[
-                                        artist_count]['artist_name']
-                        elif page[track_count]['artists_featuring'] != "":
-                            artist_name = artist_name + " ft. " + \
-                                page[track_count]['artists_featuring']
-                        else:
-                            artist_name = artists.values('artist_name')[
-                                0]['artist_name']
-                    page[track_count]['artist_name'] = artist_name
-                    page[track_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
-                        track_id=page[track_count]['id'], user_FUI=userId).exists()
-        return Response(page)
+        pageSize = 3
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            sorted_response = multikeysort(
+                response, ['-track_viewcount', '-track_rating'])
+
+            paginated_response = paginateTrackResponse(
+                sorted_response, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
 
     queryset = FavouritesModel.objects.all()
     serializer_class = FavouritesSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
@@ -572,39 +619,45 @@ class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        userId = request.query_params['userId']
-        favouries = self.queryset.filter(user_FUI=userId).order_by(
-            '-created_at').values('id', 'track_id')
-        page = []
-        if favouries.exists():
-            page = self.paginate_queryset(favouries)
-            if page is not None:
-                for fav_count in range(len(page)):
-                    page[fav_count]['fav_id'] = page[fav_count]['id']
-                    track = TracksModel.objects.filter(track_status=True, id=page[fav_count]['track_id']).order_by('-created_at').values(
-                        'id', 'track_name', 'track_description', 'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI')
-                    if track.exists():
-                        for val in ['id', 'track_name', 'track_description', 'track_coverImage', 'track_audioFile', 'track_lyrics', 'track_price', 'artists_featuring', 'artist_id', 'album_id', 'genre_id', 'encoder_FUI']:
-                            page[fav_count][val] = track[0][val]
-                        artists = ArtistsModel.objects.filter(
-                            id=track[0]['artist_id'])
-                        artist_name = ""
-                        if artists.exists():
-                            if artists.count() > 1:
-                                for artist_count in range(len(artists)):
-                                    artist_name = artist_name + ", " + \
-                                        artists.values('artist_name')[
-                                            artist_count]['artist_name']
-                            elif track[0]['artists_featuring'] != "":
-                                artist_name = artist_name + " ft. " + \
-                                    track[0]['artists_featuring']
-                            else:
-                                artist_name = artists.values('artist_name')[
-                                    0]['artist_name']
-                        page[fav_count]['artist_name'] = artist_name
-                        page[fav_count]['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
-                            track_id=page[fav_count]['id'], user_FUI=userId).exists()
-        return Response(page)
+        pageSize = 2
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['user_FUI'] == userId]
+
+            fav_tracks = []
+
+            for track_count in range(len(filtered_response)):
+                track = TracksModel.objects.filter(
+                    id=filtered_response[track_count]['track_id']).values()
+                artist_id = []
+                for artist_count in range(len(track.values('artist_id'))):
+                    artist_id.append(track.values('artist_id')
+                                     [artist_count]['artist_id'])
+                track = list(track)
+                track[0]['fav_id'] = filtered_response[track_count]['id']
+                track[0]['album_id'] = track[0].pop('album_id_id')
+                track[0]['genre_id'] = track[0].pop('genre_id_id')
+                track[0]['artist_id'] = artist_id
+                fav_tracks.append(track[0])
+
+            paginated_response = paginateTrackResponse(
+                fav_tracks, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class PlayListsByUserIdViewSet(viewsets.ModelViewSet):

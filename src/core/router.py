@@ -48,7 +48,7 @@ mobileApprouter.register(
 mobileApprouter.register(
     r'albumsByUserId', AlbumsByUserId, basename="albumsByUserId")
 mobileApprouter.register(
-    r'tracksByUserId', TracksByUserId, basename="tracksByUserId")
+    r'tracksByArtistId', TracksByArtistId, basename="tracksByArtistId")
 mobileApprouter.register(r'purchasedTracksByUserId',
                          PurchasedTracksMobileViewset, basename="purchasedTracksByUserId")
 # mobileApprouter.register(r'adminCollectionNames', AdminCollectionNamesMobileViewSet, basename="adminCollectionNames")

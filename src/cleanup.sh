@@ -1,1 +1,1 @@
-rm -rf ./core/__pycache__ ./core/migrations ./music/__pycache__ ./music/migrations db.sqlite3
+rm -rf ./media ./core/__pycache__ ./core/migrations ./music/__pycache__ ./music/migrations db.sqlite3
