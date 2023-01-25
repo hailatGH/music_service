@@ -55,7 +55,7 @@ class ArtistIdByFUId(viewsets.ModelViewSet):
         return Response(artist)
 
 
-class ArtistsByOwnerId(viewsets.ModelViewSet):
+class ArtistsByEncoderId(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
@@ -90,7 +90,7 @@ class ArtistsByOwnerId(viewsets.ModelViewSet):
         return Response(page)
 
 
-class AlbumsByOwnerId(viewsets.ModelViewSet):
+class AlbumsByEncoderId(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
     serializer_class = AlbumsSerializer
@@ -125,7 +125,7 @@ class AlbumsByOwnerId(viewsets.ModelViewSet):
         return Response(page)
 
 
-class TracksByOwnerId(viewsets.ModelViewSet):
+class TracksByEncoderId(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
@@ -176,7 +176,7 @@ class ArtistsMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -215,7 +215,7 @@ class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -267,7 +267,7 @@ class TrackByArtistIdViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -319,7 +319,7 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -363,7 +363,8 @@ class TrackByAlbumIdViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
+        paginated_response = []
 
         try:
             page = int(request.query_params['page'])
@@ -414,15 +415,7 @@ class GenresMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        genres = self.queryset.filter(genre_status=True).order_by(
-            '-genre_rating').values('id', 'genre_name', 'genre_description', 'genre_coverImage')
-        page = []
-        if genres.exists():
-            page = self.paginate_queryset(genres)
-        return Response(page)
-
-    def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -461,7 +454,8 @@ class TrackByGenreIdViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
+        paginated_response = []
 
         try:
             page = int(request.query_params['page'])
@@ -512,7 +506,7 @@ class TracksMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -556,7 +550,8 @@ class PopularTracksMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 3
+        pageSize = 15
+        paginated_response = []
 
         try:
             page = int(request.query_params['page'])
