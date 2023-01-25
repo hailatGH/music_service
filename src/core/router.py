@@ -43,15 +43,17 @@ mobileApprouter.register(
     r'playlists', PlayListsByUserIdViewSet, basename="playlists")
 mobileApprouter.register(
     r'tracksByPlaylistId', PlayListTracksByPlaylistIdViewSet, basename="tracksByPlaylistId")
-mobileApprouter.register(
-    r'artistIdByUserId', ArtistIdByUserId, basename="artistIdByUserId")
-mobileApprouter.register(
-    r'artistsByUserId', ArtistsByUserId, basename="artistsByUserId")
-mobileApprouter.register(
-    r'albumsByUserId', AlbumsByUserId, basename="albumsByUserId")
-mobileApprouter.register(
-    r'tracksByUserId', TracksByUserId, basename="tracksByUserId")
 mobileApprouter.register(r'purchasedTracksByUserId',
                          PurchasedTracksMobileViewset, basename="purchasedTracksByUserId")
+
+mobileApprouter.register(
+    r'artistIdByUserId', ArtistIdByFUId, basename="artistIdByUserId")
+mobileApprouter.register(
+    r'artistsByUserId', ArtistsByOwnerId, basename="artistsByUserId")
+mobileApprouter.register(
+    r'albumsByUserId', AlbumsByOwnerId, basename="albumsByUserId")
+mobileApprouter.register(
+    r'tracksByUserId', TracksByOwnerId, basename="tracksByUserId")
+
 # mobileApprouter.register(r'adminCollectionNames', AdminCollectionNamesMobileViewSet, basename="adminCollectionNames")
 # mobileApprouter.register(r'adminCollectionTracks', AdminCollectionTracksMobileViewSet, basename="adminCollectionTracks")
