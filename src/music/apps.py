@@ -7,7 +7,7 @@ class MusicConfig(AppConfig):
 
     # def ready(self):
     # Implicitly connect signal handlers decorated with @receiver.
-    # from . import signals
+    from . import signals
     # Explicitly connect a signal handler.
     # post_save.connect(signals.update_document)
     # post_delete.connect(signals.delete_document)
