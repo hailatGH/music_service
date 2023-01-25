@@ -21,6 +21,10 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
     serializer_class = ArtistsSerializer
     pagination_class = StandardResultsSetPagination
 
+    def create(self, request, *args, **kwargs):
+        print(request.data['artist_FUI'])
+        return Response("working fine")
+
 
 class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
 

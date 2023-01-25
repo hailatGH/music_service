@@ -100,12 +100,20 @@ def paginateTrackResponse(response, page, pageSize, userId):
             paginated_response.append(filtered_response[index])
 
     for track in paginated_response:
-        artists = ArtistsModel.objects.filter(
-            id__in=track['artist_id']).values('artist_name')
         artist_name = ""
 
-        for artist in artists:
-            artist_name = artist_name + artist['artist_name'] + " x "
+        for id in track['artist_id']:
+            privilege = TrackDetailModel.objects.filter(
+                track_id=track['id'], artist_id=id).values('privilege')
+
+            name = ArtistsModel.objects.filter(
+                id=id).values('artist_name')[0]['artist_name']
+
+            if privilege.exists():
+                if privilege[0]['privilege'] == "Singer":
+                    artist_name = artist_name + name + " x "
+                else:
+                    track[privilege[0]['privilege']] = name
 
         track['artist_name'] = artist_name[:len(artist_name) - 3]
         track['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(

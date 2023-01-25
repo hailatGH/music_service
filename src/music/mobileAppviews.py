@@ -246,6 +246,58 @@ class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
         return Response(paginated_response)
 
 
+class TrackByArtistIdViewSet(viewsets.ModelViewSet):
+
+    queryset = TracksModel.objects.all()
+    serializer_class = TracksSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def list(self, request, *args, **kwargs):
+        pageSize = 3
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = int(request.query_params['userId'])
+        except:
+            userId = 1
+
+        try:
+            artistId = int(request.query_params['artistId'])
+        except:
+            artistId = 1
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if list_contains(data['artist_id'], artistId)]
+
+            paginated_response = paginateTrackResponse(
+                filtered_response, page, pageSize, userId)
+
+        return Response(paginated_response)
+
+
 class AlbumsMobileViewSet(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
@@ -290,7 +342,7 @@ class AlbumsMobileViewSet(viewsets.ModelViewSet):
         return Response(paginated_response)
 
 
-class TracksByAlbumIdViewSet(viewsets.ModelViewSet):
+class TrackByAlbumIdViewSet(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
@@ -388,7 +440,7 @@ class GenresMobileViewSet(viewsets.ModelViewSet):
         return Response(paginated_response)
 
 
-class TracksByGenreIdViewSet(viewsets.ModelViewSet):
+class TrackByGenreIdViewSet(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer

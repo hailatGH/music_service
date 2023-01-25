@@ -28,12 +28,14 @@ mobileApprouter = DefaultRouter(trailing_slash=False)
 mobileApprouter.register(r'artists', ArtistsMobileViewSet, basename="artists")
 mobileApprouter.register(
     r'albumByArtistId', AlbumByArtistIdViewSet, basename="albumByArtistId")
+mobileApprouter.register(
+    r'trackByArtistId', TrackByArtistIdViewSet, basename="trackByArtistId")
 mobileApprouter.register(r'albums', AlbumsMobileViewSet, basename="albums")
 mobileApprouter.register(
-    r'tracksByAlbumId', TracksByAlbumIdViewSet, basename="tracksByAlbumId")
+    r'trackByAlbumId', TrackByAlbumIdViewSet, basename="trackByAlbumId")
 mobileApprouter.register(r'genres', GenresMobileViewSet, basename="genres")
 mobileApprouter.register(
-    r'tracksByGenreId', TracksByGenreIdViewSet, basename="tracksByGenreId")
+    r'trackByGenreId', TrackByGenreIdViewSet, basename="trackByGenreId")
 mobileApprouter.register(r'tracks', TracksMobileViewSet, basename="tracks")
 mobileApprouter.register(
     r'popularTracks', PopularTracksMobileViewSet, basename="popularTracks")
