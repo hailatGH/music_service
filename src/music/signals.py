@@ -12,16 +12,13 @@ __all__ = (
 @receiver(post_save)
 def update_document(sender, **kwargs):
     """Update document on added/changed records.
-    Update Book document index if related `books.Publisher` (`publisher`),
-    `books.Author` (`authors`), `books.Tag` (`tags`) fields have been updated
-    in the database.
     """
     app_label = sender._meta.app_label
     model_name = sender._meta.model_name
     instance = kwargs['instance']
 
     if app_label == 'music':
-        # If it is `books.Publisher` that is being updated.
+        # If it is `music` that is being updated.
         if model_name == 'ArtistsModel':
             artistinstances = instance.ArtistsModel.all()
             trackinstances = instance.TracksModel.all()
@@ -67,16 +64,13 @@ def update_document(sender, **kwargs):
 @receiver(post_delete)
 def delete_document(sender, **kwargs):
     """Update document on deleted records.
-    Updates Book document from index if related `books.Publisher`
-    (`publisher`), `books.Author` (`authors`), `books.Tag` (`tags`) fields
-    have been removed from database.
     """
     app_label = sender._meta.app_label
     model_name = sender._meta.model_name
     instance = kwargs['instance']
 
     if app_label == 'music':
-        # If it is `books.Publisher` that is being updated.
+        # If it is `music` that is being updated.
         if model_name == 'ArtistsModel':
             artistinstances = instance.ArtistsModel.all()
             trackinstances = instance.TracksModel.all()
@@ -119,7 +113,6 @@ def delete_document(sender, **kwargs):
                 registry.update(_instance)
 
     # if app_label == 'music':
-    #     # If it is `books.Publisher` that is being updated.
     #     if model_name == 'ArtistsModel':
     #         instances = instance.ArtistsModel.all()
     #         for _instance in instances:

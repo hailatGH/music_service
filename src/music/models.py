@@ -49,21 +49,21 @@ class ArtistsModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def get_artisttracks_for_es(self):
-    #     tracks = self.trackasartist.all()
-    #     artist_tracks_list = []
-    #     for x in tracks:
-    #         artist_tracks_list.append({'id': x.id, 'track_name': x.track_name, 'track_description': x.track_description, 'track_status': x.track_status,
-    #                                   'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
-    #     return artist_tracks_list
+    def get_artisttracks_for_es(self):
+        tracks = self.trackasartist.all()
+        artist_tracks_list = []
+        for x in tracks:
+            artist_tracks_list.append({'id': x.id, 'track_name': x.track_name, 'track_description': x.track_description, 'track_status': x.track_status,
+                                      'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
+        return artist_tracks_list
 
-    # def get_artistalbums_for_es(self):
-    #     albums = self.albumasartist.all()
-    #     artist_albums_list = []
-    #     for x in albums:
-    #         artist_albums_list.append({'id': x.id, 'album_name': x.album_name, 'album_description': x.album_description, 'album_status': x.album_status,
-    #                                   'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
-    #     return artist_albums_list
+    def get_artistalbums_for_es(self):
+        albums = self.albumasartist.all()
+        artist_albums_list = []
+        for x in albums:
+            artist_albums_list.append({'id': x.id, 'album_name': x.album_name, 'album_description': x.album_description, 'album_status': x.album_status,
+                                      'encoder_FUI': x.encoder_FUI, 'created_at': x.created_at.date(), 'updated_at': x.updated_at.date(), })
+        return artist_albums_list
 
     def save(self, *args, **kwargs):
         image = Image.open(self.artist_profileImage)
