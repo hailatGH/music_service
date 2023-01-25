@@ -20,7 +20,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 # Class based model viewsets for the Mobile App
 
 
-class ArtistIdByUserId(viewsets.ModelViewSet):
+class ArtistIdByFUId(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
@@ -55,7 +55,7 @@ class ArtistIdByUserId(viewsets.ModelViewSet):
         return Response(artist)
 
 
-class ArtistsByUserId(viewsets.ModelViewSet):
+class ArtistsByOwnerId(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
@@ -90,7 +90,7 @@ class ArtistsByUserId(viewsets.ModelViewSet):
         return Response(page)
 
 
-class AlbumsByUserId(viewsets.ModelViewSet):
+class AlbumsByOwnerId(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
     serializer_class = AlbumsSerializer
@@ -125,7 +125,7 @@ class AlbumsByUserId(viewsets.ModelViewSet):
         return Response(page)
 
 
-class TracksByUserId(viewsets.ModelViewSet):
+class TracksByOwnerId(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer

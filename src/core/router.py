@@ -47,13 +47,13 @@ mobileApprouter.register(r'purchasedTracksByUserId',
                          PurchasedTracksMobileViewset, basename="purchasedTracksByUserId")
 
 mobileApprouter.register(
-    r'artistIdByUserId', ArtistIdByFUId, basename="artistIdByUserId")
+    r'artistIdByFUId', ArtistIdByFUId, basename="artistIdByFUId")
 mobileApprouter.register(
-    r'artistsByUserId', ArtistsByOwnerId, basename="artistsByUserId")
+    r'artistsByOwnerId', ArtistsByOwnerId, basename="artistsByOwnerId")
 mobileApprouter.register(
-    r'albumsByUserId', AlbumsByOwnerId, basename="albumsByUserId")
+    r'albumsByOwnerId', AlbumsByOwnerId, basename="albumsByOwnerId")
 mobileApprouter.register(
-    r'tracksByUserId', TracksByOwnerId, basename="tracksByUserId")
+    r'tracksByOwnerId', TracksByOwnerId, basename="tracksByOwnerId")
 
 # mobileApprouter.register(r'adminCollectionNames', AdminCollectionNamesMobileViewSet, basename="adminCollectionNames")
 # mobileApprouter.register(r'adminCollectionTracks', AdminCollectionTracksMobileViewSet, basename="adminCollectionTracks")
