@@ -82,7 +82,7 @@ class ArtistsByOwnerId(viewsets.ModelViewSet):
         except:
             userId = 1
 
-        artists = self.queryset.filter(artist_status=True, owner_FUI=userId).values(
+        artists = self.queryset.filter(artist_status=True, encoder_FUI=userId).values(
             'id', 'artist_name', 'artist_profileImage', 'artist_description')
         page = []
         if artists.exists():
@@ -117,7 +117,7 @@ class AlbumsByOwnerId(viewsets.ModelViewSet):
         except:
             userId = 1
 
-        albums = self.queryset.filter(album_status=True, owner_FUI=userId).values(
+        albums = self.queryset.filter(album_status=True, encoder_FUI=userId).values(
             'id', 'album_name', 'album_coverImage', 'album_description')
         page = []
         if albums.exists():
@@ -147,7 +147,7 @@ class TracksByOwnerId(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         userId = request.query_params['userId']
-        tracks = self.queryset.filter(track_status=True, owner_FUI=userId).order_by(
+        tracks = self.queryset.filter(track_status=True, encoder_FUI=userId).order_by(
             '-track_releaseDate').values('id', 'track_name', 'track_coverImage', 'track_description')
         page = []
         if tracks.exists():

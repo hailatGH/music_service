@@ -45,7 +45,7 @@ class ArtistsModel(models.Model):
                                             validators.validate_image_extension])
     artist_FUI = models.CharField(
         null=False, blank=True, unique=True, max_length=1023)
-    owner_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -96,7 +96,7 @@ class AlbumsModel(models.Model):
     album_price = models.IntegerField(null=False, blank=True, default=40)
     artist_id = models.ManyToManyField(
         ArtistsModel, related_name="albumasartist", related_query_name="albumasartistquery")
-    owner_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -127,7 +127,7 @@ class GenresModel(models.Model):
     genre_viewcount = models.IntegerField(null=False, blank=True, default=0)
     genre_coverImage = models.ImageField(null=False, blank=True, upload_to=Genres_Cover_Images, validators=[
                                          validators.validate_image_extension])
-    owner_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -170,7 +170,7 @@ class TracksModel(models.Model):
                                  related_query_name="trackasalbumquery", null=True, blank=True, on_delete=models.DO_NOTHING)
     genre_id = models.ForeignKey(GenresModel, related_name="genre_tracks",
                                  related_query_name="genre_tracks", null=False, blank=True, on_delete=models.DO_NOTHING)
-    owner_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -283,7 +283,7 @@ class PurchasedAlbumsModel(models.Model):
 
 #     collection_name = models.CharField(
 #         null=False, blank=True, max_length=256, unique=True)
-    # owner_FUI = models.CharField(null=False, blank=True, max_length=1023)
+    # encoder_FUI = models.CharField(null=False, blank=True, max_length=1023)
 #     created_at = models.DateTimeField(auto_now_add=True)
 #     updated_at = models.DateTimeField(auto_now=True)
 

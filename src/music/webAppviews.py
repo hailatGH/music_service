@@ -2,6 +2,11 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+from django.core.mail import send_mail
+
 from .models import *
 from .serializers import *
 
@@ -22,8 +27,119 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
-        print(request.data['artist_FUI'])
-        return Response("working fine")
+        try:
+
+            url = "http://127.0.0.1:8000/users"
+            data = {
+                "user_id": request.data['artist_FUI'],
+                "privilege": 2,
+                "created_by": request.data['encoder_FUI']
+            }
+            headers = {'Content-type': 'application/json',
+                       'Accept': 'application/json'}
+
+            retry_strategy = Retry(
+                total=5,
+                backoff_factor=0.5,
+                status_forcelist=[429, 500, 502, 503, 504],
+                allowed_methods=["HEAD", "GET", "OPTIONS"],
+
+            )
+            adapter = HTTPAdapter(max_retries=retry_strategy)
+            http = requests.Session()
+            http.mount("https://", adapter)
+            http.mount("http://", adapter)
+
+            response = http.post(
+                url, json=data, headers=headers)
+
+            return super().create(request, *args, **kwargs)
+
+        except BaseException as e:
+            Subject = "Data Consistancy Problem"
+            Email_Body = f"Error: {e}\n\nIssue: {request.data['artist_name']} with FUI {request.data['artist_FUI']} could not be created!"
+            Sender = 'kinideas.tech@gmail.com'
+            Receiver = 'hailat.alx@gmail.com'
+            send_mail(Subject, Email_Body, Sender, [
+                      Receiver], fail_silently=False,)
+
+        return
+
+    def update(self, request, *args, **kwargs):
+        try:
+
+            url = "http://127.0.0.1:8000/users"
+            data = {
+                "user_id": request.data['artist_FUI'],
+                "privilege": 2,
+                "created_by": request.data['encoder_FUI']
+            }
+            headers = {'Content-type': 'application/json',
+                       'Accept': 'application/json'}
+
+            retry_strategy = Retry(
+                total=5,
+                backoff_factor=0.5,
+                status_forcelist=[429, 500, 502, 503, 504],
+                allowed_methods=["HEAD", "GET", "OPTIONS"],
+
+            )
+            adapter = HTTPAdapter(max_retries=retry_strategy)
+            http = requests.Session()
+            http.mount("https://", adapter)
+            http.mount("http://", adapter)
+
+            response = http.post(
+                url, json=data, headers=headers)
+
+            return super().update(request, *args, **kwargs)
+
+        except BaseException as e:
+            Subject = "Data Consistancy Problem"
+            Email_Body = f"Error: {e}\n\nIssue: {request.data['artist_name']} with FUI {request.data['artist_FUI']} could not be updated!"
+            Sender = 'kinideas.tech@gmail.com'
+            Receiver = 'hailat.alx@gmail.com'
+            send_mail(Subject, Email_Body, Sender, [
+                      Receiver], fail_silently=False,)
+
+        return
+
+    def destroy(self, request, *args, **kwargs):
+        id = ArtistsModel.objects.filter(id=kwargs['pk']).values('artist_FUI')
+
+        try:
+            url = f"http://127.0.0.1:8000/users/{id[0]['artist_FUI'] if id.exists() else 0}"
+            headers = {'Content-type': 'application/json',
+                       'Accept': 'application/json'}
+
+            retry_strategy = Retry(
+                total=5,
+                backoff_factor=0.5,
+                status_forcelist=[429, 500, 502, 503, 504],
+                allowed_methods=["HEAD", "GET", "OPTIONS"],
+
+            )
+            adapter = HTTPAdapter(max_retries=retry_strategy)
+            http = requests.Session()
+            http.mount("https://", adapter)
+            http.mount("http://", adapter)
+
+            response = http.delete(
+                url, headers=headers)
+
+            print(response.status_code)
+
+            return super().destroy(request, *args, **kwargs)
+
+        except BaseException as e:
+            Subject = "Data Consistancy Problem"
+            Email_Body = f"Error: {e}\n\nIssue: Artist with ID {kwargs['pk']} could not be deleted!"
+            Sender = 'kinideas.tech@gmail.com'
+            Receiver = 'hailat.alx@gmail.com'
+            send_mail(Subject, Email_Body, Sender, [
+                      Receiver], fail_silently=False,)
+
+        return
 
 
 class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
