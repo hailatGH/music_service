@@ -14,9 +14,11 @@ from .models import AlbumsModel,  ArtistsModel, TracksModel, GenresModel
 # ***************************************************************************
 
 my_analyzer = analyzer('my_analyzer',
-    tokenizer=tokenizer('trigram', 'edge_ngram', min_gram=1, max_gram=20),
-    filter=['lowercase']
-)
+                       tokenizer=tokenizer(
+                           'trigram', 'edge_ngram', min_gram=1, max_gram=20),
+                       filter=['lowercase']
+                       )
+
 
 @registry.register_document
 class MusicartistDocument(Document):
@@ -44,12 +46,12 @@ class MusicartistDocument(Document):
     }
 
     )
-    artist_name=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
-    artist_description=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
+    artist_name = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
+    artist_description = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
 
     def prepare_trackasartist(self, instance):
         return instance.get_artisttracks_for_es()
@@ -70,12 +72,12 @@ class MusicartistDocument(Document):
 
         fields = [
             "id",
-            #"artist_name",
+            # "artist_name",
             "artist_title",
             "artist_rating",
             "artist_releaseDate",
             "artist_status",
-            #"artist_description",
+            # "artist_description",
             "artist_viewcount",
             "artist_profileImage",
             "artist_FUI",
@@ -123,12 +125,12 @@ class MusicalbumDocument(Document):
         "updated_at": fields.DateField(),
     }
     )
-    album_name=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
-    album_description=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
+    album_name = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
+    album_description = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
 
     # def prepare_album_tracks(self, instance):
     #     return instance.get_albumtracks_for_es()
@@ -146,11 +148,11 @@ class MusicalbumDocument(Document):
 
         fields = [
             "id",
-            #"album_name",
+            # "album_name",
             "album_rating",
             "album_status",
             "album_releaseDate",
-            #"album_description",
+            # "album_description",
             "album_viewcount",
             "album_coverImage",
             "album_price",
@@ -203,12 +205,12 @@ class MusictrackDocument(Document):
         "updated_at": fields.DateField(),
     }
     )
-    track_name=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
-    track_description=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
+    track_name = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
+    track_description = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
 
     class Index:
         name = "music_track"
@@ -224,17 +226,17 @@ class MusictrackDocument(Document):
 
         fields = [
             "id",
-            #"track_name",
+            # "track_name",
             "track_rating",
             "track_status",
             "track_releaseDate",
-            #"track_description",
+            # "track_description",
             "track_viewcount",
             "track_coverImage",
             "track_audioFile",
             "track_lyrics",
             "track_price",
-            "artists_featuring",
+            # "artist_featuring",
             "encoder_FUI",
             "created_at",
             "updated_at",
@@ -274,12 +276,12 @@ class MusicgenreDocument(Document):
     }
 
     )
-    genre_name=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
-    genre_description=fields.TextField(analyzer=my_analyzer,fields={
-            'raw': fields.TextField(analyzer='keyword'),
-        })
+    genre_name = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
+    genre_description = fields.TextField(analyzer=my_analyzer, fields={
+        'raw': fields.TextField(analyzer='keyword'),
+    })
 
     class Index:
         name = "music_genre"

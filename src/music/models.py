@@ -163,7 +163,7 @@ class TracksModel(models.Model):
                                        validators.validate_track_extension])
     track_lyrics = models.CharField(null=True, blank=True, max_length=4096)
     track_price = models.IntegerField(null=False, blank=True, default=5)
-    artist_featuring = models.CharField(null=True, blank=True, max_length=256)
+    # artist_featuring = models.CharField(null=True, blank=True, max_length=256)
     artist_id = models.ManyToManyField(
         ArtistsModel, related_name="trackasartist", related_query_name="trackasartistquery")
     album_id = models.ForeignKey(AlbumsModel, related_name="trackasalbum",
