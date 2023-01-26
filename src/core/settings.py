@@ -4,7 +4,7 @@ from django.utils.encoding import force_str
 from urllib.parse import urlparse
 
 from dotenv import load_dotenv
-from .settings import *
+from .basesettings import *
 
 
 django.utils.encoding.force_text = force_str
