@@ -176,7 +176,7 @@ class ArtistsMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 15
+        pageSize = 2
         paginated_response = []
 
         try:
