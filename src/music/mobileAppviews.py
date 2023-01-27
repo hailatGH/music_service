@@ -477,7 +477,7 @@ class TrackByGenreIdViewSet(viewsets.ModelViewSet):
 
         if response:
             filtered_response = [
-                data for data in response if data['genre_id'] == genreId]
+                data for data in response if data['genre_id'] == int(genreId)]
 
             paginated_response = paginateTrackResponse(
                 filtered_response, page, pageSize, userId)
