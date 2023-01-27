@@ -598,7 +598,7 @@ class FavouritesByUserIdViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        pageSize = 2
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -708,7 +708,7 @@ class PlayListTracksByPlaylistIdViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        pageSize = 2
+        pageSize = 15
         paginated_response = []
 
         try:
@@ -748,7 +748,7 @@ class PurchasedTracksMobileViewset(viewsets.ModelViewSet):
     serializer_class = PurchasedTracksSerializer
 
     def list(self, request, *args, **kwargs):
-        pageSize = 2
+        pageSize = 15
         paginated_response = []
 
         try:
