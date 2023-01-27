@@ -377,7 +377,7 @@ class TrackByAlbumIdViewSet(viewsets.ModelViewSet):
             userId = 1
 
         try:
-            albumId = request.query_params['albumId']
+            albumId = int(request.query_params['albumId'])
         except:
             albumId = 1
 
@@ -386,7 +386,7 @@ class TrackByAlbumIdViewSet(viewsets.ModelViewSet):
 
         if response:
             filtered_response = [
-                data for data in response if data['album_id'] == int(albumId)]
+                data for data in response if data['album_id'] == albumId]
 
             paginated_response = paginateTrackResponse(
                 filtered_response, page, pageSize, userId)
@@ -477,7 +477,7 @@ class TrackByGenreIdViewSet(viewsets.ModelViewSet):
 
         if response:
             filtered_response = [
-                data for data in response if data['genre_id'] == int(genreId)]
+                data for data in response if data['genre_id'] == genreId]
 
             paginated_response = paginateTrackResponse(
                 filtered_response, page, pageSize, userId)
