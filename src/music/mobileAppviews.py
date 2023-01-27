@@ -129,6 +129,7 @@ class TracksByEncoderId(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
+    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -176,7 +177,7 @@ class ArtistsMobileViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
-        pageSize = 2
+        pageSize = 15
         paginated_response = []
 
         try:
