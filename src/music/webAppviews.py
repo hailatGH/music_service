@@ -28,8 +28,8 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-
-            url = "http://127.0.0.1:8000/users"
+            url = "https://kinideas-profile.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/users"
+            # url = "http://127.0.0.1:8000/users"
             data = {
                 "user_id": request.data['artist_FUI'],
                 "privilege": 2,
@@ -67,8 +67,8 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         try:
-
-            url = "http://127.0.0.1:8000/users"
+            url = "https://kinideas-profile.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/users"
+            # url = "http://127.0.0.1:8000/users"
             data = {
                 "user_id": request.data['artist_FUI'],
                 "privilege": 2,
@@ -108,7 +108,8 @@ class ArtistsWebViewSet(viewsets.ModelViewSet):
         id = ArtistsModel.objects.filter(id=kwargs['pk']).values('artist_FUI')
 
         try:
-            url = f"http://127.0.0.1:8000/users/{id[0]['artist_FUI'] if id.exists() else 0}"
+            url = f"https://kinideas-profile.calmgrass-743c6f7f.francecentral.azurecontainerapps.io/users/{id[0]['artist_FUI'] if id.exists() else 0}"
+            # url = f"http://127.0.0.1:8000/users/{id[0]['artist_FUI'] if id.exists() else 0}"
             headers = {'Content-type': 'application/json',
                        'Accept': 'application/json'}
 

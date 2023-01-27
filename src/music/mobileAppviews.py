@@ -289,8 +289,11 @@ class TrackByArtistIdViewSet(viewsets.ModelViewSet):
             super().list(request, *args, **kwargs).data))
 
         if response:
+            # filtered_response1 = [
+            # data for data in response if not data['album_id']]
+
             filtered_response = [
-                data for data in response if list_contains(data['artist_id'], artistId)]
+                data for data in [pre_data for pre_data in response if not pre_data['album_id']] if list_contains(data['artist_id'], artistId)]
 
             paginated_response = paginateTrackResponse(
                 filtered_response, page, pageSize, userId)
