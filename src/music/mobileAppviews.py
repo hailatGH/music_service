@@ -156,6 +156,37 @@ class TracksByEncoderId(viewsets.ModelViewSet):
         return Response(page)
 
 
+class TracksByArtistId(viewsets.ModelViewSet):
+
+    queryset = TracksModel.objects.all()
+    serializer_class = TracksSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def destroy(self, request, *args, **kwargs):
+        return Response("Not Allowed")
+
+    def list(self, request, *args, **kwargs):
+        artistId = request.query_params['artistId']
+        tracks = self.queryset.filter(track_status=True, artist_id__in=artistId).values(
+            'id', 'track_name', 'track_coverImage', 'track_description')
+        page = []
+        if tracks.exists():
+            page = self.paginate_queryset(tracks)
+        return Response(page)
+
+
 class ArtistsMobileViewSet(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()

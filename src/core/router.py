@@ -56,6 +56,8 @@ mobileApprouter.register(
     r'albumsByEncoderId', AlbumsByEncoderId, basename="albumsByEncoderId")
 mobileApprouter.register(
     r'tracksByEncoderId', TracksByEncoderId, basename="tracksByEncoderId")
+mobileApprouter.register(
+    r'tracksByArtistId', TracksByArtistId, basename="tracksByArtistId")
 
 # mobileApprouter.register(r'adminCollectionNames', AdminCollectionNamesMobileViewSet, basename="adminCollectionNames")
 # mobileApprouter.register(r'adminCollectionTracks', AdminCollectionTracksMobileViewSet, basename="adminCollectionTracks")
