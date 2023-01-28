@@ -179,7 +179,7 @@ class TracksByArtistId(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         artistId = request.query_params['artistId']
-        tracks = self.queryset.filter(track_status=True, artist_id__in=artistId).values(
+        tracks = self.queryset.filter(track_status=True, artist_id=artistId).values(
             'id', 'track_name', 'track_coverImage', 'track_description')
         page = []
         if tracks.exists():
