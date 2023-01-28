@@ -151,6 +151,7 @@ def list_contains(List1, val):
 
 def fetchTracksDetail(filtered_response, kay_id):
     tracks = []
+    storageUrl = "https://zemastroragev100.blob.core.windows.net/zemacontainer/"
 
     for track_count in range(len(filtered_response)):
         track = TracksModel.objects.filter(
@@ -161,6 +162,10 @@ def fetchTracksDetail(filtered_response, kay_id):
                              [artist_count]['artist_id'])
         track = list(track)
         track[0][kay_id] = filtered_response[track_count]['id']
+        track[0]['track_coverImage'] = storageUrl + \
+            track[0]['track_coverImage']
+        track[0]['track_audioFile'] = storageUrl + \
+            track[0]['track_audioFile']
         track[0]['album_id'] = track[0].pop('album_id_id')
         track[0]['genre_id'] = track[0].pop('genre_id_id')
         track[0]['artist_id'] = artist_id
