@@ -29,7 +29,7 @@ mobileApprouter.register(r'artists', ArtistsMobileViewSet, basename="artists")
 mobileApprouter.register(
     r'albumByArtistId', AlbumByArtistIdViewSet, basename="albumByArtistId")
 mobileApprouter.register(
-    r'trackByArtistId', TrackByArtistIdViewSet, basename="trackByArtistId")
+    r'singleTracks', SingleTracksViewSet, basename="singleTracks")
 mobileApprouter.register(r'albums', AlbumsMobileViewSet, basename="albums")
 mobileApprouter.register(
     r'trackByAlbumId', TrackByAlbumIdViewSet, basename="trackByAlbumId")

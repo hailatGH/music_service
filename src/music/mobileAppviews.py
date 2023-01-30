@@ -278,7 +278,7 @@ class AlbumByArtistIdViewSet(viewsets.ModelViewSet):
         return Response(paginated_response)
 
 
-class TrackByArtistIdViewSet(viewsets.ModelViewSet):
+class SingleTracksViewSet(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
