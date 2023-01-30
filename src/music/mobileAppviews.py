@@ -153,7 +153,6 @@ class TracksByEncoderId(viewsets.ModelViewSet):
 
     queryset = TracksModel.objects.all()
     serializer_class = TracksSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
