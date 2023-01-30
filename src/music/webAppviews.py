@@ -267,7 +267,7 @@ class ArtistShareOfAtrack(viewsets.ModelViewSet):
         artistCount = self.queryset.filter(
             artist_id=artistId, track_id=trackId).count()
 
-        return Response(artistCount/totalArtists)
+        return Response({"percent": artistCount/totalArtists})
 
 
 class PlayListsWebViewSet(viewsets.ModelViewSet):
