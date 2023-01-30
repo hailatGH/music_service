@@ -49,3 +49,11 @@ STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
 
 STATICFILES_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 DEFAULT_FILE_STORAGE = 'core.custom_storage.AzureMediaStorage'
+
+ELASTIC_HOST_KEY = f"https://elastic:iBDoYGCEeBHcjhtGPPo0rrI1@kin-music-search-577dcc.es.europe-west1.gcp.cloud.es.io:9243"
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': [ELASTIC_HOST_KEY]
+    }
+}

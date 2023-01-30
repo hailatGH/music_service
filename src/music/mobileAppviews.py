@@ -59,7 +59,7 @@ class ArtistsByEncoderId(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
-    pagination_class = StandardResultsSetPagination
+    # pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -77,17 +77,30 @@ class ArtistsByEncoderId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
+        pageSize = 15
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
         try:
             userId = request.query_params['userId']
         except:
-            userId = 1
+            userId = "1"
 
-        artists = self.queryset.filter(artist_status=True, encoder_FUI=userId).values(
-            'id', 'artist_name', 'artist_profileImage', 'artist_description')
-        page = []
-        if artists.exists():
-            page = self.paginate_queryset(artists)
-        return Response(page)
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['encoder_FUI'] == userId]
+
+            paginated_response = paginateArtistResponse(
+                filtered_response, page, pageSize)
+
+        return Response(paginated_response)
 
 
 class AlbumsByEncoderId(viewsets.ModelViewSet):
@@ -178,11 +191,15 @@ class TracksByArtistId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
+        storageUrl = "https://zemastroragev100.blob.core.windows.net/zemacontainer/"
         artistId = request.query_params['artistId']
         tracks = self.queryset.filter(track_status=True, artist_id=artistId).values(
             'id', 'track_name', 'track_coverImage', 'track_description')
         page = []
         if tracks.exists():
+            for track in tracks:
+                track['track_coverImage'] = storageUrl + \
+                    track['track_coverImage']
             page = self.paginate_queryset(tracks)
         return Response(page)
 

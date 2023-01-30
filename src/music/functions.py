@@ -3,6 +3,10 @@ from operator import itemgetter as i
 
 from .models import *
 
+cdnUrl = "https://zemamultimediablobcdn.azureedge.net/zemacontainer/"
+# storageUrl = "http://127.0.0.1:8001/Media/"
+storageUrl = "https://zemastroragev100.blob.core.windows.net/zemacontainer/"
+
 
 def paginateArtistResponse(response, page, pageSize):
     paginated_response = []
@@ -18,6 +22,8 @@ def paginateArtistResponse(response, page, pageSize):
             paginated_response.append(filtered_response[index])
 
     for artist_count in range(len(paginated_response)):
+        paginated_response[artist_count]['artist_profileImage'] = paginated_response[artist_count]['artist_profileImage'].replace(
+            storageUrl, cdnUrl, 1)
         try:
             paginated_response[artist_count]['noOfAlbums'] = AlbumsModel.objects.filter(
                 album_status=True, artist_id=paginated_response[artist_count]['id']).count()
@@ -60,6 +66,8 @@ def paginateAlbumResponse(response, page, pageSize, userId):
             album_id=album['id'], user_FUI=userId).exists()
 
         album_index = paginated_response.index(album)
+        album['album_coverImage'] = album['album_coverImage'].replace(
+            storageUrl, cdnUrl, 1)
         try:
             paginated_response[album_index]['noOfTracks'] = TracksModel.objects.filter(
                 track_status=True, album_id=paginated_response[album_index]['id']).count()
@@ -81,6 +89,10 @@ def paginateGenreResponse(response, page, pageSize):
         index = filtered_response.index(val)
         if (index >= indexStart and index < indexEnd):
             paginated_response.append(filtered_response[index])
+
+    for genre in paginated_response:
+        genre['genre_coverImage'] = genre['genre_coverImage'].replace(
+            storageUrl, cdnUrl, 1)
 
     return paginated_response
 
@@ -119,6 +131,11 @@ def paginateTrackResponse(response, page, pageSize, userId):
         track['is_purchasedByUser'] = PurchasedTracksModel.objects.filter(
             track_id=track['id'], user_FUI=userId).exists()
 
+        track['track_coverImage'] = track['track_coverImage'].replace(
+            storageUrl, cdnUrl, 1)
+        track['track_audioFile'] = track['track_audioFile'].replace(
+            storageUrl, cdnUrl, 1)
+
     return paginated_response
 
 
@@ -151,7 +168,6 @@ def list_contains(List1, val):
 
 def fetchTracksDetail(filtered_response, kay_id):
     tracks = []
-    storageUrl = "https://zemastroragev100.blob.core.windows.net/zemacontainer/"
 
     for track_count in range(len(filtered_response)):
         track = TracksModel.objects.filter(
@@ -162,9 +178,9 @@ def fetchTracksDetail(filtered_response, kay_id):
                              [artist_count]['artist_id'])
         track = list(track)
         track[0][kay_id] = filtered_response[track_count]['id']
-        track[0]['track_coverImage'] = storageUrl + \
+        track[0]['track_coverImage'] = cdnUrl + \
             track[0]['track_coverImage']
-        track[0]['track_audioFile'] = storageUrl + \
+        track[0]['track_audioFile'] = cdnUrl + \
             track[0]['track_audioFile']
         track[0]['album_id'] = track[0].pop('album_id_id')
         track[0]['genre_id'] = track[0].pop('genre_id_id')
