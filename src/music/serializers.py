@@ -64,6 +64,13 @@ class AlbumsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AlbumsDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AlbumDetailModel
+        fields = '__all__'
+
+
 class GenresSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -227,6 +227,13 @@ class AlbumIdByAlbumNameWebViewSet(viewsets.ModelViewSet):
         return Response(album_id)
 
 
+class AlbumsDetailWebViewSet(viewsets.ModelViewSet):
+
+    queryset = AlbumDetailModel.objects.all()
+    serializer_class = AlbumsDetailSerializer
+    pagination_class = StandardResultsSetPagination
+
+
 class GenresWebViewSet(viewsets.ModelViewSet):
 
     queryset = GenresModel.objects.all()

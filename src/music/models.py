@@ -145,6 +145,22 @@ class GenresModel(models.Model):
         return f"{self.pk}-{self.genre_name}-{self.created_at.date()}/{self.updated_at.date()}"
 
 
+class AlbumDetailModel(models.Model):
+
+    class Meta:
+        ordering = ['id']
+
+    album_id = models.ForeignKey(
+        AlbumsModel, null=False, blank=True, on_delete=models.CASCADE)
+    artist_id = models.ForeignKey(ArtistsModel, on_delete=models.CASCADE)
+    privilege = models.CharField(null=True, blank=True, max_length=256)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.pk}-{self.album_id}-{self.created_at.date()}/{self.updated_at.date()}"
+
+
 class TracksModel(models.Model):
 
     class Meta:
@@ -201,7 +217,7 @@ class TrackDetailModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk}-{self.playlist_id}-{self.created_at.date()}/{self.updated_at.date()}"
+        return f"{self.pk}-{self.track_id}-{self.created_at.date()}/{self.updated_at.date()}"
 
 
 class PlayListsModel(models.Model):

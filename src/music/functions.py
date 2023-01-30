@@ -113,10 +113,11 @@ def paginateTrackResponse(response, page, pageSize, userId):
 
     for track in paginated_response:
         artist_name = ""
+        singer_id = 0
 
         for id in track['artist_id']:
             privilege = TrackDetailModel.objects.filter(
-                track_id=track['id'], artist_id=id).values('privilege')
+                track_id=track['id'], artist_id=id).values('artist_id', 'privilege')
 
             name = ArtistsModel.objects.filter(
                 id=id).values('artist_name')[0]['artist_name']
@@ -124,6 +125,7 @@ def paginateTrackResponse(response, page, pageSize, userId):
             if privilege.exists():
                 if privilege[0]['privilege'] == "Singer":
                     artist_name = artist_name + name + " x "
+                    singer_id = privilege[0]['artist_id']
                 else:
                     track[privilege[0]['privilege']] = name
 
@@ -135,6 +137,8 @@ def paginateTrackResponse(response, page, pageSize, userId):
             storageUrl, cdnUrl, 1)
         track['track_audioFile'] = track['track_audioFile'].replace(
             storageUrl, cdnUrl, 1)
+        track['artists'] = track.pop('artist_id')
+        track['singer_id'] = singer_id
 
     return paginated_response
 
