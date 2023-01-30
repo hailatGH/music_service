@@ -262,15 +262,27 @@ class ArtistShareOfAtrack(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         trackId = int(request.query_params['trackId'])
+        artistId = int(request.query_params['artistId'])
+        totalArtists = self.queryset.filter(track_id=trackId)
+        artistTrackCount = totalArtists.filter(
+            artist_id=artistId)
+
+        return Response(artistTrackCount.count()/totalArtists.count())
+
+
+class ArtistShareOfAnAlbum(viewsets.ModelViewSet):
+
+    queryset = AlbumDetailModel.objects.all()
+    serializer_class = AlbumsDetailSerializer
+
+    def list(self, request, *args, **kwargs):
         albumId = int(request.query_params['albumId'])
         artistId = int(request.query_params['artistId'])
-        totalArtists = TrackDetailModel.filter(track_id=trackId).count()
-        artistTrackCount = TrackDetailModel.filter(
-            artist_id=artistId, track_id=trackId).count()
-        artistAlbumCount = AlbumDetailModel.filter(
-            artist_id=artistId, album_id=albumId).count()
+        totalArtists = self.queryset.filter(album_id=albumId)
+        artistTrackCount = totalArtists.filter(
+            artist_id=artistId)
 
-        return Response([artistTrackCount/totalArtists, artistAlbumCount/totalArtists])
+        return Response(artistTrackCount.count()/totalArtists.count())
 
 
 class PlayListsWebViewSet(viewsets.ModelViewSet):
