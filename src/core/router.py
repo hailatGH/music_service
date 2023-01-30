@@ -23,6 +23,8 @@ webApprouter.register(r'trackDetail',
                       TracksDetailWebViewSet, basename="trackDetail")
 webApprouter.register(r'albumDetail',
                       AlbumsDetailWebViewSet, basename="albumDetail")
+webApprouter.register(r'artistShareOfAtrack',
+                      ArtistShareOfAtrack, basename="artistShareOfAtrack")
 # webApprouter.register(r'adminCollectionName', AdminCollectionNamesWebViewSet, basename="adminCollectionName")
 # webApprouter.register(r'adminCollectionTrack', AdminCollectionTracksWebViewSet, basename="adminCollectionTrack")
 

@@ -255,6 +255,21 @@ class TracksDetailWebViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
 
+class ArtistShareOfAtrack(viewsets.ModelViewSet):
+
+    queryset = TrackDetailModel.objects.all()
+    serializer_class = TracksDetailSerializer
+
+    def list(self, request, *args, **kwargs):
+        trackId = int(request.query_params['trackId'])
+        artistId = int(request.query_params['artistId'])
+        totalArtists = self.queryset.filter(track_id=trackId).count()
+        artistCount = self.queryset.filter(
+            artist_id=artistId, track_id=trackId).count()
+
+        return Response(artistCount/totalArtists)
+
+
 class PlayListsWebViewSet(viewsets.ModelViewSet):
 
     queryset = PlayListsModel.objects.all()
