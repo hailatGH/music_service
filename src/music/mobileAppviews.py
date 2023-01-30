@@ -59,7 +59,6 @@ class ArtistsByEncoderId(viewsets.ModelViewSet):
 
     queryset = ArtistsModel.objects.all()
     serializer_class = ArtistsSerializer
-    # pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -107,7 +106,6 @@ class AlbumsByEncoderId(viewsets.ModelViewSet):
 
     queryset = AlbumsModel.objects.all()
     serializer_class = AlbumsSerializer
-    pagination_class = StandardResultsSetPagination
 
     def create(self, request, *args, **kwargs):
         return Response("Not Allowed")
@@ -125,17 +123,30 @@ class AlbumsByEncoderId(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
     def list(self, request, *args, **kwargs):
+        pageSize = 15
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
         try:
             userId = request.query_params['userId']
         except:
-            userId = 1
+            userId = "1"
 
-        albums = self.queryset.filter(album_status=True, encoder_FUI=userId).values(
-            'id', 'album_name', 'album_coverImage', 'album_description')
-        page = []
-        if albums.exists():
-            page = self.paginate_queryset(albums)
-        return Response(page)
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['encoder_FUI'] == userId]
+
+            paginated_response = paginateAlbumResponse(
+                filtered_response, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class TracksByEncoderId(viewsets.ModelViewSet):
@@ -167,6 +178,32 @@ class TracksByEncoderId(viewsets.ModelViewSet):
         if tracks.exists():
             page = self.paginate_queryset(tracks)
         return Response(page)
+
+    def list(self, request, *args, **kwargs):
+        pageSize = 15
+        paginated_response = []
+
+        try:
+            page = int(request.query_params['page'])
+        except:
+            page = 1
+
+        try:
+            userId = request.query_params['userId']
+        except:
+            userId = "1"
+
+        response = json.loads(json.dumps(
+            super().list(request, *args, **kwargs).data))
+
+        if response:
+            filtered_response = [
+                data for data in response if data['encoder_FUI'] == userId]
+
+            paginated_response = paginateTrackResponse(
+                filtered_response, page, pageSize, userId)
+
+        return Response(paginated_response)
 
 
 class TracksByArtistId(viewsets.ModelViewSet):
