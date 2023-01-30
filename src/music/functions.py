@@ -24,17 +24,17 @@ def paginateArtistResponse(response, page, pageSize):
     for artist_count in range(len(paginated_response)):
         paginated_response[artist_count]['artist_profileImage'] = paginated_response[artist_count]['artist_profileImage'].replace(
             storageUrl, cdnUrl, 1)
-        try:
-            paginated_response[artist_count]['noOfAlbums'] = AlbumsModel.objects.filter(
-                album_status=True, artist_id=paginated_response[artist_count]['id']).count()
-        except:
-            paginated_response[artist_count]['noOfAlbums'] = 0
+        # try:
+        #     paginated_response[artist_count]['noOfAlbums'] = AlbumsModel.objects.filter(
+        #         album_status=True, artist_id=paginated_response[artist_count]['id']).count()
+        # except:
+        #     paginated_response[artist_count]['noOfAlbums'] = 0
 
-        try:
-            paginated_response[artist_count]['noOfTracks'] = TracksModel.objects.filter(
-                track_status=True, artist_id=paginated_response[artist_count]['id']).count()
-        except:
-            paginated_response[artist_count]['noOfTracks'] = 0
+        # try:
+        #     paginated_response[artist_count]['noOfTracks'] = TracksModel.objects.filter(
+        #         track_status=True, artist_id=paginated_response[artist_count]['id']).count()
+        # except:
+        #     paginated_response[artist_count]['noOfTracks'] = 0
 
     return paginated_response
 
@@ -65,14 +65,14 @@ def paginateAlbumResponse(response, page, pageSize, userId):
         album['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(
             album_id=album['id'], user_FUI=userId).exists()
 
-        album_index = paginated_response.index(album)
+        # album_index = paginated_response.index(album)
         album['album_coverImage'] = album['album_coverImage'].replace(
             storageUrl, cdnUrl, 1)
-        try:
-            paginated_response[album_index]['noOfTracks'] = TracksModel.objects.filter(
-                track_status=True, album_id=paginated_response[album_index]['id']).count()
-        except:
-            paginated_response[album_index]['noOfTracks'] = 0
+        # try:
+        #     paginated_response[album_index]['noOfTracks'] = TracksModel.objects.filter(
+        #         track_status=True, album_id=paginated_response[album_index]['id']).count()
+        # except:
+        #     paginated_response[album_index]['noOfTracks'] = 0
 
     return paginated_response
 
