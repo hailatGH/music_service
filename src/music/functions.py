@@ -54,25 +54,38 @@ def paginateAlbumResponse(response, page, pageSize, userId):
             paginated_response.append(filtered_response[index])
 
     for album in paginated_response:
-        artists = ArtistsModel.objects.filter(
-            id__in=album['artist_id']).values('artist_name')
         artist_name = ""
+        singer_id = 0
 
-        for artist in artists:
-            artist_name = artist_name + artist['artist_name'] + " x "
+        for id in album['artist_id']:
+            privilege = AlbumDetailModel.objects.filter(
+                album_id=album['id'], artist_id=id).values('artist_id', 'privilege')
+
+            name = ArtistsModel.objects.filter(
+                id=id).values('artist_name')[0]['artist_name']
+
+            if privilege.exists():
+                if privilege[0]['privilege'] == "Singer":
+                    artist_name = artist_name + name + " x "
+                    singer_id = privilege[0]['artist_id']
+                else:
+                    album[privilege[0]['privilege']] = name
+
+        # artists = ArtistsModel.objects.filter(
+        #     id__in=album['artist_id']).values('artist_name')
+        # artist_name = ""
+
+        # for artist in artists:
+        #     artist_name = artist_name + artist['artist_name'] + " x "
 
         album['artist_name'] = artist_name[:len(artist_name) - 3]
         album['is_purchasedByUser'] = PurchasedAlbumsModel.objects.filter(
             album_id=album['id'], user_FUI=userId).exists()
 
-        # album_index = paginated_response.index(album)
         album['album_coverImage'] = album['album_coverImage'].replace(
             storageUrl, cdnUrl, 1)
-        # try:
-        #     paginated_response[album_index]['noOfTracks'] = TracksModel.objects.filter(
-        #         track_status=True, album_id=paginated_response[album_index]['id']).count()
-        # except:
-        #     paginated_response[album_index]['noOfTracks'] = 0
+        album['artists'] = album.pop('artist_id')
+        album['artist_id'] = singer_id
 
     return paginated_response
 
@@ -138,7 +151,7 @@ def paginateTrackResponse(response, page, pageSize, userId):
         track['track_audioFile'] = track['track_audioFile'].replace(
             storageUrl, cdnUrl, 1)
         track['artists'] = track.pop('artist_id')
-        track['singer_id'] = singer_id
+        track['artist_id'] = singer_id
 
     return paginated_response
 
