@@ -55,7 +55,6 @@ def paginateAlbumResponse(response, page, pageSize, userId):
 
     for album in paginated_response:
         artist_name = ""
-        singer_id = 0
 
         for id in album['artist_id']:
             privilege = AlbumDetailModel.objects.filter(
@@ -67,7 +66,6 @@ def paginateAlbumResponse(response, page, pageSize, userId):
             if privilege.exists():
                 if privilege[0]['privilege'] == "Singer":
                     artist_name = artist_name + name + " x "
-                    singer_id = privilege[0]['artist_id']
                 else:
                     album[privilege[0]['privilege']] = name
 
@@ -84,8 +82,6 @@ def paginateAlbumResponse(response, page, pageSize, userId):
 
         album['album_coverImage'] = album['album_coverImage'].replace(
             storageUrl, cdnUrl, 1)
-        album['artists'] = album.pop('artist_id')
-        album['artist_id'] = singer_id
 
     return paginated_response
 
@@ -126,7 +122,6 @@ def paginateTrackResponse(response, page, pageSize, userId):
 
     for track in paginated_response:
         artist_name = ""
-        singer_id = 0
 
         for id in track['artist_id']:
             privilege = TrackDetailModel.objects.filter(
@@ -138,7 +133,6 @@ def paginateTrackResponse(response, page, pageSize, userId):
             if privilege.exists():
                 if privilege[0]['privilege'] == "Singer":
                     artist_name = artist_name + name + " x "
-                    singer_id = privilege[0]['artist_id']
                 else:
                     track[privilege[0]['privilege']] = name
 
@@ -150,8 +144,6 @@ def paginateTrackResponse(response, page, pageSize, userId):
             storageUrl, cdnUrl, 1)
         track['track_audioFile'] = track['track_audioFile'].replace(
             storageUrl, cdnUrl, 1)
-        track['artists'] = track.pop('artist_id')
-        track['artist_id'] = singer_id
 
     return paginated_response
 
