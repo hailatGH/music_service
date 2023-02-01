@@ -652,7 +652,7 @@ class PopularTracksMobileViewSet(viewsets.ModelViewSet):
             super().list(request, *args, **kwargs).data))
 
         if response:
-            sorted_response = TracksViewCount.objects.all().order_by('-track_viewcount')
+            sorted_response = TracksViewCount.objects.all().order_by('-track_viewcount').values()
             # sorted_response = multikeysort(
             #     response, ['-track_viewcount', 'track_releaseDate'])
             sorted_response = fetchTracksDetail(sorted_response, 'pop_id')
