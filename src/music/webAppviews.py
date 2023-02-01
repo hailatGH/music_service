@@ -179,7 +179,7 @@ class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
                 startOfno = indexOfcomma + 1
         artist_id_list.append(int(artistId[startOfno:]))
         albums = self.queryset.filter(
-            artist_id__in=artist_id_list).values('id', 'album_name')
+            artist_id__in=artist_id_list).values()
 
         # Count how many times an album is repeated with diffrent artist_id
         tmp_data = []
