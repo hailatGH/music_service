@@ -267,9 +267,9 @@ class FavouritesModel(models.Model):
 class TracksViewCount(models.Model):
 
     class Meta:
-        ordering = ['id']
+        ordering = ['track_id']
 
-    track_id = models.IntegerField(null=False, blank=True)
+    track_id = models.IntegerField(null=False, blank=True, primary_key=True)
     track_viewcount = models.IntegerField(null=False, blank=True, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
