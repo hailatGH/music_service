@@ -329,6 +329,13 @@ class PlayListTracksWebViewSet(viewsets.ModelViewSet):
         return Response("Not Allowed")
 
 
+class TracksViewCountWebViewSet(viewsets.ModelViewSet):
+
+    queryset = TracksViewCount.objects.all()
+    serializer_class = TracksViewCountSerializer
+    pagination_class = StandardResultsSetPagination
+
+
 class PurchasedTracksWebViewSet(viewsets.ModelViewSet):
 
     queryset = PurchasedTracksModel.objects.all()

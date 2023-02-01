@@ -264,12 +264,26 @@ class FavouritesModel(models.Model):
         return f"{self.created_at.date()}/{self.updated_at.date()}"
 
 
-class PurchasedTracksModel(models.Model):
+class TracksViewCount(models.Model):
 
     class Meta:
         ordering = ['id']
 
     track_id = models.IntegerField(null=False, blank=True)
+    track_viewcount = models.IntegerField(null=False, blank=True, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.created_at.date()}/{self.updated_at.date()}"
+
+
+class PurchasedTracksModel(models.Model):
+
+    class Meta:
+        ordering = ['track_id']
+
+    track_id = models.IntegerField(null=False, blank=True, primary_key=True)
     user_FUI = models.CharField(null=False, blank=True, max_length=1023)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -148,6 +148,13 @@ class PurchasedTracksSerializer(serializers.ModelSerializer):
         ]
 
 
+class TracksViewCountSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TracksViewCount
+        fields = '__all__'
+
+
 class PurchasedAlbumsSerializer(serializers.ModelSerializer):
 
     class Meta:
