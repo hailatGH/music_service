@@ -211,9 +211,6 @@ class AlbumsWebViewSet(viewsets.ModelViewSet):
     serializer_class = AlbumsSerializer
     pagination_class = StandardResultsSetPagination
 
-    def list(self, request, *args, **kwargs):
-        return Response('Done')
-
 
 class AlbumIdByAlbumNameWebViewSet(viewsets.ModelViewSet):
 
