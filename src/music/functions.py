@@ -186,7 +186,8 @@ def fetchTracksDetail(filtered_response, kay_id):
             artist_id.append(track.values('artist_id')
                              [artist_count]['artist_id'])
         track = list(track)
-        track[0][kay_id] = filtered_response[track_count]['id']
+        if not kay_id == "pop_id":
+            track[0][kay_id] = filtered_response[track_count]['id']
         track[0]['track_coverImage'] = cdnUrl + \
             track[0]['track_coverImage']
         track[0]['track_audioFile'] = cdnUrl + \
