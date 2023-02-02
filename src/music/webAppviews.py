@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
@@ -6,6 +6,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from django.core.mail import send_mail
+import json
 
 from .models import *
 from .serializers import *
@@ -364,3 +365,94 @@ class PurchasedAlbumsWebViewSet(viewsets.ModelViewSet):
 #     queryset = AdminCollectionTracksModel.objects.all()
 #     serializer_class = AdminCollectionTracksSerializer
 #     pagination_class = StandardResultsSetPagination
+
+
+class FilterArtist(viewsets.ModelViewSet):
+
+    queryset = ArtistsModel.objects.all()
+    serializer_class = ArtistsSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        try:
+            artistName = request.query_params['q']
+        except:
+            artistName = ""
+        response = self.queryset.filter(
+            artist_name__icontains=artistName).values('id', 'artist_name', 'artist_profileImage')
+        for artist in response:
+            artist['artist_profileImage'] = cdnUrl + \
+                artist['artist_profileImage']
+
+        return Response(response)
+
+
+class FilterAlbum(viewsets.ModelViewSet):
+
+    queryset = AlbumsModel.objects.all()
+    serializer_class = AlbumsSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        try:
+            albumName = request.query_params['q']
+        except:
+            albumName = ""
+        response = self.queryset.filter(
+            album_name__icontains=albumName).values('id', 'album_name', 'album_coverImage')
+        for album in response:
+            album['album_coverImage'] = cdnUrl + album['album_coverImage']
+
+        return Response(response)
+
+
+class FilterGenre(viewsets.ModelViewSet):
+
+    queryset = GenresModel.objects.all()
+    serializer_class = GenresSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        try:
+            genreName = request.query_params['q']
+        except:
+            genreName = ""
+        response = self.queryset.filter(
+            genre_name__icontains=genreName).values('id', 'genre_name', 'genre_coverImage')
+        for genre in response:
+            genre['genre_coverImage'] = cdnUrl + genre['genre_coverImage']
+
+        return Response(response)
