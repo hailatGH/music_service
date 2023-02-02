@@ -10,6 +10,8 @@ from django.core.mail import send_mail
 from .models import *
 from .serializers import *
 
+cdnUrl = "https://zemamultimediablobcdn.azureedge.net/zemacontainer/"
+
 # Standard Results Set Pagination
 
 
@@ -201,6 +203,9 @@ class AlbumsByArtistIdViewSet(viewsets.ModelViewSet):
                 'id', 'album_name', 'artist_id')
             if len(artist_id_list) == len(artist_obj):
                 data.append(tmp_data[i])
+
+        for item in data:
+            item['album_coverImage'] = cdnUrl + item['album_coverImage']
 
         return Response(data)
 
