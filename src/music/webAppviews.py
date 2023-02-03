@@ -10,6 +10,7 @@ import json
 
 from .models import *
 from .serializers import *
+from .functions import *
 
 cdnUrl = "https://zemamultimediablobcdn.azureedge.net/zemacontainer/"
 
@@ -540,7 +541,7 @@ class ContentCount(viewsets.ModelViewSet):
         return Response(response)
 
 
-class TopTenPopTracks(viewsets.ModelViewSet):
+class TopPopularTracks(viewsets.ModelViewSet):
 
     queryset = TracksViewCount.objects.all()
     serializer_class = TracksViewCountSerializer
@@ -558,8 +559,16 @@ class TopTenPopTracks(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def list(self, request, *args, **kwargs):
-        response = {}
-        response = TracksViewCount.objects.all().order_by(
+        response = []
+        popularTracksList = TracksViewCount.objects.all().order_by(
             '-track_viewcount').values('track_id', 'track_viewcount')
+
+        if popularTracksList.count() >= 10:
+            for i in range(10):
+                response.append(popularTracksList[i])
+        else:
+            response = popularTracksList
+
+        response = fetchTracksDetail(response, "pop_id")
 
         return Response(response)

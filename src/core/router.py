@@ -41,8 +41,8 @@ webApprouter.register(r'genreTracksCount',
                       GenreTracksCount, basename="genreTracksCount")
 webApprouter.register(r'contentCount',
                       ContentCount, basename="contentCount")
-webApprouter.register(r'topTenPopTracks',
-                      TopTenPopTracks, basename="topTenPopTracks")
+webApprouter.register(r'topPopularTracks',
+                      TopPopularTracks, basename="topPopularTracks")
 # webApprouter.register(r'adminCollectionName', AdminCollectionNamesWebViewSet, basename="adminCollectionName")
 # webApprouter.register(r'adminCollectionTrack', AdminCollectionTracksWebViewSet, basename="adminCollectionTrack")
 
