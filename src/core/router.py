@@ -35,6 +35,14 @@ webApprouter.register(r'filterAlbum',
                       FilterAlbum, basename="filterAlbum")
 webApprouter.register(r'filterGenre',
                       FilterGenre, basename="filterGenre")
+webApprouter.register(r'approvedTracksCount',
+                      ApprovedTracksCount, basename="approvedTracksCount")
+webApprouter.register(r'genreTracksCount',
+                      GenreTracksCount, basename="genreTracksCount")
+webApprouter.register(r'contentCount',
+                      ContentCount, basename="contentCount")
+webApprouter.register(r'topTenPopTracks',
+                      TopTenPopTracks, basename="topTenPopTracks")
 # webApprouter.register(r'adminCollectionName', AdminCollectionNamesWebViewSet, basename="adminCollectionName")
 # webApprouter.register(r'adminCollectionTrack', AdminCollectionTracksWebViewSet, basename="adminCollectionTrack")
 

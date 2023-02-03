@@ -456,3 +456,110 @@ class FilterGenre(viewsets.ModelViewSet):
             genre['genre_coverImage'] = cdnUrl + genre['genre_coverImage']
 
         return Response(response)
+
+
+class ApprovedTracksCount(viewsets.ModelViewSet):
+
+    queryset = TracksModel.objects.all()
+    serializer_class = TracksSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        response = {}
+        totalTrackCount = self.queryset.all().count()
+        approvedTracks = self.queryset.filter(track_status=True).count()
+
+        response["totalTrackCount"] = totalTrackCount
+        response["approvedTracks"] = approvedTracks
+        response["notApprovedTracks"] = totalTrackCount - approvedTracks
+        return Response(response)
+
+
+class GenreTracksCount(viewsets.ModelViewSet):
+
+    queryset = GenresModel.objects.all()
+    serializer_class = GenresSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+
+        response = self.queryset.all().values('id', 'genre_name')
+        for genre in response:
+            genre['trackCount'] = TracksModel.objects.filter(
+                genre_id=genre['id']).count()
+
+        return Response(response)
+
+
+class ContentCount(viewsets.ModelViewSet):
+
+    queryset = ArtistsModel.objects.all()
+    serializer_class = ArtistsSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        response = {}
+        response['tracksCount'] = TracksModel.objects.all().count()
+        response['genresCount'] = GenresModel.objects.all().count()
+        response['albumsCount'] = AlbumsModel.objects.all().count()
+        response['artistsCount'] = ArtistsModel.objects.all().count()
+
+        return Response(response)
+
+
+class TopTenPopTracks(viewsets.ModelViewSet):
+
+    queryset = TracksViewCount.objects.all()
+    serializer_class = TracksViewCountSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        response = {}
+        response = TracksViewCount.objects.all().order_by(
+            '-track_viewcount').values('track_id', 'track_viewcount')
+
+        return Response(response)
