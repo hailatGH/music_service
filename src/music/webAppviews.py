@@ -571,4 +571,8 @@ class TopPopularTracks(viewsets.ModelViewSet):
 
         response = fetchTracksDetail(response, "pop_id")
 
+        for track in response:
+            track['track_viewcount'] = popularTracksList.filter(
+                track_id=track['id']).values('track_viewcount')[0]['track_viewcount']
+
         return Response(response)
